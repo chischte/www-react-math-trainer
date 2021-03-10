@@ -19,8 +19,8 @@ export default class LoginPage extends React.Component {
     render() {
         return (
             <div>
-                <Header/>
-                HOMEPAGE
+            <Header/>
+                ACCOUNT
             </div>
         );
     }

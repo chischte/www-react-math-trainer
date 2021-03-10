@@ -20,7 +20,7 @@ export default class LoginPage extends React.Component {
         return (
             <div>
                 <Header/>
-                HOMEPAGE
+                WETTKAMPF
             </div>
         );
     }
