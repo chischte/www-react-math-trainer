@@ -4,22 +4,39 @@ export default class GenerateMultiplications {
   maxFactor = 10;
   maxDividendQuotient = 10;
 
-  constructor() {}
+  constructor() {
+    this.questionArray=[];
+    this.solutionArray=[];
+    this.numberOfQuestions=0;
+  }
 
-  generateNewCalculation(level, range) {
+  generateCalculations(level, range) {
     if (level === "1") {
-      this.generateMultiplicationLevel1(range);
+      this.generateCalculationsLevel1(range);
     }
   }
 
-  generateMultiplication(range) {
-    var calculationsArray=[[],[]];
+  generateCalculationsLevel1(range) {
     var i;
     for (i = 1; i <= 10; i++) {
-      calculationsArray[0].push(i+" x " + range + "=");
-      calculationsArray[1].push(i * range);
+      this.questionArray.push(i+"x"+range);
+      var solution =i*range;
+      this.solutionArray.push(solution+"");
+      this.numberOfQuestions++;
     }
-    return calculationsArray;
+  }
+
+  // Getter:
+
+  getQuestionArray()
+  {
+    return this.questionArray
+  }
+  getSolutionArray(){
+    return this.solutionArray;
+  }
+  getNumberOfQuestions(){
+    return this.numberOfQuestions;
   }
 
 }

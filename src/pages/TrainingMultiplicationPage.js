@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../components/Header";
-import TrainingSelector from "../components/training/TrainingSelector";
 import { useHistory } from 'react-router-dom'
 
 function TrainingMultiplicationPage() {

@@ -3,16 +3,17 @@ import Header from "../components/Header";
 import GenerateMultiplications from "../calculation_generator/generateMultiplications";
 import UserInput from "../components/UserInput";
 
-
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
   const [calculationsSolved, setCalculationsSolved] = useState(0);
-
-  const getDisciplineFromUrl = () => {
-    var splitUrl = window.location.href.split("/");
-    return splitUrl[splitUrl.length - 3];
-  };
+  const [trainingCompleted, setTrainingCompleted] = useState(false);
+  const [questionArray, setQuestionArray] = useState();
+  const [solutionArray, setSolutionArray] = useState();
+  const [numberOfQuestions, setNumberOfQuestions] = useState();
+  const [currentQuestion, setCurrentQuestion] = useState();
+  const [currentSolution, setCurrentSolution] = useState();
+  const [calculationsGenerated, setCalculationsGenerated] = useState(false);
 
   const getLevelFromUrl = () => {
     var splitUrl = window.location.href.split("/");
@@ -24,17 +25,54 @@ function TrainingPage() {
     return splitUrl[splitUrl.length - 1];
   };
 
+  useEffect(() => {
+    generateMultiplications.generateCalculations(
+      getLevelFromUrl(),
+      getRangeFromUrl()
+    );
+    setQuestionArray(generateMultiplications.getQuestionArray());
+    setSolutionArray(generateMultiplications.getSolutionArray());
+    setNumberOfQuestions(generateMultiplications.getNumberOfQuestions());
+    setCalculationsGenerated(true);
+  }, []);
+
+  useEffect(() => {
+    if (calculationsGenerated) {
+      setCurrentQuestion(questionArray[calculationsSolved]);
+      setCurrentSolution(solutionArray[calculationsSolved]);
+    }
+  }, [calculationsSolved, calculationsGenerated, questionArray, solutionArray]);
+
   const getNewCalculation = () => {
-    return "bbb";
+    return currentQuestion;
   };
 
-  const getSolution=()=>{
-    var solution = generateMultiplications.generateMultiplication(getRangeFromUrl())[1][calculationsSolved]
-    //solution=666
-    return solution
-}
+  const getSolution = () => {
+    return currentSolution;
+  };
   const countOneUp = () => {
-    setCalculationsSolved(calculationsSolved+1);
+    setCalculationsSolved(calculationsSolved + 1);
+  };
+
+  useEffect(() => {
+    if (calculationsSolved === numberOfQuestions) {
+      setTrainingCompleted(true);
+    }
+  }, [calculationsSolved, numberOfQuestions]);
+
+  const showTrainingRunning = () => {
+    return (
+      <div>
+        Question ={currentQuestion}
+        <br></br>
+        <br></br>
+        <UserInput
+          solution={getSolution()}
+          getNewCalculation={getNewCalculation}
+          countOneUp={countOneUp}
+        />
+      </div>
+    );
   };
 
   return (
@@ -43,22 +81,11 @@ function TrainingPage() {
       <br></br>
       TRAINING
       <br></br>
-      Question ={" "}
-      {generateMultiplications.generateMultiplication(getRangeFromUrl())[0][calculationsSolved]}
-      <br></br>
-      <br></br>
-      <UserInput
-        solution={getSolution()}
-        getNewCalculation={getNewCalculation}
-        countOneUp={countOneUp}
-      />
-      <br></br>
-      Answer ={" "}
-      {generateMultiplications.generateMultiplication(getRangeFromUrl())[1][calculationsSolved]}
-      <br></br>
-      Calculations Solved = {calculationsSolved}
-      <br></br>
-      Number of Calculations = {generateMultiplications.generateMultiplication()[0].length}  
+      {trainingCompleted === true ? (
+        <div> TRAINING COMPLETED</div>
+      ) : (
+        showTrainingRunning()
+      )}
     </div>
   );
 }

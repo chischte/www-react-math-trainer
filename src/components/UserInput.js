@@ -17,7 +17,7 @@ export default class UserInput extends React.Component {
     let userInput = e.target.elements.userinput.value.trim();
     this.keycount = Math.random(); // to clear input fueld
 
-    if (userInput == this.props.solution) {
+    if (userInput === this.props.solution) {
       this.props.getNewCalculation();
       this.props.countOneUp();
       this.setEntryTrue();
