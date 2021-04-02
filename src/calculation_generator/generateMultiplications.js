@@ -1,42 +1,51 @@
 export default class GenerateMultiplications {
-  maxSum = 100;
-  maxMinuend = 100;
-  maxFactor = 10;
-  maxDividendQuotient = 10;
-
+  
   constructor() {
-    this.questionArray=[];
-    this.solutionArray=[];
-    this.numberOfQuestions=0;
+    this.questionArray = [];
+    this.solutionArray = [];
+    this.numberOfQuestions = 0;
   }
 
   generateCalculations(level, range) {
+    this.questionArray = [];
+    this.solutionArray = [];
+    this.numberOfQuestions = 0;
+    
     if (level === "1") {
       this.generateCalculationsLevel1(range);
+    }
+    if (level === "2") {
+      this.generateCalculationsLevel2(range);
     }
   }
 
   generateCalculationsLevel1(range) {
-    var i;
-    for (i = 1; i <= 10; i++) {
-      this.questionArray.push(i+"x"+range);
-      var solution =i*range;
-      this.solutionArray.push(solution+"");
+    for (var i = 1; i <= 2; i++) {
+      this.questionArray.push(i + "x" + range);
+      var solution = i * range;
+      this.solutionArray.push(solution + "");
+      this.numberOfQuestions++;
+    }
+  }
+  generateCalculationsLevel2(range) {
+    for (var i = 10; i >= 9; i--) {
+      this.questionArray.push(i + "x" + range);
+      var solution = i * range;
+      this.solutionArray.push(solution + "");
       this.numberOfQuestions++;
     }
   }
 
   // Getter:
 
-  getQuestionArray()
-  {
-    return this.questionArray
+  getQuestionArray() {
+    console.log(this.questionArray);
+    return this.questionArray;
   }
-  getSolutionArray(){
+  getSolutionArray() {
     return this.solutionArray;
   }
-  getNumberOfQuestions(){
+  getNumberOfQuestions() {
     return this.numberOfQuestions;
   }
-
 }

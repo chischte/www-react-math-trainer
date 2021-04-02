@@ -79,7 +79,7 @@ function TrainingPage() {
     <div>
       <Header />
       <br></br>
-      TRAINING
+      TRAINING {getRangeFromUrl()}
       <br></br>
       {trainingCompleted === true ? (
         <div> TRAINING COMPLETED</div>
