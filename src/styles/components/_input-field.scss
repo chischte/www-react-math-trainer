@@ -1,0 +1,24 @@
+.input-field {
+  width: 10rem;
+  height: 3rem;
+  border-radius: $s-radius;
+  background-color: white;
+  text-align: center;
+  font-size: $l-size;
+  font-weight: bold;
+  margin-top: none;
+  margin-bottom: 0.3rem;
+}
+
+.input-field:focus {
+  outline: none;
+}
+
+.input-field__black {
+  border: 3px solid black;
+}
+
+.input-field__red {
+  border: 3px solid red;
+  //background-color: red;
+}

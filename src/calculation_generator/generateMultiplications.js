@@ -13,14 +13,13 @@ export default class GenerateMultiplications {
   }
 
   generateMultiplication(range) {
-    var questionArray=[[],[]];
-    var solutionArray;
+    var calculationsArray=[[],[]];
     var i;
-    for (i = 1; i < 10; i++) {
-      questionArray[0].push(i+" x " + range + "=");
-      questionArray[1].push(i * range);
+    for (i = 1; i <= 10; i++) {
+      calculationsArray[0].push(i+" x " + range + "=");
+      calculationsArray[1].push(i * range);
     }
-    return questionArray;
+    return calculationsArray;
   }
 
 }
