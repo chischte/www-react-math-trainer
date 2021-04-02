@@ -1,0 +1,45 @@
+html {
+  font-size: 90%;
+  text-align: center;
+  color: $off-black;
+  background-color: $background;
+  }
+
+body {
+  font-family: Segoe UI, Helvetica, Arial, sans-serif;
+  font-size: $m-size;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.is-active {
+  font-weight: bold;
+}
+
+h4 {
+  margin: 0.2rem 0 0.2rem 0;
+}
+
+h5 {
+  margin: 0.8rem 0 0.4rem 0;
+}
+
+th,
+td {
+  height: 2.5rem;
+  border-radius: 4px;
+  padding: 0 0.2rem 0 0.2rem;
+  border: none;
+  min-width: 5rem;
+  border: 1px solid rgb(233,233,233);
+}
+
+th {
+  font-weight: 600;
+}

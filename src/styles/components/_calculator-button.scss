@@ -1,0 +1,17 @@
+.calculator_button {
+  width: 7rem;
+  height: 4.2rem;
+  border: none;
+  border-radius: $s-radius;
+  font-weight: 900;
+  font-size: $xl-size;
+  padding-bottom: .55rem;
+  background-color: $blue;
+  color: black;
+  transition: all .5s linear;
+}
+
+.calculator_button:hover {
+  color: orange;
+  background-color: $off-black;
+}
