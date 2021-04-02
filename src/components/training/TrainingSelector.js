@@ -29,7 +29,7 @@ const history = useHistory();
     </button>
     <button
       className="calculator_button"
-      onClick={() => {
+      onClick={() => {history.push('/training_multiplication')
         
       }}
       >

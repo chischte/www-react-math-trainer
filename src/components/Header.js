@@ -2,37 +2,57 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 export default class Header extends React.Component {
-    state = {};
+  state = {};
 
-    componentDidMount() { }
+  componentDidMount() {}
 
-    componentDidUpdate() { }
+  componentDidUpdate() {}
 
-    render() {
-        return (
-            <div className="header">
-                <NavLink to="/" exact={true}>
-                    home
-                </NavLink>
+  render() {
+    return (
+      <div className="header">
+        <NavLink
+          to="/"
+          exact={true}
+          className="header_link"
+          activeClassName="is-active"
+        >
+          home
+        </NavLink>
+        <span> </span>
+        <NavLink to="/training_home"
+        className="header_link"
+        activeClassName="is-active"
+        
+        >training</NavLink>
+        <span> </span>
 
-                <NavLink to="/training" >
-                    training
-                 </NavLink>
+        <NavLink
+          to="/competition"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          wettkampf
+        </NavLink>
+        <span> </span>
 
-                <NavLink to="/competition" >
-                    wettkampf
-                 </NavLink>
+        <NavLink
+          to="/highscore"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          highscore
+        </NavLink>
+        <span> </span>
 
-                <NavLink to="/highscore">
-                    highscore
-                </NavLink>
-
-
-                <NavLink to="/account" className="header_link" activeClassName="is-active">
-                    account
-                </NavLink>
-
-            </div>
-        );
-    }
+        <NavLink
+          to="/account"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          account
+        </NavLink>
+      </div>
+    );
+  }
 }
