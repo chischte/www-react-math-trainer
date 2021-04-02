@@ -12,16 +12,16 @@ function TrainingMultiplicationPage() {
       MULTIPLICATION TRAINING
       <br></br>
       <br></br>
-      <button className="training_button" onClick={() => {}}>
+      <button className="training_button" >
         8x8
       </button>{" "}
-      <button className="training_button" onClick={() => {}}>
+      <button className="training_button" onClick={() => {history.push('/training/multiplication/1/8')}}>
         LEVEL 1
       </button>
-      <button className="training_button" onClick={() => {}}>
+      <button className="training_button" onClick={() => {history.push('/training/multiplication/2/8')}}>
         LEVEL 2
       </button>
-      <button className="training_button" onClick={() => {history.push('/training/multiplication/drill/8x8')}}>
+      <button className="training_button" onClick={() => {history.push('/training/multiplication/drill/8')}}>
         DRILL
       </button>
       <br></br>

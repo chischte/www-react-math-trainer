@@ -1,43 +1,39 @@
 import React from "react";
 import Header from "../components/Header";
-import TrainingSelector from "../components/training/TrainingSelector";
+import GenerateMultiplications from "../calculation_generator/generateMultiplications";
 
-function TrainingPage(){
+const generateMultiplications = new GenerateMultiplications();
 
-    const getDisciplineFromUrl=()=>{
-        var splitUrl=window.location.href.split('/');
-        return splitUrl[splitUrl.length-3];
-    }
+function TrainingPage() {
+  const getDisciplineFromUrl = () => {
+    var splitUrl = window.location.href.split("/");
+    return splitUrl[splitUrl.length - 3];
+  };
 
-    const getLevelFromUrl=()=>{
-        var splitUrl=window.location.href.split('/');
-        return splitUrl[splitUrl.length-2];
-    }
+  const getLevelFromUrl = () => {
+    var splitUrl = window.location.href.split("/");
+    return splitUrl[splitUrl.length - 2];
+  };
 
-    const getRangeFromUrl=()=>{
-        var splitUrl=window.location.href.split('/');
-        return splitUrl[splitUrl.length-1];
-    }
-   
+  const getRangeFromUrl = () => {
+    var splitUrl = window.location.href.split("/");
+    return splitUrl[splitUrl.length - 1];
+  };
 
-    
-        return (
-            <div>
-                <Header/>
-                <br></br>
-                TRAINING
-                <br></br>
-                Discipline = {getDisciplineFromUrl()}
-                <br></br>
-                Level = {getLevelFromUrl()}
-                <br></br>
-                Range = {getRangeFromUrl()}
-                <br></br>
-
-                <br></br>
-            </div>
-        );
-    
+  return (
+    <div>
+      <Header />
+      <br></br>
+      TRAINING
+      <br></br>
+      Question ={" "}
+      {generateMultiplications.generateMultiplication(getRangeFromUrl())[0][0]}
+      <br></br>
+      Answer ={" "}
+      {generateMultiplications.generateMultiplication(getRangeFromUrl())[1][0]}
+      <br></br>
+    </div>
+  );
 }
 
-export default TrainingPage
+export default TrainingPage;
