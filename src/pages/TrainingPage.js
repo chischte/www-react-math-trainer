@@ -10,7 +10,7 @@ function TrainingPage() {
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
-  const [currentTimeArray, setCurrentTimeArray] = useState([]);
+  const [timeElapsedArray, setTimeElapsedArray] = useState([]);
   const [errorArray, setErrorArray] = useState([]);
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
@@ -232,30 +232,36 @@ function TrainingPage() {
 
       // Get arrays from hooks:
       var _solvingTimeArray = solvingTimeArray;
-      var _currentTimeArray = currentTimeArray;
+      var _timeElapsedArray = timeElapsedArray;
 
-      var currentIndex = calculationsSolved - 1;
-      _currentTimeArray[currentIndex] = timeElapsed;
+      var currentIndex = calculationsSolved;
 
+      // Log Current time:
+      _timeElapsedArray[currentIndex] = timeElapsed;
+
+      // Calculate time difference
       if (calculationsSolved === 1) {
-        _solvingTimeArray[currentIndex] = timeElapsed;
-      }
-      if (calculationsSolved > 1) {
-        var timeDifference = timeElapsed - _currentTimeArray[currentIndex - 1];
+        var timeDifference = _timeElapsedArray[0];
         timeDifference = Math.round(10 * timeDifference) / 10;
-        _solvingTimeArray[currentIndex] = timeDifference;
+        solvingTimeArray[currentIndex - 1] = timeDifference;
+      }
+
+      if (calculationsSolved > 1) {
+        var timeDifference = _timeElapsedArray[currentIndex-1] - _timeElapsedArray[currentIndex - 2];
+        timeDifference = Math.round(10 * timeDifference) / 10;
+        _solvingTimeArray[currentIndex - 1] = timeDifference;
       }
 
       // Assign arrays back to hooks:
       setSolvingTimeArray(_solvingTimeArray);
-      setCurrentTimeArray(_currentTimeArray);
+      setTimeElapsedArray(_timeElapsedArray);
     }
   }, [
     calculationsSolved,
     trainingStage,
     currentQuestion,
     solvedCalculationsArray,
-    currentTimeArray,
+    timeElapsedArray,
     solvingTimeArray,
     timeElapsed,
   ]);
