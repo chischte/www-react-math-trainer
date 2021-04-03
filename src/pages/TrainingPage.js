@@ -247,7 +247,7 @@ function TrainingPage() {
   };
 
   useEffect(() => {
-    if (trainingStage === "drillStage1" || trainingStage === "drillStage3") {
+    // if (trainingStage === "drillStage1" || trainingStage === "drillStage3") {
       var calculationsArray = solvedCalculationsArray;
       calculationsArray[calculationsSolved] = currentQuestion;
       setSolvedCalculationsArray(calculationsArray);
@@ -278,7 +278,7 @@ function TrainingPage() {
       // Assign arrays back to hooks:
       setSolvingTimeArray(_solvingTimeArray);
       setTimeElapsedArray(_timeElapsedArray);
-    }
+    // }
   }, [
     calculationsSolved,
     trainingStage,
