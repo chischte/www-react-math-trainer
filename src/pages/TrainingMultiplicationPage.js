@@ -30,7 +30,7 @@ function TrainingMultiplicationPage() {
         <button
           className="training_button"
           onClick={() => {
-            history.push("/training/multiplication/drill/8");
+            history.push("/training/multiplication/drill/"+ rowNumber);
           }}
         >
           DRILL
