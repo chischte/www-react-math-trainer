@@ -7,6 +7,7 @@ import Stopwatch from "../components/Stopwatch";
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
+  const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
   const [currentTimeArray, setCurrentTimeArray] = useState([]);
@@ -14,7 +15,6 @@ function TrainingPage() {
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
-  const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [questionArray, setQuestionArray] = useState();
   const [solutionArray, setSolutionArray] = useState();
   const [numberOfQuestions, setNumberOfQuestions] = useState();
@@ -136,7 +136,7 @@ function TrainingPage() {
     switch (trainingStage) {
       case "readyToStart":
         if (calculationsSolved === 1) {
-          if (trainingLevel === 1 || trainingLevel === 2) {
+          if (trainingLevel === "1" || trainingLevel === "2") {
             setTrainingStage("running");
           }
           if (trainingLevel === "drill") {
@@ -155,14 +155,13 @@ function TrainingPage() {
 
       case "drillStage1":
         if (calculationsSolved === numberOfQuestions) {
-          get10SlowestAnswers();
+          //get10SlowestAnswers();
           setTrainingStage("drillStage2");
           setTotalTrainingTime(timeElapsed);
         }
         break;
 
       case "drillStage2":
-
         break;
 
       case "drillStage3":
@@ -209,6 +208,7 @@ function TrainingPage() {
           solution=""
           getNewCalculation={getNewCalculation}
           countOneUp={countOneUp}
+          markUserError={markUserError}
         />
       </div>
     );
@@ -216,11 +216,13 @@ function TrainingPage() {
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
 
-  const markUserError = ()=>{
-    var _errorArray=errorArray;
-    _errorArray[calculationsSolved]=true;
+  // [0 = question,1 = answer, 2 = timeElapsed, 3= time to solve, 4= mark error]
+
+  const markUserError = () => {
+    var _errorArray = errorArray;
+    _errorArray[calculationsSolved] = true;
     setErrorArray(_errorArray);
-  }
+  };
 
   useEffect(() => {
     if (trainingStage === "drillStage1") {
@@ -255,7 +257,7 @@ function TrainingPage() {
     solvedCalculationsArray,
     currentTimeArray,
     solvingTimeArray,
-    timeElapsed
+    timeElapsed,
   ]);
 
   // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------

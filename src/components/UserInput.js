@@ -40,15 +40,15 @@ export default class UserInput extends React.Component {
               defaultValue={""}
             />
           ) : (
-              <input
-                className="input-field input-field__black"
-                autoFocus
-                type="text"
-                name="userinput"
-                autoComplete="off"
-                defaultValue={""}
-              />
-            )}
+            <input
+              className="input-field input-field__black"
+              autoFocus
+              type="text"
+              name="userinput"
+              autoComplete="off"
+              defaultValue={""}
+            />
+          )}
         </form>
       </div>
     );
