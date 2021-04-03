@@ -130,6 +130,34 @@ function TrainingPage() {
     setCalculationsSolved(calculationsSolved + 1);
   };
 
+  const get10SlowestAnswers = useCallback(() => {
+    // Generate overview Array
+    var overviewArray = [];
+
+    for (var i = 0; i < 10; i++) {
+      var _error = errorArray[i];
+      var _answer = solutionArray[i];
+      var _time = solvingTimeArray[i];
+      var _question = questionArray[i];
+      overviewArray.push([_question, _answer, _time, _error]);
+    }
+    // SortOverviewArray by slowest calculations
+    overviewArray.sort(function (a, b) {
+      return b[2] - a[2];
+
+      //Push Five Slowest Answers to question Array
+    });
+    console.log(overviewArray);
+
+    var _questionArray = questionArray;
+    var _solutionArray = solutionArray;
+
+    for (var j = 0; j < 5; j++) {
+      _questionArray.push(overviewArray[j][0]);
+      _solutionArray.push(overviewArray[j][1]);
+    }
+  }, [errorArray, questionArray, solvingTimeArray, solutionArray]);
+
   // MANAGE TRAINING STAGES ----------------------------------------------------
 
   const manageTrainingStages = useCallback(() => {
@@ -154,18 +182,14 @@ function TrainingPage() {
         break;
 
       case "drillStage1":
-        if (calculationsSolved === numberOfQuestions) {
-          //get10SlowestAnswers();
+        if (calculationsSolved === 9) {
+          get10SlowestAnswers();
           setTrainingStage("drillStage2");
-          setTotalTrainingTime(timeElapsed);
         }
         break;
 
       case "drillStage2":
-        break;
-
-      case "drillStage3":
-        if (calculationsSolved === numberOfQuestions) {
+        if (calculationsSolved === 14) {
           setTrainingStage("completed");
           setTotalTrainingTime(timeElapsed);
         }
@@ -183,6 +207,7 @@ function TrainingPage() {
     timeElapsed,
     trainingStage,
     trainingLevel,
+    get10SlowestAnswers,
   ]);
 
   useEffect(() => {
@@ -225,7 +250,7 @@ function TrainingPage() {
   };
 
   useEffect(() => {
-    if (trainingStage === "drillStage1") {
+    if (trainingStage === "drillStage1" || trainingStage === "drillStage2") {
       var calculationsArray = solvedCalculationsArray;
       calculationsArray[calculationsSolved] = currentQuestion;
       setSolvedCalculationsArray(calculationsArray);
@@ -245,9 +270,10 @@ function TrainingPage() {
         timeDifference = Math.round(10 * timeDifference) / 10;
         solvingTimeArray[currentIndex - 1] = timeDifference;
       }
-
       if (calculationsSolved > 1) {
-        var timeDifference = _timeElapsedArray[currentIndex-1] - _timeElapsedArray[currentIndex - 2];
+        timeDifference =
+          _timeElapsedArray[currentIndex - 1] -
+          _timeElapsedArray[currentIndex - 2];
         timeDifference = Math.round(10 * timeDifference) / 10;
         _solvingTimeArray[currentIndex - 1] = timeDifference;
       }

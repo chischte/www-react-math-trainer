@@ -5,7 +5,7 @@ export default class GenerateMultiplications {
     this.numberOfQuestions = 0;
   }
 
-    generateCalculations(level, range) {
+  generateCalculations(level, range) {
     this.questionArray = [];
     this.solutionArray = [];
     this.numberOfQuestions = 0;
@@ -44,7 +44,7 @@ export default class GenerateMultiplications {
     pseudoRandomArray.forEach((randomFactor) => {
       this.questionArray.push(randomFactor + "x" + range);
       var solution = randomFactor * range;
-      this.solutionArray.push(solution + "");
+      this.solutionArray.push(solution + ""); //""to store mark it as string
       this.numberOfQuestions++;
     });
   }
@@ -52,7 +52,6 @@ export default class GenerateMultiplications {
   // Getter:
 
   getQuestionArray() {
-    console.log(this.questionArray);
     return this.questionArray;
   }
   getSolutionArray() {
