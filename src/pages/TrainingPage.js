@@ -7,9 +7,8 @@ import Stopwatch from "../components/Stopwatch";
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
-  const [solvedCalculationsArray,setSolvedCalculationsArray]=useState([]);
-  const [calculationStartTime, setCalculationStartTime] = useState(0);
-  const [solvingTimeArray,setSolvingTimeArray]=useState();
+  const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
+  const [solvingTimeArray, setSolvingTimeArray] = useState([]);
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
@@ -23,7 +22,6 @@ function TrainingPage() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
-
 
   const DisciplineEnum = Object.freeze({
     addition: 1,
@@ -136,16 +134,17 @@ function TrainingPage() {
     switch (trainingStage) {
       case "readyToStart":
         if (calculationsSolved === 1) {
-          setTrainingStage("running");
+          if (trainingLevel === 1 || trainingLevel === 2) {
+            setTrainingStage("running");
+          }
+          if (trainingLevel === "drill") {
+            setTrainingStage("drillStage1");
+          }
           setCalculationsSolved(0);
         }
         break;
 
       case "running":
-        if (calculationsSolved === 1 && trainingLevel === "drill") {
-          setTrainingStage("drillStage1");
-          setCalculationsSolved(0);
-        }
         if (calculationsSolved === numberOfQuestions) {
           setTrainingStage("completed");
           setTotalTrainingTime(timeElapsed);
@@ -213,18 +212,30 @@ function TrainingPage() {
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
   useEffect(() => {
-    if(trainingStage==="drillStage1")
-    {
-      var calculationsArray=solvedCalculationsArray;
-      calculationsArray.push(currentQuestion);
+    if (trainingStage === "drillStage1") {
+      var calculationsArray = solvedCalculationsArray;
+      calculationsArray[calculationsSolved] = currentQuestion;
       setSolvedCalculationsArray(calculationsArray);
+
+      var timeArray = solvingTimeArray;
+
+      if (calculationsSolved === 1) {
+        timeArray[0] = timeElapsed;
+      }
+      if (calculationsSolved > 1) {
+        var currentIndex = calculationsSolved-1;
+        var calculationTime = Math.round(10*(timeElapsed - timeArray[currentIndex - 1]))/10;
+        timeArray[currentIndex] = calculationTime;
+      }
+
+      setSolvingTimeArray(timeArray);
     }
-
-
-
-
-
-  }, [calculationsSolved,trainingStage,currentQuestion,solvedCalculationsArray]);
+  }, [
+    calculationsSolved,
+    trainingStage,
+    currentQuestion,
+    solvedCalculationsArray,
+  ]);
 
   // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------
 
