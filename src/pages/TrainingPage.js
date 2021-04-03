@@ -9,6 +9,8 @@ const generateMultiplications = new GenerateMultiplications();
 function TrainingPage() {
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
+  const [currentTimeArray, setCurrentTimeArray] = useState([]);
+  const [errorArray, setErrorArray] = useState([]);
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
@@ -153,12 +155,14 @@ function TrainingPage() {
 
       case "drillStage1":
         if (calculationsSolved === numberOfQuestions) {
+          get10SlowestAnswers();
           setTrainingStage("drillStage2");
           setTotalTrainingTime(timeElapsed);
         }
         break;
 
       case "drillStage2":
+
         break;
 
       case "drillStage3":
@@ -211,30 +215,47 @@ function TrainingPage() {
   };
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
+
+  const markUserError = ()=>{
+    var _errorArray=errorArray;
+    _errorArray[calculationsSolved]=true;
+    setErrorArray(_errorArray);
+  }
+
   useEffect(() => {
     if (trainingStage === "drillStage1") {
       var calculationsArray = solvedCalculationsArray;
       calculationsArray[calculationsSolved] = currentQuestion;
       setSolvedCalculationsArray(calculationsArray);
 
-      var timeArray = solvingTimeArray;
+      // Get arrays from hooks:
+      var _solvingTimeArray = solvingTimeArray;
+      var _currentTimeArray = currentTimeArray;
+
+      var currentIndex = calculationsSolved - 1;
+      _currentTimeArray[currentIndex] = timeElapsed;
 
       if (calculationsSolved === 1) {
-        timeArray[0] = timeElapsed;
+        _solvingTimeArray[currentIndex] = timeElapsed;
       }
       if (calculationsSolved > 1) {
-        var currentIndex = calculationsSolved-1;
-        var calculationTime = Math.round(10*(timeElapsed - timeArray[currentIndex - 1]))/10;
-        timeArray[currentIndex] = calculationTime;
+        var timeDifference = timeElapsed - _currentTimeArray[currentIndex - 1];
+        timeDifference = Math.round(10 * timeDifference) / 10;
+        _solvingTimeArray[currentIndex] = timeDifference;
       }
 
-      setSolvingTimeArray(timeArray);
+      // Assign arrays back to hooks:
+      setSolvingTimeArray(_solvingTimeArray);
+      setCurrentTimeArray(_currentTimeArray);
     }
   }, [
     calculationsSolved,
     trainingStage,
     currentQuestion,
     solvedCalculationsArray,
+    currentTimeArray,
+    solvingTimeArray,
+    timeElapsed
   ]);
 
   // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------
@@ -249,6 +270,7 @@ function TrainingPage() {
           solution={getSolution()}
           getNewCalculation={getNewCalculation}
           countOneUp={countOneUp}
+          markUserError={markUserError}
         />
         <br></br>
         Calculations Solved : {calculationsSolved}

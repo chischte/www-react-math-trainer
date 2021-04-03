@@ -23,6 +23,7 @@ export default class UserInput extends React.Component {
       this.setEntryTrue();
     } else {
       this.setEntryFalse();
+      this.props.markUserError();
     }
   };
   render() {
