@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
 import GenerateMultiplications from "../calculation_generator/generateMultiplications";
 import UserInput from "../components/UserInput";
@@ -57,7 +57,7 @@ function TrainingPage() {
     setCalculationsSolved(calculationsSolved + 1);
   };
 
-  useEffect(() => {
+  const manageTrainingStages = useCallback(() => {
     if (
       calculationsSolved === numberOfQuestions &&
       trainingStage === "running"
@@ -69,7 +69,11 @@ function TrainingPage() {
       setTrainingStage("running");
       setCalculationsSolved(0);
     }
-  }, [calculationsSolved, numberOfQuestions]);
+  }, [calculationsSolved, numberOfQuestions, timeElapsed, trainingStage]);
+
+  useEffect(() => {
+    manageTrainingStages();
+  }, [manageTrainingStages]);
 
   const updateTimeElapsed = (timeElapsed) => {
     setTimeElapsed(timeElapsed);
@@ -125,7 +129,7 @@ function TrainingPage() {
         <br></br>
         Geschwindigkeit: {getRpm()} rpm
         <br></br>
-         (rpm = Rechnungen pro Minute)
+        (rpm = Rechnungen pro Minute)
       </div>
     );
   };
@@ -139,7 +143,7 @@ function TrainingPage() {
       {trainingStage === "running" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>
-      
+
       <br></br>
     </div>
   );
