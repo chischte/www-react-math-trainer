@@ -134,19 +134,20 @@ function TrainingPage() {
   const getOverviewArray = useCallback(() => {
     var overviewArray = [];
 
-    for (var i = 0; i < 10; i++) {
-      var _error = errorArray[i];
+    for (var i = 0; i < solutionArray.length; i++) {
+      var _question = questionArray[i];
       var _answer = solutionArray[i];
       var _time = solvingTimeArray[i];
-      var _question = questionArray[i];
-      overviewArray.push([_question, _answer, _time, _error]);
+      var _error = errorArray[i];
+      var _key = timeElapsedArray[i]
+      overviewArray.push([_question, _answer, _time, _error, _key]);
     }
     // SortOverviewArray by slowest calculations
     overviewArray.sort(function (a, b) {
       return b[2] - a[2];
     });
     return overviewArray;
-  }, [errorArray, questionArray, solutionArray, solvingTimeArray]);
+  }, [errorArray, questionArray, solutionArray, solvingTimeArray,timeElapsedArray]);
 
   const addSlowestAnswersToDrill = useCallback(() => {
     var overviewArray = getOverviewArray();
@@ -219,6 +220,7 @@ function TrainingPage() {
     trainingStage,
     trainingLevel,
     addSlowestAnswersToDrill,
+    timeElapsedArray,
   ]);
 
   useEffect(() => {
@@ -349,6 +351,9 @@ function TrainingPage() {
   };
 
   const showTrainingFeedback = () => {
+    var overviewArray = getOverviewArray();
+    console.log(overviewArray);
+
     return (
       <div>
         Super, du hast das Training geschafft!
@@ -359,6 +364,24 @@ function TrainingPage() {
         Geschwindigkeit: {getRpm()} rpm
         <br></br>
         (rpm = Rechnungen pro Minute)
+        <table>
+          <thead>
+          <tr>
+            <th>Rechnung</th>
+            <th>Zeit</th>
+            <th>Fehler</th>
+          </tr>
+          </thead>
+          <tfoot>
+            {overviewArray.map((array)=>(
+              <tr key={array[4]+array[1]}>
+                <td>{array[0]}</td>
+                <td>{array[2]}</td>
+                <td>{array[3]===true&&"X"}</td>
+              </tr>
+            ))}
+          </tfoot>
+        </table>
       </div>
     );
   };

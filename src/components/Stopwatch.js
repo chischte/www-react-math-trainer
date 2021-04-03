@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 function Stopwatch(props) {
-  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeElapsed, setTimeElapsed] = useState(props.startTime);
 
   useEffect(() => {
-    setTimeElapsed(props.startTime);
+    //setTimeElapsed(props.startTime);
   }, []);
 
   useEffect(() => {
@@ -13,7 +13,6 @@ function Stopwatch(props) {
       var _timeElapsed = timeElapsed + 0.1;
       _timeElapsed = Math.round(_timeElapsed * 10) / 10;
       setTimeElapsed(_timeElapsed);
-      //
     }, 100);
 
     // clear interval on re-render to avoid memory leaks
