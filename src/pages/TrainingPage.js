@@ -7,6 +7,9 @@ import Stopwatch from "../components/Stopwatch";
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
+  const [solvedCalculationsArray,setSolvedCalculationsArray]=useState([]);
+  const [calculationStartTime, setCalculationStartTime] = useState(0);
+  const [solvingTimeArray,setSolvingTimeArray]=useState();
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
@@ -20,6 +23,7 @@ function TrainingPage() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
+
 
   const DisciplineEnum = Object.freeze({
     addition: 1,
@@ -126,6 +130,8 @@ function TrainingPage() {
     setCalculationsSolved(calculationsSolved + 1);
   };
 
+  // MANAGE TRAINING STAGES ----------------------------------------------------
+
   const manageTrainingStages = useCallback(() => {
     switch (trainingStage) {
       case "readyToStart":
@@ -138,7 +144,6 @@ function TrainingPage() {
       case "running":
         if (calculationsSolved === 1 && trainingLevel === "drill") {
           setTrainingStage("drillStage1");
-          alert("HAUU");
           setCalculationsSolved(0);
         }
         if (calculationsSolved === numberOfQuestions) {
@@ -148,6 +153,10 @@ function TrainingPage() {
         break;
 
       case "drillStage1":
+        if (calculationsSolved === numberOfQuestions) {
+          setTrainingStage("drillStage2");
+          setTotalTrainingTime(timeElapsed);
+        }
         break;
 
       case "drillStage2":
@@ -186,7 +195,6 @@ function TrainingPage() {
     const rpm = Math.round(60 / (totalTrainingTime / calculationsSolved));
     return rpm;
   };
-  // MANAGE TRAINING STAGES ----------------------------------------------------
 
   const showReadyToStart = () => {
     return (
@@ -202,6 +210,23 @@ function TrainingPage() {
       </div>
     );
   };
+
+  // MONITOR TRAINING PERFORMANCE ----------------------------------------------
+  useEffect(() => {
+    if(trainingStage==="drillStage1")
+    {
+      var calculationsArray=solvedCalculationsArray;
+      calculationsArray.push(currentQuestion);
+      setSolvedCalculationsArray(calculationsArray);
+    }
+
+
+
+
+
+  }, [calculationsSolved,trainingStage,currentQuestion,solvedCalculationsArray]);
+
+  // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------
 
   const showTrainingRunning = () => {
     return (
@@ -244,6 +269,9 @@ function TrainingPage() {
       <br></br>
       {trainingStage === "readyToStart" && showReadyToStart()}
       {trainingStage === "running" && showTrainingRunning()}
+      {trainingStage === "drillStage1" && showTrainingRunning()}
+      {trainingStage === "drillStage2" && showTrainingRunning()}
+      {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>
 
