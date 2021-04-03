@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import GenerateMultiplications from "../calculation_generator/generateMultiplications";
 import UserInput from "../components/UserInput";
+import Stopwatch from "../components/Stopwatch";
 
 const generateMultiplications = new GenerateMultiplications();
 
@@ -14,6 +15,7 @@ function TrainingPage() {
   const [currentQuestion, setCurrentQuestion] = useState();
   const [currentSolution, setCurrentSolution] = useState();
   const [calculationsGenerated, setCalculationsGenerated] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
 
   const getLevelFromUrl = () => {
     var splitUrl = window.location.href.split("/");
@@ -60,6 +62,10 @@ function TrainingPage() {
     }
   }, [calculationsSolved, numberOfQuestions]);
 
+  const updateTimeElapsed=(timeElapsed)=>{
+    setTimeElapsed(timeElapsed);
+  }
+
   const showTrainingRunning = () => {
     return (
       <div>
@@ -70,6 +76,10 @@ function TrainingPage() {
           solution={getSolution()}
           getNewCalculation={getNewCalculation}
           countOneUp={countOneUp}
+        />
+        <br></br>
+        <Stopwatch
+        updateTimeElapsed={updateTimeElapsed}
         />
       </div>
     );
