@@ -67,7 +67,7 @@ function TrainingPage() {
     setDisciplineFromUrl();
     setLevelFromUrl();
     setNumberRangeFromUrl();
-  }, [DisciplineEnum, setDisciplineFromUrl]);
+  }, [setDisciplineFromUrl]);
 
   // GET INITIAL CALCULATIONS --------------------------------------------------
 
@@ -127,20 +127,52 @@ function TrainingPage() {
   };
 
   const manageTrainingStages = useCallback(() => {
-    // switch(train)
+    switch (trainingStage) {
+      case "readyToStart":
+        if (calculationsSolved === 1) {
+          setTrainingStage("running");
+          setCalculationsSolved(0);
+        }
+        break;
 
-    if (
-      calculationsSolved === numberOfQuestions &&
-      trainingStage === "running"
-    ) {
-      setTrainingStage("completed");
-      setTotalTrainingTime(timeElapsed);
+      case "running":
+        if (calculationsSolved === 1 && trainingLevel === "drill") {
+          setTrainingStage("drillStage1");
+          alert("HAUU");
+          setCalculationsSolved(0);
+        }
+        if (calculationsSolved === numberOfQuestions) {
+          setTrainingStage("completed");
+          setTotalTrainingTime(timeElapsed);
+        }
+        break;
+
+      case "drillStage1":
+        break;
+
+      case "drillStage2":
+        break;
+
+      case "drillStage3":
+        if (calculationsSolved === numberOfQuestions) {
+          setTrainingStage("completed");
+          setTotalTrainingTime(timeElapsed);
+        }
+        break;
+
+      case "completed":
+        break;
+
+      default:
+        break;
     }
-    if (trainingStage === "readyToStart" && calculationsSolved === 1) {
-      setTrainingStage("running");
-      setCalculationsSolved(0);
-    }
-  }, [calculationsSolved, numberOfQuestions, timeElapsed, trainingStage]);
+  }, [
+    calculationsSolved,
+    numberOfQuestions,
+    timeElapsed,
+    trainingStage,
+    trainingLevel,
+  ]);
 
   useEffect(() => {
     manageTrainingStages();
