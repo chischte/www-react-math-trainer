@@ -160,6 +160,7 @@ function TrainingPage() {
         _solutionArray.push(overviewArray[j][1]);
       }
     }
+    setNumberOfQuestions(_questionArray.length)
   }, [questionArray, solutionArray, getOverviewArray]);
 
   // MANAGE TRAINING STAGES ----------------------------------------------------
@@ -201,7 +202,7 @@ function TrainingPage() {
         break;
 
       case "drillStage3":
-        if (calculationsSolved === 14) {
+        if (calculationsSolved === numberOfQuestions) {
           setTrainingStage("completed");
           setTotalTrainingTime(timeElapsed);
         }
@@ -367,14 +368,16 @@ function TrainingPage() {
         <table>
           <thead>
           <tr>
+            <th>#</th>
             <th>Rechnung</th>
             <th>Zeit</th>
             <th>Fehler</th>
           </tr>
           </thead>
           <tfoot>
-            {overviewArray.map((array)=>(
+            {overviewArray.map((array,index)=>(
               <tr key={array[4]+array[1]}>
+                <td>{index+1}</td>
                 <td>{array[0]}</td>
                 <td>{array[2]}</td>
                 <td>{array[3]===true&&"X"}</td>
