@@ -117,7 +117,7 @@ function TrainingPage() {
     }
   }, [calculationsSolved, calculationsGenerated, questionArray, solutionArray]);
 
-  // ---------------------------------------------------------------------------
+  // VARIOUS FUNCTIONS: --------------------------------------------------------
 
   const getNewCalculation = () => {
     return currentQuestion;
@@ -130,8 +130,7 @@ function TrainingPage() {
     setCalculationsSolved(calculationsSolved + 1);
   };
 
-  const get10SlowestAnswers = useCallback(() => {
-    // Generate overview Array
+  const getOverviewArray = useCallback(() => {
     var overviewArray = [];
 
     for (var i = 0; i < 10; i++) {
@@ -144,19 +143,22 @@ function TrainingPage() {
     // SortOverviewArray by slowest calculations
     overviewArray.sort(function (a, b) {
       return b[2] - a[2];
-
-      //Push Five Slowest Answers to question Array
     });
-    console.log(overviewArray);
+    return overviewArray;
+  }, [errorArray, questionArray, solutionArray, solvingTimeArray]);
 
+  const addSlowestAnswersToDrill = useCallback(() => {
+    var overviewArray = getOverviewArray();
     var _questionArray = questionArray;
     var _solutionArray = solutionArray;
 
-    for (var j = 0; j < 5; j++) {
-      _questionArray.push(overviewArray[j][0]);
-      _solutionArray.push(overviewArray[j][1]);
+    for (var i = 0; i < 2; i++) {
+      for (var j = 0; j < 5; j++) {
+        _questionArray.push(overviewArray[j][0]);
+        _solutionArray.push(overviewArray[j][1]);
+      }
     }
-  }, [errorArray, questionArray, solvingTimeArray, solutionArray]);
+  }, [questionArray, solutionArray, getOverviewArray]);
 
   // MANAGE TRAINING STAGES ----------------------------------------------------
 
@@ -183,7 +185,7 @@ function TrainingPage() {
 
       case "drillStage1":
         if (calculationsSolved === 9) {
-          get10SlowestAnswers();
+          addSlowestAnswersToDrill();
           setTrainingStage("drillStage2");
         }
         break;
@@ -207,7 +209,7 @@ function TrainingPage() {
     timeElapsed,
     trainingStage,
     trainingLevel,
-    get10SlowestAnswers,
+    addSlowestAnswersToDrill,
   ]);
 
   useEffect(() => {
@@ -328,7 +330,7 @@ function TrainingPage() {
       </div>
     );
   };
-  // -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   return (
     <div>
       <Header />
@@ -340,7 +342,7 @@ function TrainingPage() {
       {trainingStage === "drillStage2" && showTrainingRunning()}
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
-      <br></br>
+      <br></br>     
 
       <br></br>
     </div>
