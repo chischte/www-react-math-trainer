@@ -5,7 +5,7 @@ export default class GenerateMultiplications {
     this.numberOfQuestions = 0;
   }
 
-  generateCalculations(level, range) {
+    generateCalculations(level, range) {
     this.questionArray = [];
     this.solutionArray = [];
     this.numberOfQuestions = 0;

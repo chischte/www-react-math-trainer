@@ -7,6 +7,9 @@ import Stopwatch from "../components/Stopwatch";
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
+  const [trainingDiscipline, setTrainingDiscipline] = useState();
+  const [trainingLevel, setTrainingLevel] = useState();
+  const [trainingRange, setTrainingRange] = useState();
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [questionArray, setQuestionArray] = useState();
   const [solutionArray, setSolutionArray] = useState();
@@ -18,26 +21,90 @@ function TrainingPage() {
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
 
-  const getLevelFromUrl = () => {
+  const DisciplineEnum = Object.freeze({
+    addition: 1,
+    subtraction: 2,
+    multiplication: 3,
+    division: 4,
+  });
+
+  // GET URL INFORMATION -------------------------------------------------------
+
+  const setDisciplineFromUrl = useCallback(() => {
     var splitUrl = window.location.href.split("/");
-    return splitUrl[splitUrl.length - 2];
+    var urlDiscipline = splitUrl[splitUrl.length - 3];
+
+    switch (urlDiscipline) {
+      case "addition":
+        setTrainingDiscipline(DisciplineEnum.addition);
+        break;
+      case "subtraction":
+        setTrainingDiscipline(DisciplineEnum.subtraction);
+        break;
+      case "multiplication":
+        setTrainingDiscipline(DisciplineEnum.multiplication);
+        break;
+      case "division":
+        setTrainingDiscipline(DisciplineEnum.division);
+        break;
+      default:
+        alert("invalid URL");
+        break;
+    }
+  }, [DisciplineEnum]);
+
+  const setLevelFromUrl = () => {
+    var splitUrl = window.location.href.split("/");
+    setTrainingLevel(splitUrl[splitUrl.length - 2]);
   };
 
-  const getRangeFromUrl = () => {
+  const setNumberRangeFromUrl = () => {
     var splitUrl = window.location.href.split("/");
-    return splitUrl[splitUrl.length - 1];
+    setTrainingRange(splitUrl[splitUrl.length - 1]);
   };
 
   useEffect(() => {
-    generateMultiplications.generateCalculations(
-      getLevelFromUrl(),
-      getRangeFromUrl()
-    );
+    setDisciplineFromUrl();
+    setLevelFromUrl();
+    setNumberRangeFromUrl();
+  }, [DisciplineEnum, setDisciplineFromUrl]);
+
+  // GET INITIAL CALCULATIONS --------------------------------------------------
+
+  const getMultiplication = useCallback(() => {
+    generateMultiplications.generateCalculations(trainingLevel, trainingRange);
     setQuestionArray(generateMultiplications.getQuestionArray());
     setSolutionArray(generateMultiplications.getSolutionArray());
     setNumberOfQuestions(generateMultiplications.getNumberOfQuestions());
-    setCalculationsGenerated(true);
-  }, []);
+  }, [trainingLevel, trainingRange]);
+
+  useEffect(() => {
+    if (!calculationsGenerated) {
+      switch (trainingDiscipline) {
+        case DisciplineEnum.addition:
+          alert("addition selected");
+          setCalculationsGenerated(true);
+          break;
+        case DisciplineEnum.subtraction:
+          setCalculationsGenerated(true);
+          break;
+        case DisciplineEnum.multiplication:
+          getMultiplication();
+          setCalculationsGenerated(true);
+          break;
+        case DisciplineEnum.division:
+          setCalculationsGenerated(true);
+          break;
+        default:
+          break;
+      }
+    }
+  }, [
+    DisciplineEnum,
+    getMultiplication,
+    trainingDiscipline,
+    calculationsGenerated,
+  ]);
 
   useEffect(() => {
     if (calculationsGenerated) {
@@ -45,6 +112,8 @@ function TrainingPage() {
       setCurrentSolution(solutionArray[calculationsSolved]);
     }
   }, [calculationsSolved, calculationsGenerated, questionArray, solutionArray]);
+
+  // ---------------------------------------------------------------------------
 
   const getNewCalculation = () => {
     return currentQuestion;
@@ -58,6 +127,8 @@ function TrainingPage() {
   };
 
   const manageTrainingStages = useCallback(() => {
+    // switch(train)
+
     if (
       calculationsSolved === numberOfQuestions &&
       trainingStage === "running"
