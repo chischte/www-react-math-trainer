@@ -7,6 +7,7 @@ import Stopwatch from "../components/Stopwatch";
 const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
@@ -21,9 +22,9 @@ function TrainingPage() {
   const [currentQuestion, setCurrentQuestion] = useState();
   const [currentSolution, setCurrentSolution] = useState();
   const [calculationsGenerated, setCalculationsGenerated] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
+  const [previousTimeElapsed, setPreviousTimeElapsed] = useState(0);
 
   const DisciplineEnum = Object.freeze({
     addition: 1,
@@ -194,15 +195,16 @@ function TrainingPage() {
         if (calculationsSolved === 11) {
           setTrainingStage("drillStage3");
           setCalculationsSolved(10);
+          setPreviousTimeElapsed(timeElapsedArray[9]);
         }
         break;
 
-        case "drillStage3":
-          if (calculationsSolved === 14) {
-            setTrainingStage("completed");
-            setTotalTrainingTime(timeElapsed);
-          }
-          break;
+      case "drillStage3":
+        if (calculationsSolved === 14) {
+          setTrainingStage("completed");
+          setTotalTrainingTime(timeElapsed);
+        }
+        break;
 
       case "completed":
         break;
@@ -231,8 +233,6 @@ function TrainingPage() {
     const rpm = Math.round(60 / (totalTrainingTime / calculationsSolved));
     return rpm;
   };
-
-  
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
 
@@ -300,7 +300,6 @@ function TrainingPage() {
           getNewCalculation={getNewCalculation}
           countOneUp={countOneUp}
           markUserError={markUserError}
-          timeElapsed={0.0}
         />
       </div>
     );
@@ -309,7 +308,11 @@ function TrainingPage() {
   const showReadyToContinueDrill = () => {
     return (
       <div>
-        DRÜCKE ENTER UM DIE 5 LANGSAMSTEN RECHNUNGEN 2x zu WIEDERHOLEN
+        DRÜCKE ENTER
+        <br></br>
+        UM DIE 5 LANGSAMSTEN RECHNUNGEN
+        <br></br>
+        2x zu WIEDERHOLEN
         <br></br>
         <br></br>
         <UserInput
@@ -317,12 +320,10 @@ function TrainingPage() {
           getNewCalculation={getNewCalculation}
           countOneUp={countOneUp}
           markUserError={markUserError}
-          timeElapsed={555}
         />
       </div>
     );
   };
-
 
   const showTrainingRunning = () => {
     return (
@@ -339,7 +340,10 @@ function TrainingPage() {
         <br></br>
         Calculations Solved : {calculationsSolved}
         <br></br>
-        <Stopwatch updateTimeElapsed={updateTimeElapsed} />
+        <Stopwatch
+          updateTimeElapsed={updateTimeElapsed}
+          startTime={previousTimeElapsed}
+        />
       </div>
     );
   };
@@ -370,7 +374,7 @@ function TrainingPage() {
       {trainingStage === "drillStage2" && showReadyToContinueDrill()}
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
-      <br></br>     
+      <br></br>
 
       <br></br>
     </div>

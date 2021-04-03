@@ -1,42 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default class Stopwatch extends React.Component {
-  state = {
-    timeElapsed: "5",
-  };
+function Stopwatch(props) {
+  const [timeElapsed, setTimeElapsed] = useState(0);
 
-  clockInterval = 100; // [ms]
+  useEffect(() => {
+    setTimeElapsed(props.startTime);
+  }, []);
 
-  componentDidMount() {
-    var _timeElapsed=0;
-    this.setState({
-      timeElapsed: _timeElapsed,
-    },
-      () => (this.interval = setInterval(this.clockTasks, this.clockInterval))
-    )
-  }
-  componentWillUnmount(){
-    clearInterval(this.interval);
-  }
+  useEffect(() => {
+    // save intervalId to clear interval when the component re-renders
+    const intervalId = setInterval(() => {
+      var _timeElapsed = timeElapsed + 0.1;
+      _timeElapsed = Math.round(_timeElapsed * 10) / 10;
+      setTimeElapsed(_timeElapsed);
+      //
+    }, 100);
 
-  clockTasks = () => {
-    let timeElapsed = this.state.timeElapsed + this.clockInterval / 1000;
+    // clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId);
+  });
 
-    let clockResolution = 10 / (this.clockInterval / 1000);
+  useEffect(() => {
+    props.updateTimeElapsed(timeElapsed);
+  }, [timeElapsed, props]);
 
-    timeElapsed = Math.round(timeElapsed * clockResolution) / clockResolution;
-
-    this.setState({timeElapsed:timeElapsed});
-    
-    this.props.updateTimeElapsed(timeElapsed);
-  }
-
-  render() {
-
-    return (
-      <div>
-          <div className="countdown">Stoppuhr: {Math.ceil(this.state.timeElapsed)}</div>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <div className="countdown">Stoppuhr: {Math.round(timeElapsed)}</div>
+    </div>
+  );
 }
+
+export default Stopwatch;
