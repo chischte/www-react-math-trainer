@@ -8,8 +8,9 @@ export default class Stopwatch extends React.Component {
   clockInterval = 100; // [ms]
 
   componentDidMount() {
+    var _timeElapsed=0;
     this.setState({
-      timeElapsed: 0,
+      timeElapsed: _timeElapsed,
     },
       () => (this.interval = setInterval(this.clockTasks, this.clockInterval))
     )

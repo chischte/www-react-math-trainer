@@ -184,18 +184,25 @@ function TrainingPage() {
         break;
 
       case "drillStage1":
-        if (calculationsSolved === 9) {
+        if (calculationsSolved === 10) {
           addSlowestAnswersToDrill();
           setTrainingStage("drillStage2");
         }
         break;
 
       case "drillStage2":
-        if (calculationsSolved === 14) {
-          setTrainingStage("completed");
-          setTotalTrainingTime(timeElapsed);
+        if (calculationsSolved === 11) {
+          setTrainingStage("drillStage3");
+          setCalculationsSolved(10);
         }
         break;
+
+        case "drillStage3":
+          if (calculationsSolved === 14) {
+            setTrainingStage("completed");
+            setTotalTrainingTime(timeElapsed);
+          }
+          break;
 
       case "completed":
         break;
@@ -225,21 +232,7 @@ function TrainingPage() {
     return rpm;
   };
 
-  const showReadyToStart = () => {
-    return (
-      <div>
-        DRÜCKE ENTER UM DAS TRAINING ZU STARTEN
-        <br></br>
-        <br></br>
-        <UserInput
-          solution=""
-          getNewCalculation={getNewCalculation}
-          countOneUp={countOneUp}
-          markUserError={markUserError}
-        />
-      </div>
-    );
-  };
+  
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
 
@@ -252,7 +245,7 @@ function TrainingPage() {
   };
 
   useEffect(() => {
-    if (trainingStage === "drillStage1" || trainingStage === "drillStage2") {
+    if (trainingStage === "drillStage1" || trainingStage === "drillStage3") {
       var calculationsArray = solvedCalculationsArray;
       calculationsArray[calculationsSolved] = currentQuestion;
       setSolvedCalculationsArray(calculationsArray);
@@ -295,6 +288,41 @@ function TrainingPage() {
   ]);
 
   // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------
+
+  const showReadyToStart = () => {
+    return (
+      <div>
+        DRÜCKE ENTER UM DAS TRAINING ZU STARTEN
+        <br></br>
+        <br></br>
+        <UserInput
+          solution=""
+          getNewCalculation={getNewCalculation}
+          countOneUp={countOneUp}
+          markUserError={markUserError}
+          timeElapsed={0.0}
+        />
+      </div>
+    );
+  };
+
+  const showReadyToContinueDrill = () => {
+    return (
+      <div>
+        DRÜCKE ENTER UM DIE 5 LANGSAMSTEN RECHNUNGEN 2x zu WIEDERHOLEN
+        <br></br>
+        <br></br>
+        <UserInput
+          solution=""
+          getNewCalculation={getNewCalculation}
+          countOneUp={countOneUp}
+          markUserError={markUserError}
+          timeElapsed={555}
+        />
+      </div>
+    );
+  };
+
 
   const showTrainingRunning = () => {
     return (
@@ -339,7 +367,7 @@ function TrainingPage() {
       {trainingStage === "readyToStart" && showReadyToStart()}
       {trainingStage === "running" && showTrainingRunning()}
       {trainingStage === "drillStage1" && showTrainingRunning()}
-      {trainingStage === "drillStage2" && showTrainingRunning()}
+      {trainingStage === "drillStage2" && showReadyToContinueDrill()}
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>     
