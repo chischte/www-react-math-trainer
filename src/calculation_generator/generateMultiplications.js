@@ -1,5 +1,4 @@
 export default class GenerateMultiplications {
-  
   constructor() {
     this.questionArray = [];
     this.solutionArray = [];
@@ -10,7 +9,7 @@ export default class GenerateMultiplications {
     this.questionArray = [];
     this.solutionArray = [];
     this.numberOfQuestions = 0;
-    
+
     if (level === "1") {
       this.generateCalculationsLevel1(range);
     }
@@ -20,7 +19,6 @@ export default class GenerateMultiplications {
     if (level === "drill") {
       this.generateCalculationsDrill(range);
     }
-    
   }
 
   generateCalculationsLevel1(range) {
@@ -38,6 +36,17 @@ export default class GenerateMultiplications {
       this.solutionArray.push(solution + "");
       this.numberOfQuestions++;
     }
+  }
+
+  generateCalculationsDrill(range) {
+    var pseudoRandomArray = [9, 2, 7, 4, 8, 1, 3, 10, 6, 5];
+
+    pseudoRandomArray.forEach((randomFactor) => {
+      this.questionArray.push(randomFactor + "x" + range);
+      var solution = randomFactor * range;
+      this.solutionArray.push(solution + "");
+      this.numberOfQuestions++;
+    });
   }
 
   // Getter:
