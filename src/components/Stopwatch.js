@@ -5,11 +5,11 @@ export default class Stopwatch extends React.Component {
     timeElapsed: "5",
   };
 
-  clockInterval = 1000; // [ms]
+  clockInterval = 100; // [ms]
 
   componentDidMount() {
     this.setState({
-      timeElapsed: 55,
+      timeElapsed: 0,
     },
       () => (this.interval = setInterval(this.clockTasks, this.clockInterval))
     )
@@ -21,7 +21,7 @@ export default class Stopwatch extends React.Component {
   clockTasks = () => {
     let timeElapsed = this.state.timeElapsed + this.clockInterval / 1000;
 
-    let clockResolution = 1 / (this.clockInterval / 1000);
+    let clockResolution = 10 / (this.clockInterval / 1000);
 
     timeElapsed = Math.round(timeElapsed * clockResolution) / clockResolution;
 
@@ -34,7 +34,7 @@ export default class Stopwatch extends React.Component {
 
     return (
       <div>
-          <div className="countdown">{Math.ceil(this.state.timeElapsed)}</div>
+          <div className="countdown">Stoppuhr: {Math.ceil(this.state.timeElapsed)}</div>
       </div>
     );
   }

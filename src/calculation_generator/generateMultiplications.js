@@ -18,8 +18,7 @@ export default class GenerateMultiplications {
       this.generateCalculationsLevel2(range);
     }
     if (level === "drill") {
-      this.generateCalculationsLevel1(range);
-      this.generateCalculationsLevel2(range);
+      this.generateCalculationsDrill(range);
     }
     
   }

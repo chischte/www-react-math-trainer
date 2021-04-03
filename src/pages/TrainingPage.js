@@ -8,7 +8,6 @@ const generateMultiplications = new GenerateMultiplications();
 
 function TrainingPage() {
   const [calculationsSolved, setCalculationsSolved] = useState(0);
-  const [trainingCompleted, setTrainingCompleted] = useState(false);
   const [questionArray, setQuestionArray] = useState();
   const [solutionArray, setSolutionArray] = useState();
   const [numberOfQuestions, setNumberOfQuestions] = useState();
@@ -16,6 +15,8 @@ function TrainingPage() {
   const [currentSolution, setCurrentSolution] = useState();
   const [calculationsGenerated, setCalculationsGenerated] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const [trainingStage, setTrainingStage] = useState("readyToStart");
+  const [totalTrainingTime, setTotalTrainingTime] = useState();
 
   const getLevelFromUrl = () => {
     var splitUrl = window.location.href.split("/");
@@ -57,14 +58,43 @@ function TrainingPage() {
   };
 
   useEffect(() => {
-    if (calculationsSolved === numberOfQuestions) {
-      setTrainingCompleted(true);
+    if (
+      calculationsSolved === numberOfQuestions &&
+      trainingStage === "running"
+    ) {
+      setTrainingStage("completed");
+      setTotalTrainingTime(timeElapsed);
+    }
+    if (trainingStage === "readyToStart" && calculationsSolved === 1) {
+      setTrainingStage("running");
+      setCalculationsSolved(0);
     }
   }, [calculationsSolved, numberOfQuestions]);
 
-  const updateTimeElapsed=(timeElapsed)=>{
+  const updateTimeElapsed = (timeElapsed) => {
     setTimeElapsed(timeElapsed);
-  }
+  };
+
+  const getRpm = () => {
+    const rpm = Math.round(60 / (totalTrainingTime / calculationsSolved));
+    return rpm;
+  };
+  // MANAGE TRAINING STAGES ----------------------------------------------------
+
+  const showReadyToStart = () => {
+    return (
+      <div>
+        DRÜCKE ENTER UM DAS TRAINING ZU STARTEN
+        <br></br>
+        <br></br>
+        <UserInput
+          solution=""
+          getNewCalculation={getNewCalculation}
+          countOneUp={countOneUp}
+        />
+      </div>
+    );
+  };
 
   const showTrainingRunning = () => {
     return (
@@ -78,24 +108,39 @@ function TrainingPage() {
           countOneUp={countOneUp}
         />
         <br></br>
-        <Stopwatch
-        updateTimeElapsed={updateTimeElapsed}
-        />
+        Calculations Solved : {calculationsSolved}
+        <br></br>
+        <Stopwatch updateTimeElapsed={updateTimeElapsed} />
       </div>
     );
   };
 
+  const showTrainingFeedback = () => {
+    return (
+      <div>
+        Super, du hast das Training geschafft!
+        <br></br>
+        <br></br>
+        Trainingsdauer: {totalTrainingTime} Sekunden
+        <br></br>
+        Geschwindigkeit: {getRpm()} rpm
+        <br></br>
+         (rpm = Rechnungen pro Minute)
+      </div>
+    );
+  };
+  // -----------------------------------------------------------------------------
   return (
     <div>
       <Header />
       <br></br>
-      TRAINING {getRangeFromUrl()}
       <br></br>
-      {trainingCompleted === true ? (
-        <div> TRAINING COMPLETED</div>
-      ) : (
-        showTrainingRunning()
-      )}
+      {trainingStage === "readyToStart" && showReadyToStart()}
+      {trainingStage === "running" && showTrainingRunning()}
+      {trainingStage === "completed" && showTrainingFeedback()}
+      <br></br>
+      
+      <br></br>
     </div>
   );
 }
