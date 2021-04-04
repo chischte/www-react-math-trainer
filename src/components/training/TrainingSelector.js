@@ -15,13 +15,17 @@ function TrainingSelector(props) {
       <button
         className="calculator_button"
         onClick={() => {
-          history.push("/training_multiplication");
+          history.push("/training_point_page/multiplication");
         }}
       >
         &times;
       </button>
-      <button className="calculator_button" onClick={() => {}}>
-        {" "}
+      <button
+        className="calculator_button"
+        onClick={() => {
+          history.push("/training_point_page/division");
+        }}
+      >
         &divide;
       </button>
     </div>

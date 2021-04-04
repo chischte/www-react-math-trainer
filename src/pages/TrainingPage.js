@@ -53,19 +53,39 @@ function TrainingPage() {
         setTrainingDiscipline(DisciplineEnum.division);
         break;
       default:
-        alert("invalid URL");
+        alert("invalid URL discipline");
         break;
     }
   }, [DisciplineEnum]);
 
   const setLevelFromUrl = () => {
     var splitUrl = window.location.href.split("/");
-    setTrainingLevel(splitUrl[splitUrl.length - 2]);
+    var urlLevel = splitUrl[splitUrl.length - 2];
+
+    switch (urlLevel) {
+      case "level=1":
+        break;
+      case "level=2":
+        break;
+      case "level=drill":
+        break;
+      default:
+        alert("invalid URL level");
+        break;
+    }
+    setTrainingLevel(urlLevel);
   };
 
   const setNumberRangeFromUrl = () => {
     var splitUrl = window.location.href.split("/");
-    setTrainingRange(splitUrl[splitUrl.length - 1]);
+    var urlRangeString = splitUrl[splitUrl.length - 1];
+    var urlRangeNumber = urlRangeString.split("=")[1];
+    // Check for valid number Range:
+    if (urlRangeNumber > 0 && urlRangeNumber <= 10) {
+      setTrainingRange(urlRangeNumber);
+    } else {
+      alert("invalid URL range number");
+    }
   };
 
   useEffect(() => {
@@ -175,10 +195,10 @@ function TrainingPage() {
     switch (trainingStage) {
       case "readyToStart":
         if (calculationsSolved === 1) {
-          if (trainingLevel === "1" || trainingLevel === "2") {
+          if (trainingLevel === "level=1" || trainingLevel === "level=2") {
             setTrainingStage("running");
           }
-          if (trainingLevel === "drill") {
+          if (trainingLevel === "level=drill") {
             setTrainingStage("drillStage1");
           }
           setCalculationsSolved(0);
@@ -390,7 +410,12 @@ function TrainingPage() {
               <tr key={array[4] + array[1]}>
                 <td className="tra_td">{index + 1}</td>
                 <td className="tra_td">{array[0]}</td>
-                <td className="tra_td">{array[2]}s</td>
+                {index < 3 ? (
+                  <td className="tra_td error_td">{array[2]}s</td>
+                ) : (
+                  <td className="tra_td">{array[2]}s</td>
+                )}
+
                 {array[3] === true ? (
                   <td className="tra_td error_td">&times;</td>
                 ) : (
