@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useHistory } from "react-router-dom";
+import BackHomeButton from "../components/BackHomeButton"
 
 function TrainingDashPage() {
   const history = useHistory();
@@ -62,6 +63,9 @@ function TrainingDashPage() {
       {generateButtonRow("JUMP")}
       {generateButtonRow("BIG JUMP")}
       <br></br>
+      <BackHomeButton 
+      buttonName="BACK"
+      url="/training_home" />
     </div>
   );
 }

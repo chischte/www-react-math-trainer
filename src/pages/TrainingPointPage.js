@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useHistory } from "react-router-dom";
+import BackHomeButton from "../components/BackHomeButton";
 
 function TrainingPointPage() {
   const history = useHistory();
@@ -42,7 +43,12 @@ function TrainingPointPage() {
             <button
               className="pt_hover_button"
               onClick={() => {
-                history.push("/training/"+pointOperationMode+"/level=1/range=" + rowNumber);
+                history.push(
+                  "/training/" +
+                    pointOperationMode +
+                    "/level=1/range=" +
+                    rowNumber
+                );
               }}
             >
               LEVEL 1
@@ -50,7 +56,12 @@ function TrainingPointPage() {
             <button
               className="pt_hover_button"
               onClick={() => {
-                history.push("/training/"+pointOperationMode+"/level=2/range=" + rowNumber);
+                history.push(
+                  "/training/" +
+                    pointOperationMode +
+                    "/level=2/range=" +
+                    rowNumber
+                );
               }}
             >
               LEVEL 2
@@ -58,7 +69,12 @@ function TrainingPointPage() {
             <button
               className="pt_hover_button"
               onClick={() => {
-                history.push("/training/"+pointOperationMode+"/level=drill/range=" + rowNumber);
+                history.push(
+                  "/training/" +
+                    pointOperationMode +
+                    "/level=drill/range=" +
+                    rowNumber
+                );
               }}
             >
               DRILL
@@ -83,6 +99,9 @@ function TrainingPointPage() {
       {generateButtonRow(9)}
       {generateButtonRow(10)}
       <br></br>
+      <BackHomeButton 
+      buttonName="BACK"
+      url="/training_home" />
     </div>
   );
 }

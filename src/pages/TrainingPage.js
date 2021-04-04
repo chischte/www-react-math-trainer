@@ -4,6 +4,7 @@ import GenerateCalculations from "../calculation_generator/generateTrainingCalcu
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
 import { DisciplineEnum } from "../enums/Enums";
+import BackHomeButton from "../components/BackHomeButton"
 
 const generateCalculations = new GenerateCalculations();
 
@@ -433,7 +434,7 @@ function TrainingPage() {
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>
-
+     <BackHomeButton url="/training_home" />
       <br></br>
     </div>
   );
