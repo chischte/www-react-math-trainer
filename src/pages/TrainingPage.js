@@ -3,11 +3,13 @@ import Header from "../components/Header";
 import GenerateCalculations from "../calculation_generator/generateCalculations";
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
-import { DisciplineEnum }  from "../enums/Enums";
+import { DisciplineEnum } from "../enums/Enums";
 
 const generateCalculations = new GenerateCalculations();
 
 function TrainingPage() {
+  const [numberOfQuestions, setNumberOfQuestions] = useState();
+  const [questionArray, setQuestionArray] = useState([]);
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
@@ -17,9 +19,7 @@ function TrainingPage() {
   const [errorArray, setErrorArray] = useState([]);
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
-  const [questionArray, setQuestionArray] = useState();
   const [solutionArray, setSolutionArray] = useState();
-  const [numberOfQuestions, setNumberOfQuestions] = useState();
   const [currentQuestion, setCurrentQuestion] = useState();
   const [currentSolution, setCurrentSolution] = useState();
   const [calculationsGenerated, setCalculationsGenerated] = useState(false);
@@ -98,8 +98,8 @@ function TrainingPage() {
     );
     setQuestionArray(generateCalculations.getQuestionArray());
     setSolutionArray(generateCalculations.getSolutionArray());
-    setNumberOfQuestions(generateCalculations.getNumberOfQuestions());
-  }, [trainingLevel, trainingRange,trainingDiscipline]);
+    setNumberOfQuestions(generateCalculations.getQuestionArray().length);
+  }, [trainingLevel, trainingRange, trainingDiscipline, questionArray]);
 
   useEffect(() => {
     if (!calculationsGenerated) {

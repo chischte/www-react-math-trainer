@@ -3,15 +3,13 @@ import { DisciplineEnum } from "../enums/Enums";
 export default class GenerateCalculations {
   constructor() {
     this.questionArray = [];
-    this.solutionArray = [];
-    this.numberOfQuestions = 0;
+    this.solutionArray = [];   
   }
 
   generateCalculations(discipline, level, range) {
     this.questionArray = [];
     this.solutionArray = [];
-    this.numberOfQuestions = 0;
-
+   
     switch (discipline) {
       case DisciplineEnum.addition:
         break;
@@ -86,7 +84,6 @@ export default class GenerateCalculations {
       this.questionArray.push(randomFactor + "x" + range);
       var solution = randomFactor * range;
       this.solutionArray.push(solution + ""); //""to store mark it as string
-      this.numberOfQuestions++;
     });
   }
 
@@ -103,8 +100,5 @@ export default class GenerateCalculations {
   }
   getSolutionArray() {
     return this.solutionArray;
-  }
-  getNumberOfQuestions() {
-    return this.numberOfQuestions;
   }
 }
