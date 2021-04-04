@@ -189,7 +189,7 @@ function TrainingPage() {
             trainingLevel === "2" ||
             trainingLevel === "step" ||
             trainingLevel === "jump" ||
-            trainingLevel === "jump"
+            trainingLevel === "big jump"
           ) {
             setTrainingStage("running");
           }
