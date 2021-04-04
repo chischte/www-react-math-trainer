@@ -8,7 +8,7 @@ import BackHomeButton from "../components/BackHomeButton"
 
 const generateCalculations = new GenerateCalculations();
 
-function TrainingPage() {
+function TrainingRunPage() {
   const [numberOfQuestions, setNumberOfQuestions] = useState();
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [questionArray, setQuestionArray] = useState([]);
@@ -434,10 +434,12 @@ function TrainingPage() {
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>
-     <BackHomeButton url="/training_home" />
+     <BackHomeButton 
+     buttonName="BACK"
+     url="/training_select" />
       <br></br>
     </div>
   );
 }
 
-export default TrainingPage;
+export default TrainingRunPage;

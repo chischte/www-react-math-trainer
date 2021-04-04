@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import TrainingSelector from "../components/training/TrainingSelector";
 import BackHomeButton from "../components/BackHomeButton"
 
-function TrainingHomePage() {
+function TrainingSelectPage() {
   return (
     <div>
       <Header />
@@ -19,4 +19,4 @@ function TrainingHomePage() {
   );
 }
 
-export default TrainingHomePage;
+export default TrainingSelectPage;

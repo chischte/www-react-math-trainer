@@ -20,7 +20,7 @@ export default class Header extends React.Component {
           home
         </NavLink>
         <span> </span>
-        <NavLink to="/training_home"
+        <NavLink to="/training_select"
         className="header_link"
         activeClassName="is-active"
         

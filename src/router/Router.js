@@ -1,7 +1,7 @@
 import React from "react";
 import Homepage from "../pages/Homepage"
-import TrainingPage from "../pages/TrainingPage"
-import TrainingHomePage from "../pages/TrainingHomePage"
+import TrainingRunPage from "../pages/TrainingRunPage"
+import TrainingSelectPage from "../pages/TrainingSelectPage"
 import TrainingPointPage from "../pages/TrainingPointPage"
 import TrainingDashPage from "../pages/TrainingDashPage"
 import CompetitionPage from "../pages/CompetitionPage"
@@ -12,10 +12,10 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 const Router = () => (
     <BrowserRouter>
         <Switch>
-            <Route path="/training"  component={TrainingPage} />)
+            <Route path="/training_run"  component={TrainingRunPage} />)
             <Route path="/training_point_page" component={TrainingPointPage} />)
             <Route path="/training_dash_page" component={TrainingDashPage} />)
-            <Route path="/training_home" exact={true} component={TrainingHomePage} />)
+            <Route path="/training_select" exact={true} component={TrainingSelectPage} />)
             <Route path="/competition" exact={true} component={CompetitionPage} />)
             <Route path="/highscore" exact={true} component={HighScorePage} />)
             <Route path="/account" exact={true} component={AccountPage} />)

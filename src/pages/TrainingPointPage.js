@@ -44,7 +44,7 @@ function TrainingPointPage() {
               className="pt_hover_button"
               onClick={() => {
                 history.push(
-                  "/training/" +
+                  "/training_run/" +
                     pointOperationMode +
                     "/level=1/range=" +
                     rowNumber
@@ -57,7 +57,7 @@ function TrainingPointPage() {
               className="pt_hover_button"
               onClick={() => {
                 history.push(
-                  "/training/" +
+                  "/training_run/" +
                     pointOperationMode +
                     "/level=2/range=" +
                     rowNumber
@@ -70,7 +70,7 @@ function TrainingPointPage() {
               className="pt_hover_button"
               onClick={() => {
                 history.push(
-                  "/training/" +
+                  "/training_run/" +
                     pointOperationMode +
                     "/level=drill/range=" +
                     rowNumber
@@ -101,7 +101,7 @@ function TrainingPointPage() {
       <br></br>
       <BackHomeButton 
       buttonName="BACK"
-      url="/training_home" />
+      url="/training_select" />
     </div>
   );
 }

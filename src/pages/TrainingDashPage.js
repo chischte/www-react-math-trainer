@@ -39,7 +39,7 @@ function TrainingDashPage() {
               className="dt_hover_button"
               onClick={() => {
                 history.push(
-                  "/training/" +
+                  "/training_run/" +
                     dashOperationMode +
                     "/level=" +
                     level.toLowerCase() +
@@ -65,7 +65,7 @@ function TrainingDashPage() {
       <br></br>
       <BackHomeButton 
       buttonName="BACK"
-      url="/training_home" />
+      url="/training_select" />
     </div>
   );
 }
