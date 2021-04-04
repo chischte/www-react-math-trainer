@@ -139,7 +139,7 @@ function TrainingPage() {
       var _answer = solutionArray[i];
       var _time = solvingTimeArray[i];
       var _error = errorArray[i];
-      var _key = timeElapsedArray[i]
+      var _key = timeElapsedArray[i];
       overviewArray.push([_question, _answer, _time, _error, _key]);
     }
     // SortOverviewArray by slowest calculations
@@ -147,7 +147,13 @@ function TrainingPage() {
       return b[2] - a[2];
     });
     return overviewArray;
-  }, [errorArray, questionArray, solutionArray, solvingTimeArray,timeElapsedArray]);
+  }, [
+    errorArray,
+    questionArray,
+    solutionArray,
+    solvingTimeArray,
+    timeElapsedArray,
+  ]);
 
   const addSlowestAnswersToDrill = useCallback(() => {
     var overviewArray = getOverviewArray();
@@ -160,7 +166,7 @@ function TrainingPage() {
         _solutionArray.push(overviewArray[j][1]);
       }
     }
-    setNumberOfQuestions(_questionArray.length)
+    setNumberOfQuestions(_questionArray.length);
   }, [questionArray, solutionArray, getOverviewArray]);
 
   // MANAGE TRAINING STAGES ----------------------------------------------------
@@ -249,36 +255,36 @@ function TrainingPage() {
 
   useEffect(() => {
     // if (trainingStage === "drillStage1" || trainingStage === "drillStage3") {
-      var calculationsArray = solvedCalculationsArray;
-      calculationsArray[calculationsSolved] = currentQuestion;
-      setSolvedCalculationsArray(calculationsArray);
+    var calculationsArray = solvedCalculationsArray;
+    calculationsArray[calculationsSolved] = currentQuestion;
+    setSolvedCalculationsArray(calculationsArray);
 
-      // Get arrays from hooks:
-      var _solvingTimeArray = solvingTimeArray;
-      var _timeElapsedArray = timeElapsedArray;
+    // Get arrays from hooks:
+    var _solvingTimeArray = solvingTimeArray;
+    var _timeElapsedArray = timeElapsedArray;
 
-      var currentIndex = calculationsSolved;
+    var currentIndex = calculationsSolved;
 
-      // Log Current time:
-      _timeElapsedArray[currentIndex] = timeElapsed;
+    // Log Current time:
+    _timeElapsedArray[currentIndex] = timeElapsed;
 
-      // Calculate time difference
-      if (calculationsSolved === 1) {
-        var timeDifference = _timeElapsedArray[0];
-        timeDifference = Math.round(10 * timeDifference) / 10;
-        solvingTimeArray[currentIndex - 1] = timeDifference;
-      }
-      if (calculationsSolved > 1) {
-        timeDifference =
-          _timeElapsedArray[currentIndex - 1] -
-          _timeElapsedArray[currentIndex - 2];
-        timeDifference = Math.round(10 * timeDifference) / 10;
-        _solvingTimeArray[currentIndex - 1] = timeDifference;
-      }
+    // Calculate time difference
+    if (calculationsSolved === 1) {
+      var timeDifference = _timeElapsedArray[0];
+      timeDifference = Math.round(10 * timeDifference) / 10;
+      solvingTimeArray[currentIndex - 1] = timeDifference;
+    }
+    if (calculationsSolved > 1) {
+      timeDifference =
+        _timeElapsedArray[currentIndex - 1] -
+        _timeElapsedArray[currentIndex - 2];
+      timeDifference = Math.round(10 * timeDifference) / 10;
+      _solvingTimeArray[currentIndex - 1] = timeDifference;
+    }
 
-      // Assign arrays back to hooks:
-      setSolvingTimeArray(_solvingTimeArray);
-      setTimeElapsedArray(_timeElapsedArray);
+    // Assign arrays back to hooks:
+    setSolvingTimeArray(_solvingTimeArray);
+    setTimeElapsedArray(_timeElapsedArray);
     // }
   }, [
     calculationsSolved,
@@ -365,22 +371,31 @@ function TrainingPage() {
         Geschwindigkeit: {getRpm()} rpm
         <br></br>
         (rpm = Rechnungen pro Minute)
-        <table>
+        <table className="training-overview-table">
           <thead>
-          <tr>
-            <th>#</th>
-            <th>Rechnung</th>
-            <th>Zeit</th>
-            <th>Fehler</th>
-          </tr>
+            <tr>
+              <th colSpan={4} className="tra_th title-header">
+                AUSWERTUNG
+              </th>
+            </tr>
+            <tr>
+              <th className="tra_th">#</th>
+              <th className="tra_th">Rechnung</th>
+              <th className="tra_th">Zeit</th>
+              <th className="tra_th">Fehler</th>
+            </tr>
           </thead>
           <tfoot>
-            {overviewArray.map((array,index)=>(
-              <tr key={array[4]+array[1]}>
-                <td>{index+1}</td>
-                <td>{array[0]}</td>
-                <td>{array[2]}</td>
-                <td>{array[3]===true&&"X"}</td>
+            {overviewArray.map((array, index) => (
+              <tr key={array[4] + array[1]}>
+                <td className="tra_td">{index + 1}</td>
+                <td className="tra_td">{array[0]}</td>
+                <td className="tra_td">{array[2]}s</td>
+                {array[3] === true ? (
+                  <td className="tra_td error_td">&times;</td>
+                ) : (
+                  <td className="tra_td"></td>
+                )}
               </tr>
             ))}
           </tfoot>
