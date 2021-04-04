@@ -32,15 +32,15 @@ function TrainingPointPage() {
   const generateButtonRow = (rowNumber) => {
     return (
       <div>
-        <table className="training-selector-table">
+        <table className="point-training-selector-table">
           <tr>
-            <button className="nohover_button">
+            <button className="pt_nohover_button">
               {rowNumber}
               {pointOperator}
               {rowNumber}
             </button>
             <button
-              className="hover_button"
+              className="pt_hover_button"
               onClick={() => {
                 history.push("/training/"+pointOperationMode+"/level=1/range=" + rowNumber);
               }}
@@ -48,7 +48,7 @@ function TrainingPointPage() {
               LEVEL 1
             </button>
             <button
-              className="hover_button"
+              className="pt_hover_button"
               onClick={() => {
                 history.push("/training/"+pointOperationMode+"/level=2/range=" + rowNumber);
               }}
@@ -56,7 +56,7 @@ function TrainingPointPage() {
               LEVEL 2
             </button>
             <button
-              className="hover_button"
+              className="pt_hover_button"
               onClick={() => {
                 history.push("/training/"+pointOperationMode+"/level=drill/range=" + rowNumber);
               }}

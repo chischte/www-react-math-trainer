@@ -20,7 +20,9 @@ export default class LoginPage extends React.Component {
         return (
             <div>
                 <Header/>
-                WETTKAMPF
+                <br></br>
+                <h4>Wähle eine Wettkampfdisziplin:</h4            >
+                <br></br>
             </div>
         );
     }

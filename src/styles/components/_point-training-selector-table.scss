@@ -1,4 +1,4 @@
-.training-selector-table {
+.point-training-selector-table {
   width: auto;
   font-size: $m-size;
   margin-left: auto;
@@ -13,8 +13,8 @@
   border: 0.1rem solid $blue;
 }
 
-.nohover_button,
-.hover_button {
+.pt_nohover_button,
+.pt_hover_button {
   height: 2.5rem;
   border: none;
   border-radius: $s-radius;
@@ -22,7 +22,7 @@
   background-color: $blue;
   color: black;
 }
-.nohover_button {
+.pt_nohover_button {
   width: 7rem;
   border: none;
   border-radius: $s-radius;
@@ -33,7 +33,7 @@
   color: black;
 }
 
-.hover_button {
+.pt_hover_button {
   width: 8rem;
   font-size: $m-size;
   font-weight: 500;
@@ -41,7 +41,7 @@
   margin: 0.2rem 0.2rem 0.2rem 0.2rem;
 }
 
-.hover_button:hover {
+.pt_hover_button:hover {
   color: orange;
   //background-color: $off-black;
 }

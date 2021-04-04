@@ -12,6 +12,7 @@ export default class GenerateCalculations {
 
     switch (discipline) {
       case DisciplineEnum.addition:
+        this.generateAdditions(level);
         break;
       case DisciplineEnum.subtraction:
         break;
@@ -27,32 +28,16 @@ export default class GenerateCalculations {
     }
   }
 
-  generateMultiplications(level, range) {
+  generateAdditions(level) {
     switch (level) {
-      case "level=1":
-        this.generateMultiplicationsLevel1(range);
+      case "step":
+        this.generateAdditionsStep();
         break;
-      case "level=2":
-        this.generateMultiplicationsLevel2(range);
+      case "jump":
+        this.generateAdditionsJump();
         break;
-      case "level=drill":
-        this.generateMultiplicationsLevelDrill(range);
-        break;
-      default:
-        alert("invalid level");
-        break;
-    }
-  }
-  generateDivisions(level, range) {
-    switch (level) {
-      case "level=1":
-        this.generateDivisionsLevel1(range);
-        break;
-      case "level=2":
-        this.generateDivisionsLevel2(range);
-        break;
-      case "level=drill":
-        this.generateDivisionsLevelDrill(range);
+      case "big jump":
+        this.generateAdditionsBigJump();
         break;
       default:
         alert("invalid level");
@@ -60,6 +45,82 @@ export default class GenerateCalculations {
     }
   }
 
+  generateMultiplications(level, range) {
+    switch (level) {
+      case "1":
+        this.generateMultiplicationsLevel1(range);
+        break;
+      case "2":
+        this.generateMultiplicationsLevel2(range);
+        break;
+      case "drill":
+        this.generateMultiplicationsLevelDrill(range);
+        break;
+      default:
+        alert("invalid level");
+        break;
+    }
+  }
+
+  generateDivisions(level, range) {
+    switch (level) {
+      case "1":
+        this.generateDivisionsLevel1(range);
+        break;
+      case "2":
+        this.generateDivisionsLevel2(range);
+        break;
+      case "drill":
+        this.generateDivisionsLevelDrill(range);
+        break;
+      default:
+        alert("invalid level");
+        break;
+    }
+  }
+  // ADDITIONS -----------------------------------------------------------------
+
+  generateAdditionsStep() {
+    // Generates additions that do not exceed the current tenner.
+    // E.g. 5+2, 1+4, 3+6, ...
+    //
+    // Naming: -------> Addend1 + Addend2 = Sum
+    // Base:          > (1-8)   + (1-9)   = (1-9)
+    //
+    // RandomTenner: 10, 20, 30,... 90
+
+    const numberOfCalculations = 20;
+
+    while (this.questionArray.length < numberOfCalculations) {
+      const minAddend1 = 1;
+      const maxAddend1 = 8;
+      this.addend1 = Math.floor(
+        Math.random() * (maxAddend1 - minAddend1 + 1) + minAddend1
+      );
+
+      const minAddend2 = 1;
+      const maxAddend2 = 9 - this.addend1;
+      this.addend2 = Math.floor(
+        Math.random() * (maxAddend2 - minAddend2 + 1) + minAddend2
+      );
+
+      // Add random tenner digits:
+      this.randomTenner = Math.floor(Math.random() * 10) * 10;
+      this.addend1 += this.randomTenner;
+
+      this.questionString = `${this.addend1} + ${this.addend2}`;
+      this.solution = this.addend1 + this.addend2;
+
+      if (!this.questionArray.includes(this.questionString)) {
+        this.solutionArray.push(this.solution+"");
+        this.questionArray.push(this.questionString);
+      }
+    }
+  }
+  generateAdditionsJump() {}
+  generateAdditionsBigJump() {}
+
+  // SUBTRACTIONS --------------------------------------------------------------
   // MULTIPLICATIONS -----------------------------------------------------------
 
   generateMultiplicationsLevel1(range) {

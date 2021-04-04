@@ -6,10 +6,14 @@ function TrainingSelector(props) {
 
   return (
     <div className="outliner outliner_flex">
-      <button className="calculator_button" onClick={() => {}}>
+      <button className="calculator_button" onClick={() => {
+         history.push("/training_dash_page/addition");
+      }}>
         <div>+</div>
       </button>
-      <button className="calculator_button" onClick={() => {}}>
+      <button className="calculator_button" onClick={() => {
+         history.push("/training_dash_page/subtraction");
+      }}>
         −
       </button>
       <button

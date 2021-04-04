@@ -1,0 +1,47 @@
+.dash-training-selector-table {
+  width: auto;
+  font-size: $m-size;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.6rem;
+  margin-bottom: 0.3rem;
+  padding: 0.2rem;
+  color: $off-black;
+  background-color: $light-blue;
+  border-spacing: 0.1rem;
+  border-radius: 0.4rem;
+  border: 0.1rem solid $off-black;
+}
+
+.dt_nohover_button,
+.dt_hover_button {
+  height: 4rem;
+  border: none;
+  border-radius: $s-radius;
+  padding-bottom: 0.55rem;
+  background-color: orange;
+  color: black;
+}
+// .dt_nohover_button {
+//   width: 7rem;
+//   border: none;
+//   border-radius: $s-radius;
+//   font-weight: 700;
+//   font-size: $m-size;
+//   padding-bottom: 0.55rem;
+//   background-color: $blue;
+//   color: black;
+// }
+
+.dt_hover_button {
+  width: 14rem;
+  font-size: $l-size;
+  font-weight: 700;
+  transition: all 0.4s linear;
+  margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+.dt_hover_button:hover {
+  color: orange;
+  background-color: $off-black;
+}

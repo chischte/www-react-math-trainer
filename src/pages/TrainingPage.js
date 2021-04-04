@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
-import GenerateCalculations from "../calculation_generator/generateCalculations";
+import GenerateCalculations from "../calculation_generator/generateTrainingCalculations";
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
 import { DisciplineEnum } from "../enums/Enums";
@@ -9,17 +9,17 @@ const generateCalculations = new GenerateCalculations();
 
 function TrainingPage() {
   const [numberOfQuestions, setNumberOfQuestions] = useState();
-  const [questionArray, setQuestionArray] = useState([]);
-  const [trainingDiscipline, setTrainingDiscipline] = useState();
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
+  const [questionArray, setQuestionArray] = useState([]);
+  const [solutionArray, setSolutionArray] = useState();
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
   const [timeElapsedArray, setTimeElapsedArray] = useState([]);
   const [errorArray, setErrorArray] = useState([]);
   const [trainingLevel, setTrainingLevel] = useState();
+  const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingRange, setTrainingRange] = useState();
-  const [solutionArray, setSolutionArray] = useState();
   const [currentQuestion, setCurrentQuestion] = useState();
   const [currentSolution, setCurrentSolution] = useState();
   const [calculationsGenerated, setCalculationsGenerated] = useState(false);
@@ -58,10 +58,22 @@ function TrainingPage() {
 
     switch (urlLevel) {
       case "level=1":
+        urlLevel = "1";
         break;
       case "level=2":
+        urlLevel = "2";
         break;
       case "level=drill":
+        urlLevel = "drill";
+        break;
+      case "level=step":
+        urlLevel = "step";
+        break;
+      case "level=jump":
+        urlLevel = "jump";
+        break;
+      case "level=big%20jump":
+        urlLevel = "big jump";
         break;
       default:
         alert("invalid URL level");
@@ -172,10 +184,16 @@ function TrainingPage() {
     switch (trainingStage) {
       case "readyToStart":
         if (calculationsSolved === 1) {
-          if (trainingLevel === "level=1" || trainingLevel === "level=2") {
+          if (
+            trainingLevel === "1" ||
+            trainingLevel === "2" ||
+            trainingLevel === "step" ||
+            trainingLevel === "jump" ||
+            trainingLevel === "jump"
+          ) {
             setTrainingStage("running");
           }
-          if (trainingLevel === "level=drill") {
+          if (trainingLevel === "drill") {
             setTrainingStage("drillStage1");
           }
           setCalculationsSolved(0);
@@ -298,7 +316,7 @@ function TrainingPage() {
   const showReadyToStart = () => {
     return (
       <div>
-        DRÜCKE ENTER UM DAS TRAINING ZU STARTEN
+        <h4>Drücke ENTER um das Training zu starten!</h4>
         <br></br>
         <br></br>
         <UserInput
@@ -334,9 +352,7 @@ function TrainingPage() {
   const showTrainingRunning = () => {
     return (
       <div>
-        Question ={currentQuestion}
-        <br></br>
-        <br></br>
+        <h3>{currentQuestion}</h3>
         <UserInput
           solution={getSolution()}
           getNewCalculation={getNewCalculation}
@@ -344,7 +360,7 @@ function TrainingPage() {
           markUserError={markUserError}
         />
         <br></br>
-        Calculations Solved : {calculationsSolved}
+        Noch zu lösen: {numberOfQuestions-calculationsSolved} Rechnungen
         <br></br>
         <Stopwatch
           updateTimeElapsed={updateTimeElapsed}

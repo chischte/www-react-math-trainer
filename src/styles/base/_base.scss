@@ -3,7 +3,7 @@ html {
   text-align: center;
   color: $off-black;
   background-color: $background;
-  }
+}
 
 body {
   font-family: Segoe UI, Helvetica, Arial, sans-serif;
@@ -25,7 +25,12 @@ button:disabled {
 h1 {
   margin: 0.4rem 0 0.4rem 0;
 }
-
+h2 {
+  margin: 0.4rem 0 0.4rem 0;
+}
+h3 {
+  margin: 0.4rem 0 0.4rem 0;
+}
 
 h4 {
   margin: 0.2rem 0 0.2rem 0;
@@ -42,7 +47,7 @@ td {
   padding: 0 0.2rem 0 0.2rem;
   border: none;
   min-width: 5rem;
-  border: 1px solid rgb(233,233,233);
+  border: 1px solid rgb(233, 233, 233);
 }
 
 th {

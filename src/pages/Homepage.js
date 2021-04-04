@@ -20,7 +20,8 @@ export default class LoginPage extends React.Component {
         return (
             <div>
                 <Header/>
-                HOMEPAGE
+                <br></br>
+                <h3>Wilkommen beim Mathe-Trainer!</h3>
             </div>
         );
     }

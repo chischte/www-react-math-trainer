@@ -3,6 +3,7 @@ import Homepage from "../pages/Homepage"
 import TrainingPage from "../pages/TrainingPage"
 import TrainingHomePage from "../pages/TrainingHomePage"
 import TrainingPointPage from "../pages/TrainingPointPage"
+import TrainingDashPage from "../pages/TrainingDashPage"
 import CompetitionPage from "../pages/CompetitionPage"
 import HighScorePage from "../pages/HighScorePage"
 import AccountPage from "../pages/AccountPage"
@@ -13,6 +14,7 @@ const Router = () => (
         <Switch>
             <Route path="/training"  component={TrainingPage} />)
             <Route path="/training_point_page" component={TrainingPointPage} />)
+            <Route path="/training_dash_page" component={TrainingDashPage} />)
             <Route path="/training_home" exact={true} component={TrainingHomePage} />)
             <Route path="/competition" exact={true} component={CompetitionPage} />)
             <Route path="/highscore" exact={true} component={HighScorePage} />)
