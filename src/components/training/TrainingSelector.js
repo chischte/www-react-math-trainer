@@ -5,7 +5,7 @@ function TrainingSelector(props) {
   const history = useHistory();
 
   return (
-    <div className="outliner outliner__flex">
+    <div className="outliner outliner_flex">
       <button className="calculator_button" onClick={() => {}}>
         <div>+</div>
       </button>

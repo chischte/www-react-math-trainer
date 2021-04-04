@@ -362,8 +362,7 @@ function TrainingPage() {
       <div>
         Super, du hast das Training geschafft!
         <br></br>
-        <br></br>
-        Trainingsdauer: {totalTrainingTime} Sekunden
+        Tip: Schreibe dir die langsamsten und falsch gelösten Rechnungen auf!
         <br></br>
         Geschwindigkeit: {getRpm()} rpm
         <br></br>

@@ -1,0 +1,15 @@
+.outliner {
+  //background-color: darken($light-blue, 10%);
+  max-width: 30rem;
+  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0.5rem;
+}
+
+.outliner_flex {
+  display: flex;
+  justify-content: space-evenly;
+}

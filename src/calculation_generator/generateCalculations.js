@@ -22,7 +22,7 @@ export default class GenerateCalculations {
         this.generateDivisions(level, range);
         break;
       default:
-        alert("invalid discipline"+discipline);
+        alert("invalid discipline" + discipline);
         break;
     }
   }
@@ -95,15 +95,32 @@ export default class GenerateCalculations {
     for (var i = 1; i <= 10; i++) {
       var quotient = i;
       var dividend = range;
-      var divisor = i * range;
+      var divisor = quotient * dividend;
       this.solutionArray.push(quotient + "");
       this.questionArray.push(divisor + "÷" + dividend);
     }
   }
 
-  generateDivisionsLevel2(range) {}
+  generateDivisionsLevel2(range) {
+    for (var i = 10; i >= 1; i--) {
+      var quotient = i;
+      var dividend = range;
+      var divisor = quotient * dividend;
+      this.solutionArray.push(quotient + "");
+      this.questionArray.push(divisor + "÷" + dividend);
+    }
+  }
 
-  generateDivisionsLevelDrill(range) {}
+  generateDivisionsLevelDrill(range) {
+    var pseudoRandomArray = [9, 2, 7, 4, 8, 1, 3, 10, 6, 5];
+
+    pseudoRandomArray.forEach((quotient) => {
+      var dividend = range;
+      var divisor = quotient * dividend;
+      this.solutionArray.push(quotient + "");
+      this.questionArray.push(divisor + "÷" + dividend);
+    });
+  }
 
   // Getter:
 
