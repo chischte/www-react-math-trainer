@@ -90,7 +90,7 @@ function TrainingPage() {
 
   // GET INITIAL CALCULATIONS --------------------------------------------------
 
-  const getMultiplication = useCallback(() => {
+  const getCalculation = useCallback(() => {
     generateCalculations.generateCalculations(
       trainingDiscipline,
       trainingLevel,
@@ -102,27 +102,11 @@ function TrainingPage() {
   }, [trainingLevel, trainingRange, trainingDiscipline, questionArray]);
 
   useEffect(() => {
-    if (!calculationsGenerated) {
-      switch (trainingDiscipline) {
-        case DisciplineEnum.addition:
-          alert("addition selected");
-          setCalculationsGenerated(true);
-          break;
-        case DisciplineEnum.subtraction:
-          setCalculationsGenerated(true);
-          break;
-        case DisciplineEnum.multiplication:
-          getMultiplication();
-          setCalculationsGenerated(true);
-          break;
-        case DisciplineEnum.division:
-          setCalculationsGenerated(true);
-          break;
-        default:
-          break;
-      }
+    if (!calculationsGenerated && trainingDiscipline) {
+      getCalculation();
+      setCalculationsGenerated(true);
     }
-  }, [getMultiplication, trainingDiscipline, calculationsGenerated]);
+  }, [getCalculation, trainingDiscipline, calculationsGenerated]);
 
   useEffect(() => {
     if (calculationsGenerated) {
