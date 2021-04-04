@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
-import GenerateMultiplications from "../calculation_generator/generateMultiplications";
+import GenerateCalculations from "../calculation_generator/generateCalculations";
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
+import { DisciplineEnum }  from "../enums/Enums";
 
-const generateMultiplications = new GenerateMultiplications();
+const generateCalculations = new GenerateCalculations();
 
 function TrainingPage() {
+  const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [solvedCalculationsArray, setSolvedCalculationsArray] = useState([]);
   const [solvingTimeArray, setSolvingTimeArray] = useState([]);
   const [timeElapsedArray, setTimeElapsedArray] = useState([]);
   const [errorArray, setErrorArray] = useState([]);
-  const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [trainingLevel, setTrainingLevel] = useState();
   const [trainingRange, setTrainingRange] = useState();
   const [questionArray, setQuestionArray] = useState();
@@ -25,13 +26,6 @@ function TrainingPage() {
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
   const [previousTimeElapsed, setPreviousTimeElapsed] = useState(0);
-
-  const DisciplineEnum = Object.freeze({
-    addition: 1,
-    subtraction: 2,
-    multiplication: 3,
-    division: 4,
-  });
 
   // GET URL INFORMATION -------------------------------------------------------
 
@@ -56,7 +50,7 @@ function TrainingPage() {
         alert("invalid URL discipline");
         break;
     }
-  }, [DisciplineEnum]);
+  }, []);
 
   const setLevelFromUrl = () => {
     var splitUrl = window.location.href.split("/");
@@ -97,11 +91,15 @@ function TrainingPage() {
   // GET INITIAL CALCULATIONS --------------------------------------------------
 
   const getMultiplication = useCallback(() => {
-    generateMultiplications.generateCalculations(trainingLevel, trainingRange);
-    setQuestionArray(generateMultiplications.getQuestionArray());
-    setSolutionArray(generateMultiplications.getSolutionArray());
-    setNumberOfQuestions(generateMultiplications.getNumberOfQuestions());
-  }, [trainingLevel, trainingRange]);
+    generateCalculations.generateCalculations(
+      trainingDiscipline,
+      trainingLevel,
+      trainingRange
+    );
+    setQuestionArray(generateCalculations.getQuestionArray());
+    setSolutionArray(generateCalculations.getSolutionArray());
+    setNumberOfQuestions(generateCalculations.getNumberOfQuestions());
+  }, [trainingLevel, trainingRange,trainingDiscipline]);
 
   useEffect(() => {
     if (!calculationsGenerated) {
@@ -124,12 +122,7 @@ function TrainingPage() {
           break;
       }
     }
-  }, [
-    DisciplineEnum,
-    getMultiplication,
-    trainingDiscipline,
-    calculationsGenerated,
-  ]);
+  }, [getMultiplication, trainingDiscipline, calculationsGenerated]);
 
   useEffect(() => {
     if (calculationsGenerated) {
