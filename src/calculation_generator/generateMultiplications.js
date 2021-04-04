@@ -10,14 +10,14 @@ export default class GenerateMultiplications {
     this.solutionArray = [];
     this.numberOfQuestions = 0;
 
-    if (level === "1") {
+    if (level === "level=1") {
       this.generateCalculationsLevel1(range);
-    }
-    if (level === "2") {
+    } else if (level === "level=2") {
       this.generateCalculationsLevel2(range);
-    }
-    if (level === "drill") {
+    } else if (level === "level=drill") {
       this.generateCalculationsDrill(range);
+    } else {
+      alert("invalid level");
     }
   }
 
