@@ -371,7 +371,7 @@ function TrainingPage() {
         Geschwindigkeit: {getRpm()} rpm
         <br></br>
         (rpm = Rechnungen pro Minute)
-        <table className="training-overview-table">
+        <table className="after-training-table">
           <thead>
             <tr>
               <th colSpan={4} className="tra_th title-header">

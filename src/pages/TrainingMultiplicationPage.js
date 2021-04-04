@@ -8,11 +8,13 @@ function TrainingMultiplicationPage() {
   const generateButtonRow = (rowNumber) => {
     return (
       <div>
-        <button className="training_button">
+        <table className="training-selector-table">
+        <tr>
+        <button className="nohover_button">
           {rowNumber}x{rowNumber}
-        </button>{" "}
+        </button>
         <button
-          className="training_button"
+          className="hover_button"
           onClick={() => {
             history.push("/training/multiplication/1/" + rowNumber);
           }}
@@ -20,7 +22,7 @@ function TrainingMultiplicationPage() {
           LEVEL 1
         </button>
         <button
-          className="training_button"
+          className="hover_button"
           onClick={() => {
             history.push("/training/multiplication/2/" + rowNumber);
           }}
@@ -28,13 +30,15 @@ function TrainingMultiplicationPage() {
           LEVEL 2
         </button>
         <button
-          className="training_button"
+          className="hover_button"
           onClick={() => {
             history.push("/training/multiplication/drill/"+ rowNumber);
           }}
         >
           DRILL
         </button>
+        </tr>
+        </table>
       </div>
     );
   };

@@ -1,0 +1,47 @@
+.training-selector-table {
+  width: auto;
+  font-size: $m-size;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  padding: 0.1rem;
+  color: $off-black;
+  background-color: $light-blue;
+  border-spacing: 0.1rem;
+  border-radius: 0.4rem;
+  border: 0.1rem solid $blue;
+}
+
+.nohover_button,
+.hover_button {
+  height: 2.5rem;
+  border: none;
+  border-radius: $s-radius;
+  padding-bottom: 0.55rem;
+  background-color: $blue;
+  color: black;
+}
+.nohover_button {
+  width: 7rem;
+  border: none;
+  border-radius: $s-radius;
+  font-weight: 700;
+  font-size: $m-size;
+  padding-bottom: 0.55rem;
+  background-color: $blue;
+  color: black;
+}
+
+.hover_button {
+  width: 8rem;
+  font-size: $m-size;
+  font-weight: 500;
+  transition: all 0.5s linear;
+  margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+.hover_button:hover {
+  color: orange;
+  //background-color: $off-black;
+}
