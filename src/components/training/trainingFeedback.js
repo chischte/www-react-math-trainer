@@ -61,14 +61,10 @@ function TrainingFeedback(props) {
         rpm: getRpm(),
       };
       firebase.database().ref(getDbPath()).update(dbEntry);
-      alert(
-        "Super " +
-          userName +
-          "! ...dein Punktestand wurde gespeichert."
-      );
+      alert("Super " + userName + "! ...dein Punktestand wurde gespeichert.");
       console.log("created training score");
     }
-  }, [getDbPath, getRpm, userIsLoggedIn,userName]);
+  }, [getDbPath, getRpm, userIsLoggedIn, userName]);
 
   // get DB connection:
   function getDbConnection(ref) {
@@ -115,17 +111,29 @@ function TrainingFeedback(props) {
         );
       }
     }
-  }, [dbSnapshot, getRpm, updateNewRecordInDb,userName]);
+  }, [dbSnapshot, getRpm, updateNewRecordInDb, userName]);
 
   return (
     <div>
-      Super {userName}! ...du hast das Training geschafft!
+      {userIsLoggedIn ? (
+        <h4>Super {userName}! ...du hast das Training geschafft!</h4>
+      ) : (
+        <div>
+          <h5>Super!...du hast das Training geschafft!</h5>
+          <h5 style={{ color: "red" }}>
+            Melde dich an, um weitere Levels freizuschalten <br></br>und deinen
+            Trainingsfortschritt zu speichern!
+          </h5>
+        </div>
+      )}
+      <h5>
+        Präge dir die langsamsten Rechnungen gut ein, <br></br> um schneller zu werden!
+        
+      </h5>
       <br></br>
-      Tip: Schreibe dir die langsamsten und falsch gelösten Rechnungen auf!
+      <h4>Speed: {getRpm()} rpm</h4>
       <br></br>
-      Geschwindigkeit: {getRpm()} rpm
-      <br></br>
-      (rpm = Rechnungen pro Minute)
+      
       <table className="after-training-table">
         <thead>
           <tr>
