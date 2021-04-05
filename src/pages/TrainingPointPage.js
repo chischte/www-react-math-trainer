@@ -46,7 +46,7 @@ function TrainingPointPage() {
                 history.push(
                   "/training_run/" +
                     pointOperationMode +
-                    "/level=1/range=" +
+                    "/level1/range=" +
                     rowNumber
                 );
               }}
@@ -59,7 +59,7 @@ function TrainingPointPage() {
                 history.push(
                   "/training_run/" +
                     pointOperationMode +
-                    "/level=2/range=" +
+                    "/level2/range=" +
                     rowNumber
                 );
               }}
@@ -72,7 +72,7 @@ function TrainingPointPage() {
                 history.push(
                   "/training_run/" +
                     pointOperationMode +
-                    "/level=drill/range=" +
+                    "/drill/range=" +
                     rowNumber
                 );
               }}

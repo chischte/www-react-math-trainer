@@ -12,7 +12,7 @@ function Header() {
       setUserName(authContext.currentUser.displayName);
       setUserIsLoggedIn(true);
     } else {
-      setUserName("nope");
+      setUserName("guest");
       setUserIsLoggedIn(false);
     }
   }, [authContext]);

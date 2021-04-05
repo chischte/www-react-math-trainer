@@ -55,22 +55,17 @@ function TrainingRunPage() {
     var urlLevel = splitUrl[splitUrl.length - 2];
 
     switch (urlLevel) {
-      case "level=1":
-        urlLevel = "level1";
+      case "level1":
         break;
-      case "level=2":
-        urlLevel = "level2";
+      case "level2":
         break;
-      case "level=drill":
-        urlLevel = "drill";
+      case "drill":
         break;
-      case "level=step":
-        urlLevel = "step";
+      case "step":
         break;
-      case "level=jump":
-        urlLevel = "jump";
+      case "jump":
         break;
-      case "level=big%20jump":
+      case "big%20jump":
         urlLevel = "big_jump";
         break;
       default:
@@ -125,9 +120,9 @@ function TrainingRunPage() {
     }
   }, [calculationsSolved, calculationsGenerated, questionArray, solutionArray]);
 
-useEffect(()=>{
-  console.log(currentSolution)
-},[currentSolution])
+  useEffect(() => {
+    console.log(currentSolution);
+  }, [currentSolution]);
 
   // VARIOUS FUNCTIONS: --------------------------------------------------------
 

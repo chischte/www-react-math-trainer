@@ -68,7 +68,7 @@ function TrainingFeedback(props) {
       );
       console.log("created training score");
     }
-  }, [getDbPath, getRpm, userIsLoggedIn]);
+  }, [getDbPath, getRpm, userIsLoggedIn,userName]);
 
   // get DB connection:
   function getDbConnection(ref) {
