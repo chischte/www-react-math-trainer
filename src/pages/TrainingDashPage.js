@@ -12,7 +12,6 @@ function TrainingDashPage() {
   const [dbSnapshot, setDbSnapshot] = useState();
   const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [dashOperator, setDashOperator] = useState();
-  const [userName, setUserName] = useState();
   const [userUid, setUserUid] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
@@ -40,11 +39,9 @@ function TrainingDashPage() {
 
   useEffect(() => {
     if (!!authContext.currentUser) {
-      setUserName(authContext.currentUser.displayName);
       setUserUid(authContext.currentUser.uid);
       setUserIsLoggedIn(true);
     } else {
-      setUserName("guest");
       setUserIsLoggedIn(false);
     }
   }, [authContext]);
@@ -84,7 +81,7 @@ function TrainingDashPage() {
   }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
 
   const getRpmFromDb = (level) => {
-    var rpm="-";
+    var rpm = "-";
     if (dbSnapshot) {
       try {
         if (level === "STEP") {
@@ -96,8 +93,10 @@ function TrainingDashPage() {
         if (level === "BIG JUMP") {
           rpm = dbSnapshot.big_jump[1].rpm;
         }
-        rpm+=" rpm"
-      } catch {}
+        rpm += " rpm";
+      } catch {
+        alert("invalid level");
+      }
     }
 
     return rpm;

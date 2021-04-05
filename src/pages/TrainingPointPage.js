@@ -1,23 +1,31 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState,useContext } from "react";
 import Header from "../components/Header";
 import { useHistory } from "react-router-dom";
+import * as firebase from "firebase/app";
+import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
 
 function TrainingPointPage() {
   const history = useHistory();
-  const [pointOperationMode, setPointOperationMode] = useState();
+  const authContext = useContext(AuthContext);
+
+  const [dbSnapshot, setDbSnapshot] = useState();
+  const [trainingDiscipline, setTrainingDiscipline] = useState();
   const [pointOperator, setPointOperator] = useState();
+  const [userUid, setUserUid] = useState();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+
 
   const setPointOperatorFromUrl = useCallback(() => {
     var splitUrl = window.location.href.split("/");
     var urlDiscipline = splitUrl[splitUrl.length - 1];
     switch (urlDiscipline) {
       case "multiplication":
-        setPointOperationMode("multiplication");
+        setTrainingDiscipline("multiplication");
         setPointOperator("×");
         break;
       case "division":
-        setPointOperationMode("division");
+        setTrainingDiscipline("division");
         setPointOperator("÷");
         break;
       default:
@@ -29,6 +37,73 @@ function TrainingPointPage() {
   useEffect(() => {
     setPointOperatorFromUrl();
   }, [setPointOperatorFromUrl]);
+
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      setUserUid(authContext.currentUser.uid);
+      setUserIsLoggedIn(true);
+    } else {
+      setUserIsLoggedIn(false);
+    }
+  }, [authContext]);
+
+  const getDbPath = useCallback(() => {
+    const dbPath = "/users/" + userUid + "/training/" + trainingDiscipline;
+    return dbPath;
+  }, [trainingDiscipline, userUid]);
+
+  // get DB connection:
+  function getDbConnection(ref) {
+    return new Promise((resolve, reject) => {
+      const userRef = firebase.database().ref(ref);
+      const onError = (error) => reject(error);
+      const onData = (snapshot) => resolve(snapshot.val());
+      userRef.on("value", onData, onError);
+    });
+  }
+
+  // wait for DB connection and get snapshot:
+  const getDbSnapshot = React.useCallback(async (ref) => {
+    try {
+      const dbUserData = await getDbConnection(ref);
+      if (dbUserData) {
+        setDbSnapshot(dbUserData);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  // establish DB connection only if user is logged in:
+  useEffect(() => {
+    if (!!userIsLoggedIn) {
+      getDbSnapshot(getDbPath()); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+    }
+  }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
+
+  const getRpmFromDb = (level,range) => {
+    var rpm = "-";
+    if (dbSnapshot) {
+      console.log(dbSnapshot.level1);
+      try {
+        if (level === "level1") {
+          rpm = dbSnapshot.level1[range].rpm;
+        }
+        if (level === "level2") {
+          rpm = dbSnapshot.level2[range].rpm;
+        }
+        if (level === "drill") {
+          rpm = dbSnapshot.drill[range].rpm;
+        }
+        rpm += " rpm";
+      } catch {
+        //alert("invalid level");
+      }
+    }
+
+    return rpm;
+  };
+
 
   const generateButtonRow = (rowNumber) => {
     return (
@@ -45,7 +120,7 @@ function TrainingPointPage() {
               onClick={() => {
                 history.push(
                   "/training_run/" +
-                    pointOperationMode +
+                    trainingDiscipline +
                     "/level1/range=" +
                     rowNumber
                 );
@@ -58,7 +133,7 @@ function TrainingPointPage() {
               onClick={() => {
                 history.push(
                   "/training_run/" +
-                    pointOperationMode +
+                    trainingDiscipline +
                     "/level2/range=" +
                     rowNumber
                 );
@@ -71,7 +146,7 @@ function TrainingPointPage() {
               onClick={() => {
                 history.push(
                   "/training_run/" +
-                    pointOperationMode +
+                    trainingDiscipline +
                     "/drill/range=" +
                     rowNumber
                 );
@@ -79,6 +154,7 @@ function TrainingPointPage() {
             >
               DRILL
             </button>
+            {getRpmFromDb("drill",rowNumber)}
           </tr>
         </table>
       </div>
