@@ -1,77 +1,80 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import * as firebase from "firebase/app";
+import { AuthContext } from "../components/firebase/Auth";
 
-export default class Header extends React.Component {
-  state = {};
+function Header() {
+  const authContext = useContext(AuthContext);
+  const [userName, setUserName] = useState();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
-  componentDidMount() {
-    if (!!firebase.auth().currentUser) {
-      const user = firebase.auth().currentUser;
-      this.setState({ userName: user.displayName });
-      this.setState({ userIsLoggedIn: !!firebase.auth().currentUser });
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      setUserName(authContext.currentUser.displayName);
+      setUserIsLoggedIn(true);
+    } else {
+      setUserName("nope");
+      setUserIsLoggedIn(false);
     }
-  }
+  }, [authContext]);
 
-  componentDidUpdate() {}
+  return (
+    <div className="header">
+      <NavLink
+        to="/"
+        exact={true}
+        className="header_link"
+        activeClassName="is-active"
+      >
+        home
+      </NavLink>
+      <span> </span>
+      <NavLink
+        to="/training_select"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        training
+      </NavLink>
+      <span> </span>
 
-  render() {
-    return (
-      <div className="header">
+      <NavLink
+        to="/competition"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        wettkampf
+      </NavLink>
+      <span> </span>
+
+      <NavLink
+        to="/highscore"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        highscore
+      </NavLink>
+      <span> </span>
+
+      {userIsLoggedIn ? (
         <NavLink
-          to="/"
-          exact={true}
+          to="/account"
           className="header_link"
           activeClassName="is-active"
         >
-          home
+          {userName}
         </NavLink>
-        <span> </span>
+      ) : (
         <NavLink
-          to="/training_select"
+          to="/login"
           className="header_link"
           activeClassName="is-active"
         >
-          training
+          anmelden
         </NavLink>
-        <span> </span>
-
-        <NavLink
-          to="/competition"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          wettkampf
-        </NavLink>
-        <span> </span>
-
-        <NavLink
-          to="/highscore"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          highscore
-        </NavLink>
-        <span> </span>
-
-        {this.state.userIsLoggedIn ? (
-          <NavLink
-            to="/login"
-            className="header_link"
-            activeClassName="is-active"
-          >
-            {this.state.userName}
-          </NavLink>
-        ) : (
-          <NavLink
-            to="/account"
-            className="header_link"
-            activeClassName="is-active"
-          >
-            anmelden
-          </NavLink>
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
+
+export default Header;
