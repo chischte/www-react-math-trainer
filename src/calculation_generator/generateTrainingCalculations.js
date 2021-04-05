@@ -1,5 +1,3 @@
-import { DisciplineEnum } from "../enums/Enums";
-
 export default class GenerateCalculations {
   constructor() {
     this.questionArray = [];
@@ -12,16 +10,16 @@ export default class GenerateCalculations {
     this.solutionArray = [];
 
     switch (discipline) {
-      case DisciplineEnum.addition:
+      case "addition":
         this.generateAdditions(level);
         break;
-      case DisciplineEnum.subtraction:
+      case "subtraction":
         this.generateSubtractions(level);
         break;
-      case DisciplineEnum.multiplication:
+      case "multiplication":
         this.generateMultiplications(level, range);
         break;
-      case DisciplineEnum.division:
+      case "division":
         this.generateDivisions(level, range);
         break;
       default:
@@ -38,7 +36,7 @@ export default class GenerateCalculations {
       case "jump":
         this.generateAdditionsJump();
         break;
-      case "big jump":
+      case "big_jump":
         this.generateAdditionsBigJump();
         break;
       default:
@@ -54,7 +52,7 @@ export default class GenerateCalculations {
       case "jump":
         this.generateSubtractionsJump();
         break;
-      case "big jump":
+      case "big_jump":
         this.generateSubtractionsBigJump();
         break;
       default:
@@ -65,10 +63,10 @@ export default class GenerateCalculations {
 
   generateMultiplications(level, range) {
     switch (level) {
-      case "1":
+      case "level1":
         this.generateMultiplicationsLevel1(range);
         break;
-      case "2":
+      case "level2":
         this.generateMultiplicationsLevel2(range);
         break;
       case "drill":
@@ -82,10 +80,10 @@ export default class GenerateCalculations {
 
   generateDivisions(level, range) {
     switch (level) {
-      case "1":
+      case "level1":
         this.generateDivisionsLevel1(range);
         break;
-      case "2":
+      case "level2":
         this.generateDivisionsLevel2(range);
         break;
       case "drill":

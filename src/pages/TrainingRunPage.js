@@ -3,9 +3,8 @@ import Header from "../components/Header";
 import GenerateCalculations from "../calculation_generator/generateTrainingCalculations";
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
-import { DisciplineEnum } from "../enums/Enums";
 import BackHomeButton from "../components/BackHomeButton";
-import TrainingFeedback from "../components/training/trainingFeedback";
+import TrainingFeedback from "../components/training/TrainingFeedback";
 
 const generateCalculations = new GenerateCalculations();
 
@@ -37,21 +36,18 @@ function TrainingRunPage() {
 
     switch (urlDiscipline) {
       case "addition":
-        setTrainingDiscipline(DisciplineEnum.addition);
         break;
       case "subtraction":
-        setTrainingDiscipline(DisciplineEnum.subtraction);
         break;
       case "multiplication":
-        setTrainingDiscipline(DisciplineEnum.multiplication);
         break;
       case "division":
-        setTrainingDiscipline(DisciplineEnum.division);
         break;
       default:
         alert("invalid URL discipline");
         break;
     }
+    setTrainingDiscipline(urlDiscipline);
   }, []);
 
   const setLevelFromUrl = () => {
@@ -60,10 +56,10 @@ function TrainingRunPage() {
 
     switch (urlLevel) {
       case "level=1":
-        urlLevel = "1";
+        urlLevel = "level1";
         break;
       case "level=2":
-        urlLevel = "2";
+        urlLevel = "level2";
         break;
       case "level=drill":
         urlLevel = "drill";
@@ -75,7 +71,7 @@ function TrainingRunPage() {
         urlLevel = "jump";
         break;
       case "level=big%20jump":
-        urlLevel = "big jump";
+        urlLevel = "big_jump";
         break;
       default:
         alert("invalid URL level");
@@ -129,6 +125,10 @@ function TrainingRunPage() {
     }
   }, [calculationsSolved, calculationsGenerated, questionArray, solutionArray]);
 
+useEffect(()=>{
+  console.log(currentSolution)
+},[currentSolution])
+
   // VARIOUS FUNCTIONS: --------------------------------------------------------
 
   const getNewCalculation = () => {
@@ -150,7 +150,7 @@ function TrainingRunPage() {
       var _answer = solutionArray[i];
       var _time = solvingTimeArray[i];
       var _error = errorArray[i];
-      var _key = [i+1];
+      var _key = [i + 1];
       overviewArray.push([_question, _answer, _time, _error, _key]);
     }
     // SortOverviewArray by slowest calculations
@@ -158,12 +158,7 @@ function TrainingRunPage() {
       return b[2] - a[2];
     });
     return overviewArray;
-  }, [
-    errorArray,
-    questionArray,
-    solutionArray,
-    solvingTimeArray,    
-  ]);
+  }, [errorArray, questionArray, solutionArray, solvingTimeArray]);
 
   const addSlowestAnswersToDrill = useCallback(() => {
     var overviewArray = getOverviewArray();
@@ -186,11 +181,11 @@ function TrainingRunPage() {
       case "readyToStart":
         if (calculationsSolved === 1) {
           if (
-            trainingLevel === "1" ||
-            trainingLevel === "2" ||
+            trainingLevel === "level1" ||
+            trainingLevel === "level2" ||
             trainingLevel === "step" ||
             trainingLevel === "jump" ||
-            trainingLevel === "big jump"
+            trainingLevel === "big_jump"
           ) {
             setTrainingStage("running");
           }
@@ -372,7 +367,10 @@ function TrainingRunPage() {
       <div>
         <TrainingFeedback
           overviewArray={overviewArray}
-          totalTrainingTime={totalTrainingTime}          
+          totalTrainingTime={totalTrainingTime}
+          trainingDiscipline={trainingDiscipline}
+          trainingLevel={trainingLevel}
+          trainingRange={trainingRange}
         />
       </div>
     );
