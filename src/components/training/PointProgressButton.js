@@ -9,10 +9,9 @@ function ProgressButton(props) {
   const calculateButtonParameters = useCallback(() => {
     const widthQuotient = rpm / rpmGreen;
     // Calculate width:
-    var greenWidth = 19;
+    var greenWidth = 30;
     var currentWidth = greenWidth * widthQuotient;
     currentWidth = Math.floor(currentWidth);
-    console.log("widthQuotient:"+ currentWidth)
     currentWidth += "rem";
     setWidth(currentWidth);
     //AssignColor:

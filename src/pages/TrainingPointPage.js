@@ -108,7 +108,9 @@ function TrainingPointPage() {
     return (
       <div>
         <table className="point-training-selector-table">
+          <thead>
           <tr>
+          <td>
             <button className="pt_nohover_button">
               {rowNumber}
               {pointOperator}
@@ -163,7 +165,7 @@ function TrainingPointPage() {
                   
                     <ProgressButton 
                     rpm={getRpmFromDb("drill", rowNumber)}
-                    rpmGreen={100}
+                    rpmGreen={70}
                     />
                  
                 )}
@@ -171,7 +173,9 @@ function TrainingPointPage() {
             ) : (
               "-->"
             )}
+            </td>
           </tr>
+          </thead>
         </table>
       </div>
     );

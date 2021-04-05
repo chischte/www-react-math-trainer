@@ -19,6 +19,7 @@ function Header() {
 
   return (
     <div className="header">
+      <br></br>
       <NavLink
         to="/"
         exact={true}
