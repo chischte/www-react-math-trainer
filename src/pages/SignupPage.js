@@ -149,16 +149,13 @@ export default class SignupPage extends React.Component {
 
   createNicknameEntryDB = () => {
     if (!!firebase.auth().currentUser) {
-      let user = firebase.auth().currentUser;
-      let uid = user.uid;
       let dbEntry = {
-        uid: uid,
         name: this.state.userName,
       };
 
       firebase
         .database()
-        .ref("/nicknames/" + uid)
+        .ref("/nicknames/"+this.state.userName)
         .update(dbEntry);
     }
   };

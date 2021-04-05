@@ -356,7 +356,7 @@ export default class GenerateCalculations {
   //#region MULTIPLICATIONS ----------------------------------------------------
 
   generateMultiplicationsLevel1(range) {
-    for (var i = 1; i <= 3; i++) {
+    for (var i = 1; i <= 10; i++) {
       this.questionArray.push(i + "×" + range);
       var solution = i * range;
       this.solutionArray.push(solution + "");

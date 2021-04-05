@@ -22,6 +22,10 @@ export default class LoginPage extends React.Component {
                 <Header/>
                 <br></br>
                 <h3>Wilkommen beim Mathe-Trainer!</h3>
+                <br></br>
+                <h5>Melde dich an...</h5>
+                <h5>...</h5>
+                <h5>-> rpm bedeutet Rechnungen pro Minute &lt;-</h5>
             </div>
         );
     }

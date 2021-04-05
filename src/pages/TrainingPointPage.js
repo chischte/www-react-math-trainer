@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as firebase from "firebase/app";
 import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
+import ProgressButton from "../components/training/PointProgressButton";
 
 function TrainingPointPage() {
   const history = useHistory();
@@ -95,7 +96,7 @@ function TrainingPointPage() {
           rpm = dbSnapshot.drill[range].rpm;
         }
         //rpm += " rpm";
-      } catch(e) {
+      } catch (e) {
         console.log(e);
       }
     }
@@ -158,8 +159,14 @@ function TrainingPointPage() {
                 >
                   DRILL
                 </button>
-                {getRpmFromDb("drill", rowNumber)>0  &&
-                  getRpmFromDb("drill", rowNumber) + "rpm"}
+                {getRpmFromDb("drill", rowNumber) > 0 && (
+                  
+                    <ProgressButton 
+                    rpm={getRpmFromDb("drill", rowNumber)}
+                    rpmGreen={100}
+                    />
+                 
+                )}
               </span>
             ) : (
               "-->"

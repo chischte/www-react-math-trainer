@@ -1,0 +1,35 @@
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "users": {
+            "$user_id": {
+              ".read": "$user_id === auth.uid",
+                ".write": "$user_id === auth.uid"
+            }
+        },
+        "groups": {
+            "$group_name": {
+                "highscore": {
+                    ".read": true,
+                    "$user_id": {
+                        ".write": "$user_id === auth.uid"
+                    }
+                },
+                "group_info": {
+                    ".read": true,
+                    "$user_id": {
+                        ".write": "$user_id === auth.uid"
+                    }
+                }
+            }
+        },
+        "nicknames": {
+            ".read": true,
+            "$user_id": {
+                ".write": "!data.exists()"
+            }
+        },
+        
+    }
+}
