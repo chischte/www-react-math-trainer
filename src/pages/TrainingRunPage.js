@@ -4,7 +4,8 @@ import GenerateCalculations from "../calculation_generator/generateTrainingCalcu
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
 import { DisciplineEnum } from "../enums/Enums";
-import BackHomeButton from "../components/BackHomeButton"
+import BackHomeButton from "../components/BackHomeButton";
+import TrainingFeedback from "../components/training/trainingFeedback";
 
 const generateCalculations = new GenerateCalculations();
 
@@ -149,7 +150,7 @@ function TrainingRunPage() {
       var _answer = solutionArray[i];
       var _time = solvingTimeArray[i];
       var _error = errorArray[i];
-      var _key = timeElapsedArray[i];
+      var _key = [i+1];
       overviewArray.push([_question, _answer, _time, _error, _key]);
     }
     // SortOverviewArray by slowest calculations
@@ -161,8 +162,7 @@ function TrainingRunPage() {
     errorArray,
     questionArray,
     solutionArray,
-    solvingTimeArray,
-    timeElapsedArray,
+    solvingTimeArray,    
   ]);
 
   const addSlowestAnswersToDrill = useCallback(() => {
@@ -252,11 +252,6 @@ function TrainingRunPage() {
 
   const updateTimeElapsed = (timeElapsed) => {
     setTimeElapsed(timeElapsed);
-  };
-
-  const getRpm = () => {
-    const rpm = Math.round(60 / (totalTrainingTime / calculationsSolved));
-    return rpm;
   };
 
   // MONITOR TRAINING PERFORMANCE ----------------------------------------------
@@ -361,7 +356,7 @@ function TrainingRunPage() {
           markUserError={markUserError}
         />
         <br></br>
-        Noch zu lösen: {numberOfQuestions-calculationsSolved} Rechnungen
+        Noch zu lösen: {numberOfQuestions - calculationsSolved} Rechnungen
         <br></br>
         <Stopwatch
           updateTimeElapsed={updateTimeElapsed}
@@ -373,51 +368,12 @@ function TrainingRunPage() {
 
   const showTrainingFeedback = () => {
     var overviewArray = getOverviewArray();
-    console.log(overviewArray);
-
     return (
       <div>
-        Super, du hast das Training geschafft!
-        <br></br>
-        Tip: Schreibe dir die langsamsten und falsch gelösten Rechnungen auf!
-        <br></br>
-        Geschwindigkeit: {getRpm()} rpm
-        <br></br>
-        (rpm = Rechnungen pro Minute)
-        <table className="after-training-table">
-          <thead>
-            <tr>
-              <th colSpan={4} className="tra_th title-header">
-                AUSWERTUNG
-              </th>
-            </tr>
-            <tr>
-              <th className="tra_th">#</th>
-              <th className="tra_th">Rechnung</th>
-              <th className="tra_th">Zeit</th>
-              <th className="tra_th">Fehler</th>
-            </tr>
-          </thead>
-          <tfoot>
-            {overviewArray.map((array, index) => (
-              <tr key={array[4] + array[1]}>
-                <td className="tra_td">{index + 1}</td>
-                <td className="tra_td">{array[0]}</td>
-                {index < 3 ? (
-                  <td className="tra_td error_td">{array[2]}s</td>
-                ) : (
-                  <td className="tra_td">{array[2]}s</td>
-                )}
-
-                {array[3] === true ? (
-                  <td className="tra_td error_td">&times;</td>
-                ) : (
-                  <td className="tra_td"></td>
-                )}
-              </tr>
-            ))}
-          </tfoot>
-        </table>
+        <TrainingFeedback
+          overviewArray={overviewArray}
+          totalTrainingTime={totalTrainingTime}          
+        />
       </div>
     );
   };
@@ -434,9 +390,7 @@ function TrainingRunPage() {
       {trainingStage === "drillStage3" && showTrainingRunning()}
       {trainingStage === "completed" && showTrainingFeedback()}
       <br></br>
-     <BackHomeButton 
-     buttonName="BACK"
-     url="/training_select" />
+      <BackHomeButton buttonName="BACK" url="/training_select" />
       <br></br>
     </div>
   );
