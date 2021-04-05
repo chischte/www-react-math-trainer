@@ -86,16 +86,14 @@ function TrainingDashPage() {
       try {
         if (level === "STEP") {
           rpm = dbSnapshot.step[1].rpm;
-        }
-        if (level === "JUMP") {
+        } else if (level === "JUMP") {
           rpm = dbSnapshot.jump[1].rpm;
-        }
-        if (level === "BIG JUMP") {
+        } else if (level === "BIG JUMP") {
           rpm = dbSnapshot.big_jump[1].rpm;
         }
         rpm += " rpm";
-      } catch {
-        alert("invalid level");
+      } catch (e) {
+        console.log(e);
       }
     }
 

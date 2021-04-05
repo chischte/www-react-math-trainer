@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState,useContext } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import Header from "../components/Header";
 import { useHistory } from "react-router-dom";
 import * as firebase from "firebase/app";
@@ -14,7 +14,6 @@ function TrainingPointPage() {
   const [pointOperator, setPointOperator] = useState();
   const [userUid, setUserUid] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
-
 
   const setPointOperatorFromUrl = useCallback(() => {
     var splitUrl = window.location.href.split("/");
@@ -81,7 +80,7 @@ function TrainingPointPage() {
     }
   }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
 
-  const getRpmFromDb = (level,range) => {
+  const getRpmFromDb = (level, range) => {
     var rpm = "-";
     if (dbSnapshot) {
       console.log(dbSnapshot.level1);
@@ -95,15 +94,14 @@ function TrainingPointPage() {
         if (level === "drill") {
           rpm = dbSnapshot.drill[range].rpm;
         }
-        rpm += " rpm";
-      } catch {
-        //alert("invalid level");
+        //rpm += " rpm";
+      } catch(e) {
+        console.log(e);
       }
     }
 
     return rpm;
   };
-
 
   const generateButtonRow = (rowNumber) => {
     return (
@@ -128,33 +126,44 @@ function TrainingPointPage() {
             >
               LEVEL 1
             </button>
-            <button
-              className="pt_hover_button"
-              onClick={() => {
-                history.push(
-                  "/training_run/" +
-                    trainingDiscipline +
-                    "/level2/range=" +
-                    rowNumber
-                );
-              }}
-            >
-              LEVEL 2
-            </button>
-            <button
-              className="pt_hover_button"
-              onClick={() => {
-                history.push(
-                  "/training_run/" +
-                    trainingDiscipline +
-                    "/drill/range=" +
-                    rowNumber
-                );
-              }}
-            >
-              DRILL
-            </button>
-            {getRpmFromDb("drill",rowNumber)}
+            {getRpmFromDb("level1", rowNumber) > 10 ? (
+              <button
+                className="pt_hover_button"
+                onClick={() => {
+                  history.push(
+                    "/training_run/" +
+                      trainingDiscipline +
+                      "/level2/range=" +
+                      rowNumber
+                  );
+                }}
+              >
+                LEVEL 2
+              </button>
+            ) : (
+              "-->"
+            )}
+            {getRpmFromDb("level2", rowNumber) > 10 ? (
+              <span>
+                <button
+                  className="pt_hover_button"
+                  onClick={() => {
+                    history.push(
+                      "/training_run/" +
+                        trainingDiscipline +
+                        "/drill/range=" +
+                        rowNumber
+                    );
+                  }}
+                >
+                  DRILL
+                </button>
+                {getRpmFromDb("drill", rowNumber)>0  &&
+                  getRpmFromDb("drill", rowNumber) + "rpm"}
+              </span>
+            ) : (
+              "-->"
+            )}
           </tr>
         </table>
       </div>
@@ -175,9 +184,7 @@ function TrainingPointPage() {
       {generateButtonRow(9)}
       {generateButtonRow(10)}
       <br></br>
-      <BackHomeButton 
-      buttonName="BACK"
-      url="/training_select" />
+      <BackHomeButton buttonName="BACK" url="/training_select" />
     </div>
   );
 }

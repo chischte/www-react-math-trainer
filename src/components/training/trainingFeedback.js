@@ -115,7 +115,7 @@ function TrainingFeedback(props) {
         );
       }
     }
-  }, [dbSnapshot, getRpm, updateNewRecordInDb]);
+  }, [dbSnapshot, getRpm, updateNewRecordInDb,userName]);
 
   return (
     <div>
