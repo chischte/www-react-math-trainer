@@ -112,7 +112,7 @@ function TrainingRunPage() {
     setQuestionArray(generateCalculations.getQuestionArray());
     setSolutionArray(generateCalculations.getSolutionArray());
     setNumberOfQuestions(generateCalculations.getQuestionArray().length);
-  }, [trainingLevel, trainingRange, trainingDiscipline, questionArray]);
+  }, [trainingLevel, trainingRange, trainingDiscipline]);
 
   useEffect(() => {
     if (!calculationsGenerated && trainingDiscipline) {

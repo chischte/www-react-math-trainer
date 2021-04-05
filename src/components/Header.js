@@ -1,10 +1,17 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import * as firebase from "firebase/app";
 
 export default class Header extends React.Component {
   state = {};
 
-  componentDidMount() {}
+  componentDidMount() {
+    if (!!firebase.auth().currentUser) {
+      const user = firebase.auth().currentUser;
+      this.setState({ userName: user.displayName });
+      this.setState({ userIsLoggedIn: !!firebase.auth().currentUser });
+    }
+  }
 
   componentDidUpdate() {}
 
@@ -20,11 +27,13 @@ export default class Header extends React.Component {
           home
         </NavLink>
         <span> </span>
-        <NavLink to="/training_select"
-        className="header_link"
-        activeClassName="is-active"
-        
-        >training</NavLink>
+        <NavLink
+          to="/training_select"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          training
+        </NavLink>
         <span> </span>
 
         <NavLink
@@ -45,13 +54,23 @@ export default class Header extends React.Component {
         </NavLink>
         <span> </span>
 
-        <NavLink
-          to="/account"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          account
-        </NavLink>
+        {this.state.userIsLoggedIn ? (
+          <NavLink
+            to="/login"
+            className="header_link"
+            activeClassName="is-active"
+          >
+            {this.state.userName}
+          </NavLink>
+        ) : (
+          <NavLink
+            to="/account"
+            className="header_link"
+            activeClassName="is-active"
+          >
+            anmelden
+          </NavLink>
+        )}
       </div>
     );
   }
