@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import * as firebase from "firebase/app";
 import { AuthContext } from "../components/firebase/Auth";
 
 function Header() {
