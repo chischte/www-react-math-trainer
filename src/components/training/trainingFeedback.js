@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import * as firebase from "firebase/app";
 import { AuthContext } from "../firebase/Auth";
 
 function TrainingFeedback(props) {
   const authContext = useContext(AuthContext);
 
-  const [overviewArray, setOverviewArray] = useState(props.overviewArray);
-  const [trainingDiscipline, setTrainingDiscipline] = useState(
-    props.trainingDiscipline
-  );
-  const [trainingLevel, setTrainingLevel] = useState(props.trainingLevel);
-  const [trainingRange, setTrainingRange] = useState(props.trainingRange);
+  const [overviewArray] = useState(props.overviewArray);
+  const [trainingDiscipline] = useState(props.trainingDiscipline);
+  const [trainingLevel] = useState(props.trainingLevel);
+  const [trainingRange] = useState(props.trainingRange);
   const [userName, setUserName] = useState();
   const [userUid, setUserUid] = useState();
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const [dbSnapshot, setDbSnapshot] = useState();
 
-  useEffect(() => {}, [props]);
+  const getRpm = useCallback(() => {
+    const calculationsSolved = props.overviewArray.length;
+    const rpm = Math.round(60 / (props.totalTrainingTime / calculationsSolved));
+    return rpm;
+  }, [props]);
 
   useEffect(() => {
     if (!!authContext.currentUser) {
@@ -29,7 +31,7 @@ function TrainingFeedback(props) {
     }
   }, [authContext]);
 
-  const getDbPath = () => {
+  const getDbPath = useCallback(() => {
     const dbPath =
       "/users/" +
       userUid +
@@ -40,7 +42,33 @@ function TrainingFeedback(props) {
       "/" +
       trainingRange;
     return dbPath;
-  };
+  }, [trainingDiscipline, trainingLevel, trainingRange, userUid]);
+
+  // update DB entry:
+  const updateNewRecordInDb = useCallback(() => {
+    if (userIsLoggedIn) {
+      let dbEntry = {
+        rpm: getRpm(),
+      };
+      firebase.database().ref(getDbPath()).update(dbEntry);
+      console.log("updated training score");
+    }
+  }, [getDbPath, getRpm, userIsLoggedIn]);
+
+  const createFirstDbEntry = useCallback(() => {
+    if (!!userIsLoggedIn) {
+      let dbEntry = {
+        rpm: getRpm(),
+      };
+      firebase.database().ref(getDbPath()).update(dbEntry);
+      alert(
+        "Super " +
+          userName +
+          "! ...dein Punktestand wurde gespeichert."
+      );
+      console.log("created training score");
+    }
+  }, [getDbPath, getRpm, userIsLoggedIn]);
 
   // get DB connection:
   function getDbConnection(ref) {
@@ -53,54 +81,45 @@ function TrainingFeedback(props) {
   }
 
   // wait for DB connection and get snapshot:
-  const getDbSnapshot = React.useCallback(async (ref) => {
-    try {
-      const dbUserData = await getDbConnection(ref);
-      setDbSnapshot(dbUserData);
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const getDbSnapshot = React.useCallback(
+    async (ref) => {
+      try {
+        const dbUserData = await getDbConnection(ref);
+        if (dbUserData) {
+          setDbSnapshot(dbUserData);
+        } else {
+          createFirstDbEntry();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [createFirstDbEntry]
+  );
 
-  // get DB connection if user is logged in:
+  // establish DB connection only if user is logged in:
   useEffect(() => {
     if (!!userIsLoggedIn) {
-      getDbSnapshot("/users/" + userUid + "/training/"); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+      getDbSnapshot(getDbPath()); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
     }
-  }, [userIsLoggedIn]);
+  }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
 
-  // update component with new snapshot:
+  // check for new record
   useEffect(() => {
     if (dbSnapshot) {
-      //setUserGroups(dbSnapshot.groups);
-      console.log(dbSnapshot.favorite_group);
-      //setFavoriteGroup(dbSnapshot.favorite_group);
+      console.log(dbSnapshot);
+      if (getRpm() > dbSnapshot.rpm) {
+        updateNewRecordInDb();
+        alert(
+          "SUPER " + userName + "! EIN NEUER REKORD IN DIESER DISZIPLIN!!!"
+        );
+      }
     }
-  }, [dbSnapshot]);
-
-  //CHECK FOR NEW RECORD
-  //UPDATE DB
-
-  // update DB entry:
-  useEffect(() => {
-    if (userIsLoggedIn) {
-      let dbEntry = {
-        rpm: getRpm(),
-      };
-      firebase.database().ref(getDbPath()).update(dbEntry);
-      console.log("updated training score");
-    }
-  }, [userIsLoggedIn]);
-
-  const getRpm = () => {
-    const calculationsSolved = props.overviewArray.length;
-    const rpm = Math.round(60 / (props.totalTrainingTime / calculationsSolved));
-    return rpm;
-  };
+  }, [dbSnapshot, getRpm, updateNewRecordInDb]);
 
   return (
     <div>
-      Super, du hast das Training geschafft!
+      Super {userName}! ...du hast das Training geschafft!
       <br></br>
       Tip: Schreibe dir die langsamsten und falsch gelösten Rechnungen auf!
       <br></br>
