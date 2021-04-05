@@ -36,13 +36,14 @@ export default class LoginPage extends React.Component {
 
   handleLogIn = (event) => {
     event.preventDefault();
-    const { email, password } = event.target.elements;
+    var { email, password } = event.target.elements;
+    email = email.value + "@mathe-trainer.oo";
     this.setState(
-      { userEmail: email.value, userPassword: password.value },
+      { userEmail: email, userPassword: password.value },
       () => {}
     );
 
-    this.logInExistingUserAsync(email.value, password.value);
+    this.logInExistingUserAsync(email, password.value);
   };
 
   async logInExistingUserAsync(email, password) {
@@ -78,7 +79,7 @@ export default class LoginPage extends React.Component {
                       name="email"
                       fullWidth
                       id="outlined-basic"
-                      label="email"
+                      label="nickname"
                       variant="outlined"
                     />
                   </Box>
@@ -99,11 +100,11 @@ export default class LoginPage extends React.Component {
                       color="primary"
                       fullWidth
                     >
-                      Log In
+                      Melde dich an
                     </Button>
                   </Box>
                 </form>
-                <h5> OR</h5>
+                <h5> ODER</h5>
                 <Box m={0} pt={1}>
                   <Button
                     onClick={this.handleSwitchToSignup}
@@ -111,7 +112,7 @@ export default class LoginPage extends React.Component {
                     color="secondary"
                     fullWidth
                   >
-                    Create A New Account
+                    Erstelle einen neuen Account
                   </Button>
                 </Box>
               </div>

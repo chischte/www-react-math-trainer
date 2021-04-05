@@ -59,11 +59,13 @@ export default class SignupPage extends React.Component {
 
   handleCreateNewUser = (event) => {
     event.preventDefault();
-    const { email, password, name } = event.target.elements;
+    var { password, name } = event.target.elements;
+    name = name.value.trim();
+    const email = name + "@" + "mathe-trainer.oo";
     this.setState(
       {
-        userName: name.value.trim(),
-        userEmail: email.value,
+        userName: name,
+        userEmail: email,
         userPassword: password.value,
       },
       () => {
@@ -103,6 +105,13 @@ export default class SignupPage extends React.Component {
         this.createNicknameEntryDB();
         this.setUserDisplayName();
         this.setState({ userIsLoggedIn: !!firebase.auth().currentUser });
+        alert(
+          "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
+            this.state.userName +
+            "\r\nDein Passwort ist:" +
+            this.state.userPassword +
+            "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+        );
       }
     }
   }
@@ -155,7 +164,7 @@ export default class SignupPage extends React.Component {
 
       firebase
         .database()
-        .ref("/nicknames/"+this.state.userName)
+        .ref("/nicknames/" + this.state.userName)
         .update(dbEntry);
     }
   };
@@ -172,10 +181,10 @@ export default class SignupPage extends React.Component {
                   <form onSubmit={this.handleCreateNewUser}>
                     <Box m={0} pt={1}>
                       <TextField
-                        name="email"
+                        name="name"
                         fullWidth
                         id="outlined-basic"
-                        label="email"
+                        label="nickname"
                         variant="outlined"
                       />
                     </Box>
@@ -186,15 +195,6 @@ export default class SignupPage extends React.Component {
                         fullWidth
                         id="outlined-basic"
                         label="password"
-                        variant="outlined"
-                      />
-                    </Box>
-                    <Box m={0} pt={1}>
-                      <TextField
-                        name="name"
-                        fullWidth
-                        id="outlined-basic"
-                        label="name"
                         variant="outlined"
                       />
                     </Box>
@@ -212,17 +212,17 @@ export default class SignupPage extends React.Component {
                           <FormControlLabel
                             value="jedi"
                             control={<Radio />}
-                            label="I'm a Jedi"
+                            label="Ich bin ein Jedi"
                           />
                           <FormControlLabel
                             value="sith"
                             control={<Radio />}
-                            label="I'm a Sith"
+                            label="Ich bin ein Sith"
                           />
                           <FormControlLabel
                             value="unicorn"
                             control={<Radio />}
-                            label="I'm a Unicorn"
+                            label="Ich bin ein Einhorn"
                           />
                         </RadioGroup>
                       </FormControl>
@@ -234,7 +234,7 @@ export default class SignupPage extends React.Component {
                         color="secondary"
                         fullWidth
                       >
-                        Create Account
+                        Account Erstellen
                       </Button>
                     </Box>
                   </form>
