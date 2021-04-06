@@ -14,7 +14,8 @@
 }
 
 .dt_nohover_button,
-.dt_hover_button {
+.dt_hover_button,
+.dt_status_button {
   height: 4rem;
   border: none;
   border-radius: $s-radius;
@@ -44,4 +45,11 @@
 .dt_hover_button:hover {
   color: orange;
   background-color: $off-black;
+}
+
+.dt_status_button {
+  height: 3rem;
+  font-weight: 600;
+  font-size: $s-size;
+  padding-top: 0.45rem;
 }

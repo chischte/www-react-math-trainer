@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import TrainingSelector from "../components/training/TrainingSelector";
 import BackHomeButton from "../components/BackHomeButton"
 
+
 function TrainingSelectPage() {
   return (
     <div>

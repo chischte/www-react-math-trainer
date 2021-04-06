@@ -5,6 +5,7 @@ function ProgressButton(props) {
   const [width, setWidth] = useState();
   const [rpm] = useState(props.rpm);
   const [rpmGreen] = useState(props.rpmGreen);
+  const [pointOrDash] = useState(props.pointOrDash);
 
   const calculateButtonParameters = useCallback(() => {
     const widthQuotient = rpm / rpmGreen;
@@ -24,21 +25,29 @@ function ProgressButton(props) {
     }
   }, [rpm, rpmGreen]);
 
-
   useEffect(() => {
     calculateButtonParameters();
-  }, [props,calculateButtonParameters]);
+  }, [props, calculateButtonParameters]);
 
- 
   return (
-    
-      <button
-        className="pt_status_button"
-        style={{ backgroundColor: color, width: width }}
-      >
-        {rpm}rpm
-      </button>
-    
+    <span>
+      {pointOrDash === "point" && (
+        <button
+          className="pt_status_button"
+          style={{ backgroundColor: color, width: width }}
+        >
+          {rpm}rpm
+        </button>
+      )}
+       {pointOrDash === "dash" && (
+        <button
+          className="dt_status_button"
+          style={{ backgroundColor: color, width: width }}
+        >
+          {rpm}rpm
+        </button>
+      )}
+    </span>
   );
 }
 

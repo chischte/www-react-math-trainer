@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as firebase from "firebase/app";
 import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
-import ProgressButton from "../components/training/PointProgressButton";
+import ProgressButton from "../components/training/ProgressButton";
 
 function TrainingPointPage() {
   const history = useHistory();
@@ -109,72 +109,71 @@ function TrainingPointPage() {
       <div>
         <table className="point-training-selector-table">
           <thead>
-          <tr>
-          <td>
-            <button className="pt_nohover_button">
-              {rowNumber}
-              {pointOperator}
-              {rowNumber}
-            </button>
-            <button
-              className="pt_hover_button"
-              onClick={() => {
-                history.push(
-                  "/training_run/" +
-                    trainingDiscipline +
-                    "/level1/range=" +
-                    rowNumber
-                );
-              }}
-            >
-              LEVEL 1
-            </button>
-            {getRpmFromDb("level1", rowNumber) > 10 ? (
-              <button
-                className="pt_hover_button"
-                onClick={() => {
-                  history.push(
-                    "/training_run/" +
-                      trainingDiscipline +
-                      "/level2/range=" +
-                      rowNumber
-                  );
-                }}
-              >
-                LEVEL 2
-              </button>
-            ) : (
-              "-->"
-            )}
-            {getRpmFromDb("level2", rowNumber) > 10 ? (
-              <span>
+            <tr>
+              <td>
+                <button className="pt_nohover_button">
+                  {rowNumber}
+                  {pointOperator}
+                  {rowNumber}
+                </button>
                 <button
                   className="pt_hover_button"
                   onClick={() => {
                     history.push(
                       "/training_run/" +
                         trainingDiscipline +
-                        "/drill/range=" +
+                        "/level1/range=" +
                         rowNumber
                     );
                   }}
                 >
-                  DRILL
+                  LEVEL 1
                 </button>
-                {getRpmFromDb("drill", rowNumber) > 0 && (
-                  
-                    <ProgressButton 
-                    rpm={getRpmFromDb("drill", rowNumber)}
-                    rpmGreen={70}
-                    />
-                 
+                {getRpmFromDb("level1", rowNumber) > 10 ? (
+                  <button
+                    className="pt_hover_button"
+                    onClick={() => {
+                      history.push(
+                        "/training_run/" +
+                          trainingDiscipline +
+                          "/level2/range=" +
+                          rowNumber
+                      );
+                    }}
+                  >
+                    LEVEL 2
+                  </button>
+                ) : (
+                  "-->"
                 )}
-              </span>
-            ) : (
-              "-->"
-            )}
-            </td>
-          </tr>
+                {getRpmFromDb("level2", rowNumber) > 10 ? (
+                  <span>
+                    <button
+                      className="pt_hover_button"
+                      onClick={() => {
+                        history.push(
+                          "/training_run/" +
+                            trainingDiscipline +
+                            "/drill/range=" +
+                            rowNumber
+                        );
+                      }}
+                    >
+                      DRILL
+                    </button>
+                    {getRpmFromDb("drill", rowNumber) > 0 && (
+                      <ProgressButton
+                        rpm={getRpmFromDb("drill", rowNumber)}
+                        rpmGreen={70}
+                        pointOrDash="point"
+                      />
+                    )}
+                  </span>
+                ) : (
+                  "-->"
+                )}
+              </td>
+            </tr>
           </thead>
         </table>
       </div>

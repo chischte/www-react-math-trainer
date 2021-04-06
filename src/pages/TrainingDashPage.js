@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as firebase from "firebase/app";
 import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
+import ProgressButton from "../components/training/ProgressButton";
 
 function TrainingDashPage() {
   const history = useHistory();
@@ -91,7 +92,7 @@ function TrainingDashPage() {
         } else if (level === "BIG JUMP") {
           rpm = dbSnapshot.big_jump[1].rpm;
         }
-        rpm += " rpm";
+        //rpm += " rpm";
       } catch (e) {
         console.log(e);
       }
@@ -100,27 +101,56 @@ function TrainingDashPage() {
     return rpm;
   };
 
+  const scaleProgressButtonByLevel = (level) => {
+    var rpmGreen;
+    switch (level) {
+      case "STEP":
+        rpmGreen = 50;
+        break;
+      case "JUMP":
+        rpmGreen = 30;
+        break;
+      case "BIG JUMP":
+        rpmGreen = 15;
+        break;
+      default:
+        alert("invalid level");
+        break;
+    }
+    return rpmGreen;
+  };
+
   const generateButtonRow = (level) => {
     return (
       <div>
         <table className="dash-training-selector-table">
-          <tr>
-            <button
-              className="dt_hover_button"
-              onClick={() => {
-                history.push(
-                  "/training_run/" +
-                    trainingDiscipline +
-                    "/" +
-                    level.toLowerCase() +
-                    "/range=1"
-                );
-              }}
-            >
-              {level}
-            </button>
-          </tr>
-          <tr>{getRpmFromDb(level)}</tr>
+          <thead>
+            <tr>
+              <td>
+                <button
+                  className="dt_hover_button"
+                  onClick={() => {
+                    history.push(
+                      "/training_run/" +
+                        trainingDiscipline +
+                        "/" +
+                        level.toLowerCase() +
+                        "/range=1"
+                    );
+                  }}
+                >
+                  {level}
+                </button>
+                {getRpmFromDb(level) > 0 && (
+                  <ProgressButton
+                    rpm={getRpmFromDb(level)}
+                    rpmGreen={scaleProgressButtonByLevel(level)}
+                    pointOrDash="dash"
+                  />
+                )}
+              </td>
+            </tr>
+          </thead>
         </table>
       </div>
     );
