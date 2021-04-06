@@ -4,7 +4,7 @@ import GenerateCalculations from "../calculation_generator/generateTrainingCalcu
 import UserInput from "../components/UserInput";
 import Stopwatch from "../components/Stopwatch";
 import BackHomeButton from "../components/BackHomeButton";
-import TrainingFeedback from "../components/training/TrainingFeedback";
+import TrainingFeedback from "./TrainingFeedbackSubPage";
 
 const generateCalculations = new GenerateCalculations();
 

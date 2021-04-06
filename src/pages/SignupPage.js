@@ -61,7 +61,7 @@ export default class SignupPage extends React.Component {
     event.preventDefault();
     var { password, name } = event.target.elements;
     name = name.value.trim();
-    const email = name + "@" + "mathe-trainer.oo";
+    const email = name + "@mathe-trainer.oo";
     this.setState(
       {
         userName: name,

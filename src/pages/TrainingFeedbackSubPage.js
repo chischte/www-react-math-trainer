@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import * as firebase from "firebase/app";
-import { AuthContext } from "../firebase/Auth";
+import { AuthContext } from "../components/firebase/Auth";
 
 function TrainingFeedback(props) {
   const authContext = useContext(AuthContext);
