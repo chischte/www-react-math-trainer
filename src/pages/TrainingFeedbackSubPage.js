@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useCallback } from "react";
 import * as firebase from "firebase/app";
 import { AuthContext } from "../components/firebase/Auth";
 
-function TrainingFeedback(props) {
+export default function TrainingFeedback(props) {
   const authContext = useContext(AuthContext);
 
   const [overviewArray] = useState(props.overviewArray);
@@ -171,4 +171,3 @@ function TrainingFeedback(props) {
     </div>
   );
 }
-export default TrainingFeedback;

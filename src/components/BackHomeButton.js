@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-function BackHomeButton(props) {
+export default function BackHomeButton(props) {
   const history = useHistory();
 
   return (
@@ -17,4 +17,3 @@ function BackHomeButton(props) {
     </div>
   );
 }
-export default BackHomeButton;

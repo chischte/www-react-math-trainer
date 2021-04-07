@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function Stopwatch(props) {
+export default function Stopwatch(props) {
   const [timeElapsed, setTimeElapsed] = useState(props.startTime);
 
   useEffect(() => {
@@ -29,5 +29,3 @@ function Stopwatch(props) {
     </div>
   );
 }
-
-export default Stopwatch;

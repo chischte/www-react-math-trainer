@@ -6,7 +6,7 @@ import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
 import ProgressButton from "../components/training/ProgressButton";
 
-function TrainingDashPage() {
+export default function TrainingDashPage() {
   const history = useHistory();
   const authContext = useContext(AuthContext);
 
@@ -168,5 +168,3 @@ function TrainingDashPage() {
     </div>
   );
 }
-
-export default TrainingDashPage;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-function ProgressButton(props) {
+export default function ProgressButton(props) {
   const [color, setColor] = useState();
   const [width, setWidth] = useState();
   const [rpm] = useState(props.rpm);
@@ -39,7 +39,7 @@ function ProgressButton(props) {
           {rpm}rpm
         </button>
       )}
-       {pointOrDash === "dash" && (
+      {pointOrDash === "dash" && (
         <button
           className="dt_status_button"
           style={{ backgroundColor: color, width: width }}
@@ -50,5 +50,3 @@ function ProgressButton(props) {
     </span>
   );
 }
-
-export default ProgressButton;

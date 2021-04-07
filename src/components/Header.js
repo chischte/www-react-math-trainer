@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../components/firebase/Auth";
 
-function Header() {
+export default function Header() {
   const authContext = useContext(AuthContext);
   const [userName, setUserName] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
@@ -76,5 +76,3 @@ function Header() {
     </div>
   );
 }
-
-export default Header;

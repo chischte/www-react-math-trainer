@@ -1,18 +1,18 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-function TrainingSelector(props) {
+export default function TrainingSelector() {
   const history = useHistory();
 
   return (
     <div className="outliner outliner_flex">
       <button className="calculator_button" onClick={() => {
-         history.push("/training_dash_page/addition");
+        history.push("/training_dash_page/addition");
       }}>
         <div>+</div>
       </button>
       <button className="calculator_button" onClick={() => {
-         history.push("/training_dash_page/subtraction");
+        history.push("/training_dash_page/subtraction");
       }}>
         −
       </button>
@@ -35,4 +35,3 @@ function TrainingSelector(props) {
     </div>
   );
 }
-export default TrainingSelector;

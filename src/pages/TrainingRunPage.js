@@ -8,7 +8,7 @@ import TrainingFeedback from "./TrainingFeedbackSubPage";
 
 const generateCalculations = new GenerateCalculations();
 
-function TrainingRunPage() {
+export default function TrainingRunPage() {
   const [numberOfQuestions, setNumberOfQuestions] = useState();
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [questionArray, setQuestionArray] = useState([]);
@@ -389,4 +389,3 @@ function TrainingRunPage() {
   );
 }
 
-export default TrainingRunPage;

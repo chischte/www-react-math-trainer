@@ -4,7 +4,7 @@ import TrainingSelector from "../components/training/TrainingSelector";
 import BackHomeButton from "../components/BackHomeButton"
 
 
-function TrainingSelectPage() {
+export default function TrainingSelectPage() {
   return (
     <div>
       <Header />
@@ -13,11 +13,9 @@ function TrainingSelectPage() {
       <br></br>
       <TrainingSelector></TrainingSelector>
       <br></br>
-      <BackHomeButton 
-      buttonName="HOME"
-      url="/"/>
+      <BackHomeButton
+        buttonName="HOME"
+        url="/" />
     </div>
   );
 }
-
-export default TrainingSelectPage;
