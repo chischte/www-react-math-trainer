@@ -1,79 +1,53 @@
-import React from "react";
+import React,{useState, useContext,useEffect} from "react";
 import firebaseInitializeApp from "../components/firebase/firebase";
-import * as firebase from "firebase/app";
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
 import { Button, Box } from "@material-ui/core";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
+import { AuthContext } from "../components/firebase/Auth";
 
-export default class LoginPage extends React.Component {
-  constructor(props) {
-    super(props);
+export default function LoginPage(props){
+  const authContext = useContext(AuthContext);
+  const[userIsLoggedIn,setUserIsLoggedIn]=useState();
 
-    this.state = {
-      userEmail: "",
-      userName: "",
-      userPassword: "",
-      userGender: "undefined",
-      databaseSnapshot: "",
-      emailEntered: "",
-      emailIsInDatabase: "",
-      loginFailed: "",
-      userIsLoggedIn: "",
-    };
-  }
-
-  componentDidMount() {
-    if (!!firebase.auth().currentUser) {
-      const user = firebase.auth().currentUser;
-      this.setState({ userName: user.displayName });
-      this.setState({ userIsLoggedIn: !!firebase.auth().currentUser });
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      setUserIsLoggedIn(true);
+    } else {
+      setUserIsLoggedIn(false);
     }
-  }
-  componentDidUpdate() {}
+  }, [authContext]);
 
-  handleLogIn = (event) => {
+  const handleLogIn = (event) => {
     event.preventDefault();
     var { email, password } = event.target.elements;
     email = email.value + "@mathe-trainer.oo";
-    this.setState(
-      { userEmail: email, userPassword: password.value },
-      () => {}
-    );
-
-    this.logInExistingUserAsync(email, password.value);
+    logInExistingUser(email, password.value);
   };
 
-  async logInExistingUserAsync(email, password) {
+  const logInExistingUser=async(email, password) =>{
     try {
       await firebaseInitializeApp
         .auth()
         .signInWithEmailAndPassword(email, password);
     } catch (error) {
       alert(error);
-      this.setState({ loginFailed: true });
-    } finally {
-      if (!!firebase.auth().currentUser) {
-        this.setState({ userIsLoggedIn: !!firebase.auth().currentUser });
-        this.setState({ userName: firebase.auth().currentUser.displayName });
-      }
     }
   }
-  handleSwitchToSignup = () => {
-    this.props.history.push("/signup");
+  const handleSwitchToSignup = () => {
+    props.history.push("/signup");
   };
 
-  render() {
     return (
       <div>
         <Header />
         <div className="outliner">
           <ThemeProvider theme={theme}>
-            {!this.state.userIsLoggedIn && (
+            {!userIsLoggedIn && (
               <div>
-                <form onSubmit={this.handleLogIn}>
+                <form onSubmit={handleLogIn}>
                   <Box m={0} pt={1}>
                     <TextField
                       name="email"
@@ -107,7 +81,7 @@ export default class LoginPage extends React.Component {
                 <h5> ODER</h5>
                 <Box m={0} pt={1}>
                   <Button
-                    onClick={this.handleSwitchToSignup}
+                    onClick={handleSwitchToSignup}
                     variant="contained"
                     color="secondary"
                     fullWidth
@@ -118,7 +92,7 @@ export default class LoginPage extends React.Component {
               </div>
             )}
           </ThemeProvider>
-          {this.state.userIsLoggedIn && (
+          {userIsLoggedIn && (
             <div>
               <Redirect to="/" />
             </div>
@@ -127,7 +101,7 @@ export default class LoginPage extends React.Component {
       </div>
     );
   }
-}
+
 const theme = createMuiTheme({
   typography: {
     fontSize: 20,

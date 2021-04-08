@@ -71,6 +71,7 @@ export default function TrainingPointPage() {
       }
     } catch (e) {
       console.log(e);
+      alert("db connection failed\r\n"+e);
     }
   }, []);
 
