@@ -1,0 +1,14 @@
+.show-congrats {
+  margin-top: 2rem;
+  font-size: $xl-size;
+  font-weight: bolder;
+}
+
+.show-congrats__haudi {
+  font-size: $xl-size;
+}
+
+.show-congrats__count {
+  color: darken($blue, 20%);
+  font-size: $xxl-size;
+}

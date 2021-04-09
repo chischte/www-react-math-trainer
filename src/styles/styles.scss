@@ -1,10 +1,14 @@
-@import './base/settings';
-@import './base/base';
-@import './components/calculator-button';
-@import './components/input-field';
-@import './components/after-training-table';
-@import './components/point-training-table-buttons';
-@import './components/dash-training-table-buttons';
-@import './components/outliner';
-@import './components/back-home-button'
-
+@import "./base/settings";
+@import "./base/base";
+@import "./components/after-training-table";
+@import "./components/back-home-button";
+@import "./components/calculator-button";
+@import "./components/countdown";
+@import "./components/dash-training-table-buttons";
+@import "./components/input-field";
+@import "./components/outliner";
+@import "./components/point-training-table-buttons";
+@import "./components/question-display";
+@import "./components/ready-set-go";
+@import "./components/show-congrats";
+@import "./components/show-speed";

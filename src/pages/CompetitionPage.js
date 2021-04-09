@@ -1,24 +1,429 @@
-import React from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import firebase from "firebase";
+
+import GenerateCalculations from "../calculation_generator/generateCalculations";
+
+import Countdown from "../components/competition/Countdown";
+import QuestionDisplay from "../components/QuestionDisplay";
+import CompetitionSelector from "../components/competition/CompetitionSelector";
+import ReadySetGo from "../components/competition/ReadySetGo";
+import ShowCongrats from "../components/competition/ShowCongrats";
+import UserInput from "../components/UserInput";
 import Header from "../components/Header";
+import ShowSpeed from "../components/competition/ShowSpeed";
+import { AuthContext } from "../components/firebase/Auth";
 
-export default class LoginPage extends React.Component {
-  constructor(props) {
-    super(props);
+const generateCalculations = new GenerateCalculations();
 
-    this.state = {};
-  }
+export default function CompetitionPage() {
+  const authContext = useContext(AuthContext);
 
-  componentDidMount() {}
-  componentDidUpdate() {}
+  const [recordCheckIsEnabled, setRecordCheckIsEnabled] = useState(false);
+  const [competitionCountIsEnabled, setCompetitionCountIsEnabled] = useState(false);
+  const [checkForRecordTrack, setCheckForRecordTrack] = useState(false);
+  const [dbWriteDataIsReady, setDbWriteDataIsReady] = useState(false);
+  const [cpmSub, setCpmSub] = useState(0);
+  const [cpmAdd, setCpmAdd] = useState(0);
+  const [cpmDiv, setCpmDiv] = useState(0);
+  const [countAdd, setCountAdd] = useState(0);
+  const [countSub, setCountSub] = useState(0);
+  const [countMul, setCountMul] = useState(0);
+  const [countDiv, setCountDiv] = useState(0);
+  const [countTotal, setCountTotal] = useState(0);
+  const [groupName, setGroupName] = useState("public");
+  const [groupCode, setGroupCode] = useState("public");
+  const [questionStrings, setQuestionStrings] = useState([]);
+  const [calculationsSolved, setCalculationsSolved] = useState(0);
+  const [userCharacter, setUserCharacter] = useState("");
+  const [userName, setUserName] = useState("guest");
+  const [uid, setUid] = useState("");
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+  const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
+  const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
+  const [calculationQuestion, setCalculationQuestion] = useState("");
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [calculationSolution, setCalculationSolution] = useState("");
+  const [cpmMul, setCpmMul] = useState(0);
+  const [currentSpeed, setCurrentSpeed] = useState(0);
 
-  render() {
+  const getHighscoreDB = useCallback(
+    (uid) => {
+      let ref = firebase
+        .database()
+        .ref("/groups/" + groupCode + "/highscore/" + uid);
+      ref.on("value", (snapshot) => {
+        const dbUserData = snapshot.val();
+        console.log("get high score data from db/groups: ")
+        console.log(dbUserData);
+
+        if (!!dbUserData) {
+          setCpmAdd(dbUserData.cpm_add);
+          setCpmSub(dbUserData.cpm_sub);
+          setCpmMul(dbUserData.cpm_mul);
+          setCpmDiv(dbUserData.cpm_div);
+          setCountAdd(dbUserData.count_add);
+          setCountSub(dbUserData.count_sub);
+          setCountMul(dbUserData.count_mul);
+          setCountDiv(dbUserData.count_div);
+          setCountTotal(dbUserData.count_total);
+          setUserCharacter(dbUserData.character);
+          setUserName(dbUserData.name);
+        } else {
+          // no group highscore created yet, clear fields:
+          setCpmAdd(0);
+          setCpmSub(0);
+          setCpmMul(0);
+          setCpmDiv(0);
+          setCountAdd(0);
+          setCountSub(0);
+          setCountMul(0);
+          setCountDiv(0);
+          setCountTotal(0);
+        }
+      });
+    },
+    [groupCode]
+  );
+
+  const calculateNewAverage = useCallback(() => {
+    const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
+    return newAverage
+  }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
+
+  const writeToDatabase = useCallback(() => {
+    if (userIsLoggedIn && dbWriteDataIsReady) {
+      let dbEntry = {
+        cpm_add: cpmAdd,
+        cpm_avg: calculateNewAverage(),
+        cpm_div: cpmDiv,
+        cpm_mul: cpmMul,
+        cpm_sub: cpmSub,
+        count_add: countAdd,
+        count_sub: countSub,
+        count_mul: countMul,
+        count_div: countDiv,
+        count_total: countTotal,
+        character: userCharacter,
+        name: userName,
+        timestamp: new Date(),
+      };
+      firebase
+        .database()
+        .ref("/groups/" + groupCode + "/highscore/" + uid)
+        .update(dbEntry);
+      console.log("stored high score data to /groups:");
+      console.log(dbEntry);
+    }
+  }, [
+    countAdd,
+    countDiv,
+    countMul,
+    countSub,
+    countTotal,
+    cpmAdd,
+    cpmDiv,
+    cpmMul,
+    cpmSub,
+    groupCode,
+    uid,
+    userCharacter,
+    userName,
+    dbWriteDataIsReady,
+    userIsLoggedIn,
+    calculateNewAverage
+  ]);
+
+  // Monitor if DB is ready to write and initiate DB write
+  useEffect(() => {
+    if (userIsLoggedIn && dbWriteDataIsReady) {
+      writeToDatabase();
+      setDbWriteDataIsReady(false);
+    }
+  }, [userIsLoggedIn, dbWriteDataIsReady, writeToDatabase])
+
+  const checkForAdditionRecord = useCallback(() => {
+    if (cpmAdd < calculationsSolved) {
+      setCpmAdd(calculationsSolved);
+      alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+    }
+  }, [calculationsSolved, cpmAdd]);
+
+  const checkForSubtractionRecord = useCallback(() => {
+    if (cpmSub < calculationsSolved) {
+      setCpmSub(calculationsSolved);
+      alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+    }
+  }, [calculationsSolved, cpmSub]);
+
+  const checkForMultiplicationRecord = useCallback(() => {
+    if (cpmMul < calculationsSolved) {
+      setCpmMul(calculationsSolved);
+      alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+    }
+  }, [calculationsSolved, cpmMul]);
+
+  const checkForDivisionRecord = useCallback(() => {
+    if (cpmDiv < calculationsSolved) {
+      setCpmDiv(calculationsSolved);
+      alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+    }
+  }, [calculationsSolved, cpmDiv]);
+
+  const checkForNewRecord = useCallback(() => {
+    if (mode === "addition") {
+      checkForAdditionRecord();
+    }
+    if (mode === "subtraction") {
+      checkForSubtractionRecord();
+    }
+    if (mode === "multiplication") {
+      checkForMultiplicationRecord();
+    }
+    if (mode === "division") {
+      checkForDivisionRecord();
+    }
+  }, [
+    checkForAdditionRecord,
+    checkForSubtractionRecord,
+    checkForMultiplicationRecord,
+    checkForDivisionRecord,
+    mode,
+  ]);
+
+
+  const getUsersDB = useCallback(
+    (uid) => {
+      var dbUserData = 0;
+      let ref = firebase.database().ref("/users/" + uid);
+      ref.on("value", (snapshot) => {
+        dbUserData = snapshot.val();
+        console.log("competitionPage dbUserData:")
+        console.log(dbUserData);
+      });
+      if (!!dbUserData) {
+        try {
+          setUserName(dbUserData.name);
+          setUserCharacter(dbUserData.character);
+          setGroupName(dbUserData.favorite_group.name);
+          setGroupCode(dbUserData.favorite_group.code);
+        }
+        catch (e) {
+          console.log(e);
+        }
+      }
+    },
+    []
+  );
+
+  // Get user auth data and DB data:
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      const uid = authContext.currentUser.uid;
+      setUid(uid);
+      getHighscoreDB(uid);
+      getUsersDB(uid);
+      setUserIsLoggedIn(true);
+    } else {
+      setUserIsLoggedIn(false);
+    }
+  }, [authContext, getHighscoreDB, getUsersDB]);
+
+  useEffect(() => {
+    if (recordCheckIsEnabled) {
+      setRecordCheckIsEnabled(false);
+      checkForNewRecord();
+    }
+  }, [
+    checkForNewRecord,
+    checkForRecordTrack,
+    recordCheckIsEnabled,
+  ]);
+
+  const selectMode = (mode) => {
+    setMode(mode);
+    setRecordValueOfCurrentMode();
+  };
+
+  const getNewCalculation = useCallback(() => {
+    let isDuplicate = true;
+    let _questionStrings = questionStrings;
+    let newQuestion = 0;
+    let newSolution = 0;
+    while (isDuplicate) {
+      generateCalculations.generateNewCalculation(mode);
+      newQuestion = generateCalculations.getQuestion();
+      newSolution = generateCalculations.getSolution();
+
+      if (_questionStrings.includes(newQuestion)) {
+        console.log("duplicate found" + newQuestion);
+      } else {
+        isDuplicate = false;
+      }
+    }
+    questionStrings.push(newQuestion);
+    setQuestionStrings(questionStrings);
+    setCalculationQuestion(newQuestion);
+    setCalculationSolution(newSolution)
+  }, [mode, questionStrings])
+
+  // Generate new calculation if mode changed:
+  useEffect(() => {
+    if (mode) {
+      getNewCalculation();
+    }
+  }, [mode, getNewCalculation])
+
+  const countOneUp = () => {
+    setCalculationsSolved(calculationsSolved + 1);
+    setCheckForRecordTrack(true);
+  };
+
+  // Calculate speed when competition is running:
+  useEffect(() => {
+    setCurrentSpeed(1);
+    let cpm = 0;
+    if (timeElapsed) {
+      cpm = Math.round((calculationsSolved * 60) / timeElapsed);
+    }
+    setCurrentSpeed(cpm);
+
+  }, [calculationsSolved, timeElapsed])
+
+  const setRecordValueOfCurrentMode = () => {
+    let recordCpm = 0;
+    if (mode === "addition") {
+      recordCpm = cpmAdd;
+    }
+    if (mode === "subtraction") {
+      recordCpm = cpmSub;
+    }
+    if (mode === "multiplication") {
+      recordCpm = cpmMul;
+    }
+    if (mode === "division") {
+      recordCpm = cpmDiv;
+    }
+  };
+
+  // MANAGE COMPETITION STAGES -------------------------------------------------
+
+  const setStageReadySetGo = () => {
+    setCompetitionStage("readySetGo");
+    setCalculationsSolved(0);
+    setQuestionStrings([]);
+  };
+
+  const setStageRunning = () => {
+    setCompetitionStage("running");
+  };
+
+  const setStageCompleted = () => {
+    setCompetitionStage("completed");
+    setRecordCheckIsEnabled(true);
+    setCompetitionCountIsEnabled(true);
+  };
+
+  const updateCompetitionCounter = useCallback(() => {
+    if (mode === "addition") {
+      if (calculationsSolved > cpmAdd / 2) {
+        setCountAdd(countAdd + 1);
+        setCountTotal(countTotal + 1);
+      }
+    }
+    if (mode === "subtraction") {
+      if (calculationsSolved > cpmSub / 2) {
+        setCountSub(countSub + 1);
+        setCountTotal(countTotal + 1);
+      }
+    }
+    if (mode === "multiplication") {
+      if (calculationsSolved > cpmMul / 2) {
+        setCountMul(countMul + 1);
+        setCountTotal(countTotal + 1);
+      }
+    }
+    if (mode === "division") {
+      if (calculationsSolved > cpmDiv / 2) {
+        setCountDiv(countDiv + 1)
+        setCountTotal(countTotal + 1);
+      }
+    }
+    setDbWriteDataIsReady(true);
+  }, [calculationsSolved, countAdd, countDiv, countMul, countSub, countTotal, cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
+
+  useEffect(() => {
+    if (competitionCountIsEnabled) {
+      updateCompetitionCounter();
+      setCompetitionCountIsEnabled(false);
+    }
+  }, [competitionCountIsEnabled, updateCompetitionCounter])
+
+  const updateTimeElapsed = (_timeElapsed) => {
+    setTimeElapsed(_timeElapsed);
+  };
+
+  // JSX OF COMPETITION STAGES -------------------------------------------------
+  const stageMounted = () => {
     return (
       <div>
-        <Header />
         <br></br>
-        <h4>Wähle eine Wettkampfdisziplin:</h4>
-        <br></br>
+        <div className="user-at-group">WÄHLE EINE DISZIPLIN</div>
       </div>
     );
-  }
+  };
+
+  const stageReadySetGo = () => {
+    return <ReadySetGo setStageRunning={setStageRunning} />;
+  };
+
+  const stageRunning = () => {
+    return (
+      <div>
+        <div className="outliner">
+          <QuestionDisplay questionString={calculationQuestion} />
+
+          <UserInput
+            solution={calculationSolution}
+            getNewCalculation={getNewCalculation}
+            countOneUp={countOneUp}
+            markUserError={()=>{console.log("user error")}}
+          />
+        </div>
+        <ShowSpeed
+          calculationsSolved={calculationsSolved}
+          currentSpeed={currentSpeed}
+        />
+        <Countdown
+          setTimeElapsed={updateTimeElapsed}
+          setStageCompleted={setStageCompleted}
+        />
+      </div>
+    );
+  };
+
+  const stageCompleted = () => {
+    return (
+      <div>
+        <ShowCongrats calculationsSolved={calculationsSolved} />
+      </div>
+    );
+  };
+  //------------------------------------------------------------------------------
+
+  return (
+    <div>
+      <Header />
+      <br></br>
+      <CompetitionSelector
+        selectMode={selectMode}
+        setStageReadySetGo={setStageReadySetGo}
+      />
+      {competitionStage === "mounted" && stageMounted()}
+      {competitionStage === "readySetGo" && stageReadySetGo()}
+      {competitionStage === "running" && stageRunning()}
+      {competitionStage === "completed" && stageCompleted()}
+
+
+    </div>
+  );
 }
