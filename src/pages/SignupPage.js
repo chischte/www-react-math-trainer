@@ -143,7 +143,7 @@ export default function SignupPage() {
 
   // If all data is provided, create user
   useEffect(() => {
-    if (userEmail && userPassword && userName) {
+    if (userEmail && userPassword && userName&& !userIsLoggedIn) {
       createNewUser();
       createUserEntryInDB();
       createNicknameEntryDB();
@@ -155,6 +155,7 @@ export default function SignupPage() {
     createNewUser,
     createNicknameEntryDB,
     createUserEntryInDB,
+    userIsLoggedIn
   ]);
 
   const setUserDisplayName = useCallback(() => {
