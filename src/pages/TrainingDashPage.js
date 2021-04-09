@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useContext } from "react";
 import Header from "../components/Header";
 import { useHistory } from "react-router-dom";
-import * as firebase from "firebase/app";
+import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
 import BackHomeButton from "../components/BackHomeButton";
 import ProgressButton from "../components/training/ProgressButton";

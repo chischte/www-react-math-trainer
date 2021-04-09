@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { AuthContext } from "../components/firebase/Auth";
 import firebaseInitializeApp from "../components/firebase/firebase";
-import * as firebase from "firebase/app";
+import firebase from "firebase"
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
 import { NavLink } from "react-router-dom";

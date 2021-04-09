@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import * as firebase from "firebase/app";
+import firebase from "firebase"
 import { AuthContext } from "../components/firebase/Auth";
 
 export default function TrainingFeedback(props) {
