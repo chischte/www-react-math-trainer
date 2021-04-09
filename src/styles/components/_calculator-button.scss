@@ -1,18 +1,32 @@
-.calculator_button {
+.tr_calculator_button,
+.comp_calculator_button {
   width: 7rem;
   height: 4.2rem;
   border: none;
   border-radius: $s-radius;
   font-weight: 900;
   font-size: $xl-size;
-  padding-bottom: .55rem;
-  background-color: $blue;
+  padding-bottom: 0.55rem;
   margin: 0.1rem;
-  color: black;
-  transition: all .5s linear;
+  transition: all 0.5s linear;
 }
 
-.calculator_button:hover {
+.tr_calculator_button {
+  background-color: $blue;
+  color: black;
+}
+.tr_calculator_button:hover {
   color: orange;
   background-color: $off-black;
+}
+
+.comp_calculator_button {
+  color: orange;
+  background-color: $off-black;
+  transition: all 4s linear;
+}
+.comp_calculator_button:hover {
+  background-color: red;
+  color: black;
+  transition: all 0.3s linear;
 }
