@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { AuthContext } from "../components/firebase/Auth";
 import firebaseInitializeApp from "../components/firebase/firebase";
-import firebase from "firebase"
+import firebase from "firebase";
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
 import { NavLink } from "react-router-dom";
@@ -21,9 +21,9 @@ export default function SignupPage() {
   const authContext = useContext(AuthContext);
   const [userEmail, setUserEmail] = useState();
   const [userName, setUserName] = useState();
-  const [userUid, setUserUid] = useState();
-  const [userPassword, setUserPassword] = useState();
   const [userCharacter, setUserCharacter] = useState("jedi");
+  const [userPassword, setUserPassword] = useState();
+  const [userUid, setUserUid] = useState();
   const [nicknameDatabaseSnapshot, setNicknameDatabaseSnapshot] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
@@ -73,8 +73,9 @@ export default function SignupPage() {
         "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
       );
     }
-    setUserEmail(email);
+
     setUserPassword(password.value);
+    setUserEmail(email);
   };
 
   const checkIfNicknameIsAvailable = (name) => {
@@ -88,24 +89,25 @@ export default function SignupPage() {
     return nicknameIsAvailable;
   };
 
-  const createNewUser = useCallback(async () => {
+  const createUserEmailAuth = useCallback(async () => {
     try {
       await firebaseInitializeApp
         .auth()
         .createUserWithEmailAndPassword(userEmail, userPassword);
       alert(
         "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
-        userName +
-        "\r\nDein Passwort ist:" +
-        userPassword +
-        "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+          userName +
+          "\r\nDein Passwort ist:" +
+          userPassword +
+          "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
       );
     } catch (error) {
       console.log(error);
-      alert("Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
-        "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname und versuche es nocheinmal.")
+      alert(
+        "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
+          "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname und versuche es nocheinmal."
+      );
     } finally {
-
     }
   }, [userEmail, userName, userPassword]);
 
@@ -140,24 +142,36 @@ export default function SignupPage() {
         .database()
         .ref("/nicknames/" + userName)
         .update(dbEntry);
+      console.log("created nickname entry in database");
     }
   }, [userName]);
 
   // If all data is provided, create user
   useEffect(() => {
     if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
-      createNewUser();
-      createUserEntryInDB();
-      createNicknameEntryDB();
+      createUserEmailAuth();      
     }
   }, [
     userEmail,
     userPassword,
     userName,
-    createNewUser,
+    createUserEmailAuth,
+    userIsLoggedIn,
+  ]);
+
+  // If email auth worked, create nickname and user db entryies
+  useEffect(() => {
+    if (userEmail && userPassword && !!userName && userIsLoggedIn) {
+      createNicknameEntryDB();
+      createUserEntryInDB();
+    }
+  }, [
+    userEmail,
+    userPassword,
+    userName,
     createNicknameEntryDB,
     createUserEntryInDB,
-    userIsLoggedIn
+    userIsLoggedIn,
   ]);
 
   const setUserDisplayName = useCallback(() => {
@@ -167,10 +181,10 @@ export default function SignupPage() {
         displayName: userName,
       })
       .then(function () {
-        console.log("user display name update successful")
+        console.log("user display name update successful");
       })
       .catch(function (e) {
-        console.log(e)
+        console.log(e);
       });
   }, [userName]);
 
