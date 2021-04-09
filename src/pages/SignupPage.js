@@ -38,7 +38,7 @@ export default function SignupPage() {
 
   const getNicknameDatabaseSnapshot = () => {
     try {
-    let ref = firebase.database().ref("/nicknames/");
+      let ref = firebase.database().ref("/nicknames/");
       ref.on("value", (snapshot) => {
         let databaseSnapshot = snapshot.val();
         if (!!databaseSnapshot) {
@@ -47,8 +47,8 @@ export default function SignupPage() {
           setNicknameDatabaseSnapshot(databaseSnapshot);
         }
       });
-    } catch(e) {
-      alert("db connection failed\r\n"+e);
+    } catch (e) {
+      alert("db connection failed\r\n" + e);
     }
   };
 
@@ -73,7 +73,6 @@ export default function SignupPage() {
         "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
       );
     }
-
     setUserEmail(email);
     setUserPassword(password.value);
   };
@@ -94,16 +93,19 @@ export default function SignupPage() {
       await firebaseInitializeApp
         .auth()
         .createUserWithEmailAndPassword(userEmail, userPassword);
-    } catch (error) {
-      alert(error);
-    } finally {
       alert(
         "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
-          userName +
-          "\r\nDein Passwort ist:" +
-          userPassword +
-          "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+        userName +
+        "\r\nDein Passwort ist:" +
+        userPassword +
+        "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
       );
+    } catch (error) {
+      console.log(error);
+      alert("Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
+        "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname und versuche es nocheinmal.")
+    } finally {
+
     }
   }, [userEmail, userName, userPassword]);
 
@@ -143,7 +145,7 @@ export default function SignupPage() {
 
   // If all data is provided, create user
   useEffect(() => {
-    if (userEmail && userPassword && userName&& !userIsLoggedIn) {
+    if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
       createNewUser();
       createUserEntryInDB();
       createNicknameEntryDB();
@@ -165,10 +167,10 @@ export default function SignupPage() {
         displayName: userName,
       })
       .then(function () {
-        // Update successful.
+        console.log("user display name update successful")
       })
-      .catch(function (error) {
-        // An error happened.
+      .catch(function (e) {
+        console.log(e)
       });
   }, [userName]);
 
