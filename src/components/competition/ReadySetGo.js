@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function ReadySetGo(props) {
+export default function ReadySetGo(props) {
   const [stage, setStage] = useState(3);
 
   if (stage <= 0) {
@@ -26,5 +26,3 @@ function ReadySetGo(props) {
     </div>
   );
 }
-
-export default ReadySetGo;

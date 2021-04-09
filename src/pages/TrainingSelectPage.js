@@ -1,8 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import TrainingSelector from "../components/training/TrainingSelector";
-import BackHomeButton from "../components/BackHomeButton"
-
+import BackHomeButton from "../components/BackHomeButton";
 
 export default function TrainingSelectPage() {
   return (
@@ -13,9 +12,6 @@ export default function TrainingSelectPage() {
       <br></br>
       <TrainingSelector></TrainingSelector>
       <br></br>
-      <BackHomeButton
-        buttonName="HOME"
-        url="/" />
     </div>
   );
 }

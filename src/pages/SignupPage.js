@@ -64,29 +64,37 @@ export default function SignupPage() {
     event.preventDefault();
     var { password, name } = event.target.elements;
     name = name.value.trim();
-    const email = name + "@mathe-trainer.oo";
 
-    if (checkIfNicknameIsAvailable(name)) {
+    if (checkIfNicknameIsValid(name)) {
       setUserName(name);
-    } else {
-      alert(
-        "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
-      );
+      setUserPassword(password.value);
+      setUserEmail(createEmailFromUserName(name));
     }
-
-    setUserPassword(password.value);
-    setUserEmail(email);
   };
 
-  const checkIfNicknameIsAvailable = (name) => {
+  const checkIfNicknameIsValid = (name) => {
     let nicknameIsAvailable = true;
-
-    if (!!nicknameDatabaseSnapshot) {
+    if (name.length > 15) {
+      alert(
+        "Bitte wähle einen kürzeren Namen.\r\n" +
+          "Der Name darf maximal 15 Zeichen lang sein."
+      );
+      nicknameIsAvailable = false;
+    }
+    else if (!!nicknameDatabaseSnapshot) {
       if (!!nicknameDatabaseSnapshot.find((x) => x.name === name)) {
         nicknameIsAvailable = false;
+        alert(
+          "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
+        );
       }
     }
     return nicknameIsAvailable;
+  };
+
+  const createEmailFromUserName = (nickName) => {
+    var email = nickName + "@mathe-trainer.oo";
+    return email;
   };
 
   const createUserEmailAuth = useCallback(async () => {
@@ -105,7 +113,8 @@ export default function SignupPage() {
       console.log(error);
       alert(
         "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
-          "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname und versuche es nocheinmal."
+          "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
+          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~"
       );
     } finally {
     }
@@ -149,15 +158,9 @@ export default function SignupPage() {
   // If all data is provided, create user
   useEffect(() => {
     if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
-      createUserEmailAuth();      
+      createUserEmailAuth();
     }
-  }, [
-    userEmail,
-    userPassword,
-    userName,
-    createUserEmailAuth,
-    userIsLoggedIn,
-  ]);
+  }, [userEmail, userPassword, userName, createUserEmailAuth, userIsLoggedIn]);
 
   // If email auth worked, create nickname and user db entryies
   useEffect(() => {

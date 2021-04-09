@@ -21,15 +21,6 @@ export default function Header() {
     <div className="header">
       <br></br>
       <NavLink
-        to="/"
-        exact={true}
-        className="header_link"
-        activeClassName="is-active"
-      >
-        home
-      </NavLink>
-      <span> </span>
-      <NavLink
         to="/training_select"
         className="header_link"
         activeClassName="is-active"
