@@ -15,8 +15,12 @@ const generateCalculations = new GenerateCalculations();
 
 export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
-
+  
   //#region useState HOOKS -------------------------------------------------------
+  const [userUid, setUserUid] = useState("");
+  const [userName, setUserName] = useState("guest");
+  const [userCharacter, setUserCharacter] = useState("");
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const [recordCheckIsEnabled, setRecordCheckIsEnabled] = useState(false);
   const [competitionCountIsEnabled, setCompetitionCountIsEnabled] = useState(
     false
@@ -38,10 +42,6 @@ export default function CompetitionPage() {
   const [groupCode, setGroupCode] = useState("public");
   const [questionStrings, setQuestionStrings] = useState([]);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
-  const [userCharacter, setUserCharacter] = useState("");
-  const [userName, setUserName] = useState("guest");
-  const [userUid, setUserUid] = useState("");
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
   const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
   const [cpmMul, setCpmMul] = useState(0);
@@ -218,8 +218,6 @@ export default function CompetitionPage() {
           setCountMul(dbUserData.count_mul);
           setCountDiv(dbUserData.count_div);
           setCountTotal(dbUserData.count_total);
-          setUserCharacter(dbUserData.character);
-          setUserName(dbUserData.name);
         } else {
           // no group highscore created yet, clear fields:
           setCpmAdd(0);
@@ -255,17 +253,17 @@ export default function CompetitionPage() {
       dbUserData = snapshot.val();
       console.log("get user data from db/user:");
       console.log(dbUserData);
-    });
-    if (!!dbUserData) {
-      try {
-        setUserName(dbUserData.name);
-        setUserCharacter(dbUserData.character);
-        setGroupName(dbUserData.favorite_group.name);
-        setGroupCode(dbUserData.favorite_group.code);
-      } catch (e) {
-        console.log(e);
+      if (dbUserData) {
+        try {
+          setUserName(dbUserData.name);
+          setUserCharacter(dbUserData.character);
+          setGroupName(dbUserData.favorite_group.name);
+          setGroupCode(dbUserData.favorite_group.code);
+        } catch (e) {
+          console.log(e);
+        }
       }
-    }
+    });
   }, []);
 
   // Get DB /user data:

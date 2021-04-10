@@ -8,15 +8,15 @@ import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
 
 function JoinGroupPage() {
-  const authContext = useContext(AuthContext);
+  const [groupName, setGroupName] = useState();
   const [groupsDbSnapshot, setGroupsDbSnapshot] = useState();
   const [userDbSnapshot, setUserDbSnapshot] = useState();
-  const [entryCreated, setEntryCreated] = useState();
-  const [groupName, setGroupName] = useState();
-  const [userName, setUserName] = useState();
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
-  const [uid, setUid] = useState();
   const [groupCode, setGroupCode] = useState();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
+  const authContext = useContext(AuthContext);
+  const [entryCreated, setEntryCreated] = useState();
+  const [userName, setUserName] = useState();
+  const [uid, setUid] = useState();
 
   // Get user data and login state:
   useEffect(() => {
@@ -57,8 +57,9 @@ function JoinGroupPage() {
   const getDbSnapshotGroups = React.useCallback(async (ref) => {
     try {
       const dbUserData = await getDbConnection(ref);
-      if (dbUserData) {
-        console.log("GroupSnapshot:" + dbUserData);
+      if (!!dbUserData) {
+        console.log("get snapshot from db/groups/groupcode...")
+        console.log(dbUserData);
         setGroupsDbSnapshot(dbUserData);
       } else {
         alert("Dieser Gruppencode ist ungültig!");

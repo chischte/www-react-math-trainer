@@ -149,21 +149,7 @@ export default function CreateGroupPage() {
 
   //#endregion
 
-  //#region CREATE PUBLIC GROUP ------------------------------------------------
-  // ------ only necessary for the very first user------------------------------
-
-  useEffect(() => {
-    if (uid) {
-      firebase
-        .database()
-        .ref("/groups/public/group_info/" + uid)
-        .update({ creator: "god", name: "public", code: "public" });
-      console.log("created public group in user database");
-    }
-  }, [uid]);
-
-  //#endregion
-
+  
   const handleCreateGroup = (event) => {
     event.preventDefault();
     const { groupName } = event.target.elements;
