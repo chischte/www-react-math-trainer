@@ -531,11 +531,14 @@ export default function CompetitionPage() {
       <div className="user-at-group">
         {userName}@{groupName}
       </div>
-      <GroupSelector/>
+      <GroupSelector />
       <CompetitionSelector
         selectMode={selectMode}
         setStageReadySetGo={setStageReadySetGo}
       />
+      {competitionStage === "mounted" && (
+        <div className="infotext">WÄHLE EINEN WETTKAMPF</div>
+      )}
       {competitionStage === "mounted" && stageMounted()}
       {competitionStage === "readySetGo" && stageReadySetGo()}
       {competitionStage === "running" && stageRunning()}

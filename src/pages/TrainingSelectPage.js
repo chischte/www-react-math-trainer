@@ -7,8 +7,8 @@ export default function TrainingSelectPage() {
     <div>
       <Header />
       <br></br>
+      <div className="infotext">WÄHLE EIN TRAINING</div>
       <TrainingSelector></TrainingSelector>
-      <br></br>
     </div>
   );
 }

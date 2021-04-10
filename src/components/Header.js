@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../components/firebase/Auth";
 
@@ -6,7 +6,9 @@ export default function Header() {
   const authContext = useContext(AuthContext);
   const [userName, setUserName] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
+  const [mode, setMode] = useState();
 
+  // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
@@ -17,34 +19,54 @@ export default function Header() {
     }
   }, [authContext]);
 
+  // Get url location to hide irrelevant links:
+  const getModeFromUrl = useCallback(() => {
+    var currentUrl = window.location.href;
+    if (currentUrl.includes("training")) {
+      setMode("training");
+    } else if (currentUrl.includes("competition")) {
+      setMode("competition");
+    } else if (currentUrl.includes("highscore")) {
+      setMode("highscore");
+    }
+  }, []);
+
+  useEffect(() => {
+    getModeFromUrl();
+  }, [getModeFromUrl]);
+
   return (
     <div className="header">
       <br></br>
-      <NavLink
-        to="/training_select"
-        className="header_link"
-        activeClassName="is-active"
-      >
-        training
-      </NavLink>
+      {mode != "training" && (
+        <NavLink
+          to="/training_select"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          training
+        </NavLink>
+      )}
       <span> </span>
-
-      <NavLink
-        to="/competition"
-        className="header_link"
-        activeClassName="is-active"
-      >
-        wettkampf
-      </NavLink>
+      {mode != "competition" && (
+        <NavLink
+          to="/competition"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          wettkampf
+        </NavLink>
+      )}
       <span> </span>
-
-      <NavLink
-        to="/highscore"
-        className="header_link"
-        activeClassName="is-active"
-      >
-        highscore
-      </NavLink>
+      {mode != "highscore" && (
+        <NavLink
+          to="/highscore"
+          className="header_link"
+          activeClassName="is-active"
+        >
+          highscore
+        </NavLink>
+      )}
       <span> </span>
 
       {userIsLoggedIn ? (
