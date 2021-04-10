@@ -7,7 +7,7 @@ import Countdown from "../components/competition/Countdown";
 import QuestionDisplay from "../components/QuestionDisplay";
 import CompetitionSelector from "../components/competition/CompetitionSelector";
 import ReadySetGo from "../components/competition/ReadySetGo";
-import ShowCongrats from "../components/competition/ShowCongrats";
+import CompetitionFeedback from "../pages/CompetitionFeedbackSubPage";
 import UserInput from "../components/UserInput";
 import Header from "../components/Header";
 import ShowSpeed from "../components/competition/ShowSpeed";
@@ -394,8 +394,6 @@ export default function CompetitionPage() {
   const stageMounted = () => {
     return (
       <div>
-        <br></br>
-        <div className="user-at-group">WÄHLE EINE DISZIPLIN</div>
       </div>
     );
   };
@@ -434,7 +432,9 @@ export default function CompetitionPage() {
   const stageCompleted = () => {
     return (
       <div>
-        <ShowCongrats calculationsSolved={calculationsSolved} />
+        <CompetitionFeedback 
+        calculationsSolved={calculationsSolved}
+        overviewArray={[3,4,5,6]} />
       </div>
     );
   };
@@ -444,6 +444,9 @@ export default function CompetitionPage() {
     <div>
       <Header />
       <br></br>
+      <div className="user-at-group">
+        {userName}@{groupName}
+      </div>
       <CompetitionSelector
         selectMode={selectMode}
         setStageReadySetGo={setStageReadySetGo}

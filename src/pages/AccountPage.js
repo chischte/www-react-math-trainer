@@ -37,7 +37,7 @@ export default function AccountPage(props) {
                 color="primary"
                 fullWidth
               >
-                join a group{" "}
+                Einer Gruppe Beitreten
               </Button>
 
               <Box m={0} pt={1}>
@@ -48,7 +48,7 @@ export default function AccountPage(props) {
                   color="primary"
                   fullWidth
                 >
-                  create a group{" "}
+                  Eine Gruppe erzeugen
                 </Button>
               </Box>
               <Box m={0} pt={1}>
@@ -59,7 +59,7 @@ export default function AccountPage(props) {
                   color="primary"
                   fullWidth
                 >
-                  manage groups{" "}
+                  meine Gruppen{" "}
                 </Button>
               </Box>
               <Box m={0} pt={1}>
