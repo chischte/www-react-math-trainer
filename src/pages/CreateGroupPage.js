@@ -18,6 +18,7 @@ export default function CreateGroupPage() {
   const [userName, setUserName] = useState();
   const [uid, setUid] = useState();
   const [userGroups, setUserGroups] = useState();
+  const [groupsDbSnapshot, setGroupsDbSnapshot] = useState();
 
   //#region GET USER AUTH INFO
 
@@ -148,6 +149,21 @@ export default function CreateGroupPage() {
 
   //#endregion
 
+  //#region CREATE PUBLIC GROUP ------------------------------------------------
+  // ------ only necessary for the very first user------------------------------
+
+  useEffect(() => {
+    if (uid) {
+      firebase
+        .database()
+        .ref("/groups/public/group_info/" + uid)
+        .update({ creator: "god", name: "public", code: "public" });
+      console.log("created public group in user database");
+    }
+  }, [uid]);
+
+  //#endregion
+
   const handleCreateGroup = (event) => {
     event.preventDefault();
     const { groupName } = event.target.elements;
@@ -194,11 +210,14 @@ export default function CreateGroupPage() {
       {!!groupCreated && (
         <div className="outliner_wide">
           <div className="infotext">
-          <br></br>
-          Du hast die Gruppe <span className="it-blue">{groupName}</span> erstellt.
-          <br></br>
-          Mit dem Gruppencode <span className="it-blue">{groupCode}</span> können andere Benutzer der Gruppe
-          beitreten.          
+            <br></br>
+            Du hast die Gruppe <span className="it-blue">{groupName}</span>{" "}
+            erstellt.
+            <br></br>
+            Mit dem Gruppencode <span className="it-blue">
+              {groupCode}
+            </span>{" "}
+            können andere Benutzer der Gruppe beitreten.
           </div>
         </div>
       )}
