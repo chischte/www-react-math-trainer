@@ -53,12 +53,13 @@ export default function CompetitionPage() {
   const [calculationLogArray, setCalculationLogArray] = useState([]);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [timeElapsedArray, setTimeElapsedArray] = useState([]);
-  
+
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
     return newAverage;
   }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
+  //#region WRITE COMPETITION INFO TO DB/GROUPS -----------------------
   const writeToDatabase = useCallback(() => {
     if (userIsLoggedIn && dbWriteDataIsReady) {
       let dbEntry = {
@@ -109,7 +110,9 @@ export default function CompetitionPage() {
       setDbWriteDataIsReady(false);
     }
   }, [userIsLoggedIn, dbWriteDataIsReady, writeToDatabase]);
+  //#endregion
 
+  //#region CHECK FOR RECORDS --------------------------------------------------
   const checkForAdditionRecord = useCallback(() => {
     if (cpmAdd < calculationsSolved) {
       setCpmAdd(calculationsSolved);
@@ -167,6 +170,16 @@ export default function CompetitionPage() {
     mode,
   ]);
 
+  useEffect(() => {
+    if (recordCheckIsEnabled) {
+      setRecordCheckIsEnabled(false);
+      checkForNewRecord();
+    }
+  }, [checkForNewRecord, checkForRecordTrack, recordCheckIsEnabled]);
+  //#endregion
+
+  //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
+
   const getGroupsHighscoreDB = useCallback(
     (uid) => {
       let ref = firebase
@@ -206,6 +219,16 @@ export default function CompetitionPage() {
     [groupCode]
   );
 
+  // Get DB /groups data:
+  useEffect(() => {
+    if (userUid && !groupDbSnapshotIsCreated) {
+      getGroupsHighscoreDB(userUid);
+      setGroupDbSnapshotIsCreated(true);
+    }
+  }, [userUid, getGroupsHighscoreDB, groupDbSnapshotIsCreated]);
+  //#endregion
+
+  //#region GET USER'S NAME AVATAR FAVORITE GROUP FROM DB/USERS ----------------
   const getUsersDB = useCallback((uid) => {
     var dbUserData = 0;
     let ref = firebase.database().ref("/users/" + uid);
@@ -226,14 +249,6 @@ export default function CompetitionPage() {
     }
   }, []);
 
-  // Get DB /groups data:
-  useEffect(() => {
-    if (userUid && !groupDbSnapshotIsCreated) {
-      getGroupsHighscoreDB(userUid);
-      setGroupDbSnapshotIsCreated(true);
-    }
-  }, [userUid, getGroupsHighscoreDB, groupDbSnapshotIsCreated]);
-
   // Get DB /user data:
   useEffect(() => {
     if (userUid) {
@@ -241,7 +256,9 @@ export default function CompetitionPage() {
     }
   }, [userUid, getUsersDB]);
 
-  // Get user auth data and DB data:
+  //#endregion
+
+  //#region GET USER AUTH STATUS AND INFO --------------------------------------
   useEffect(() => {
     if (!!authContext.currentUser) {
       const uid = authContext.currentUser.uid;
@@ -251,13 +268,8 @@ export default function CompetitionPage() {
       setUserIsLoggedIn(false);
     }
   }, [authContext]);
+  //#endregion
 
-  useEffect(() => {
-    if (recordCheckIsEnabled) {
-      setRecordCheckIsEnabled(false);
-      checkForNewRecord();
-    }
-  }, [checkForNewRecord, checkForRecordTrack, recordCheckIsEnabled]);
 
   const selectMode = (mode) => {
     setMode(mode);
@@ -324,7 +336,7 @@ export default function CompetitionPage() {
     }
   };
 
-  // GET DATA FOR COMPETITION FEEDBACK SUB-PAGE -------------------------------
+  //#region GET DATA FOR COMPETITION FEEDBACK SUB-PAGE -------------------------
 
   // [0 = question,1 = answer, 2 = timeElapsed, 3= time to solve, 4= mark error]
 
@@ -362,20 +374,28 @@ export default function CompetitionPage() {
     }
 
     var calculationLog = {
-      questionNumber: calculationsSolved+1,
+      questionNumber: calculationsSolved + 1,
       questionString: currentQuestion,
       solutionString: currentSolution,
       errorCount: errorArray[currentIndex],
-      calculationTime:"0",
+      calculationTime: "0",
     };
 
-    _calculationLogArray[currentIndex]=calculationLog
+    _calculationLogArray[currentIndex] = calculationLog;
 
     // Assign back to hooks:
     setCalculationLogArray(_calculationLogArray);
     setTimeElapsedArray(_timeElapsedArray);
     // }
-  }, [calculationsSolved, currentQuestion,currentSolution, timeElapsedArray, timeElapsed]);
+  }, [
+    calculationsSolved,
+    currentQuestion,
+    currentSolution,
+    timeElapsedArray,
+    timeElapsed,
+  ]);
+
+  //#endregion
 
   // MANAGE COMPETITION STAGES -------------------------------------------------
 
