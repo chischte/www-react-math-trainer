@@ -45,12 +45,15 @@ export default function CompetitionPage() {
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
   const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
-  const [calculationQuestion, setCalculationQuestion] = useState("");
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [calculationSolution, setCalculationSolution] = useState("");
   const [cpmMul, setCpmMul] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(0);
-
+  const [errorArray, setErrorArray] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [currentSolution, setCurrentSolution] = useState("");
+  const [calculationLogArray, setCalculationLogArray] = useState([]);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeElapsedArray, setTimeElapsedArray] = useState([]);
+  
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
     return newAverage;
@@ -279,8 +282,8 @@ export default function CompetitionPage() {
     }
     questionStrings.push(newQuestion);
     setQuestionStrings(questionStrings);
-    setCalculationQuestion(newQuestion);
-    setCalculationSolution(newSolution);
+    setCurrentQuestion(newQuestion);
+    setCurrentSolution(newSolution);
   }, [mode, questionStrings]);
 
   // Generate new calculation if mode changed:
@@ -320,6 +323,59 @@ export default function CompetitionPage() {
       recordCpm = cpmDiv;
     }
   };
+
+  // GET DATA FOR COMPETITION FEEDBACK SUB-PAGE -------------------------------
+
+  // [0 = question,1 = answer, 2 = timeElapsed, 3= time to solve, 4= mark error]
+
+  const markUserError = () => {
+    var _errorArray = errorArray;
+    if (!_errorArray[calculationsSolved]) {
+      _errorArray[calculationsSolved] = 1;
+    } else {
+      _errorArray[calculationsSolved] += 1;
+    }
+    setErrorArray(_errorArray);
+  };
+
+  useEffect(() => {
+    // Get arrays from hooks:
+    var currentIndex = calculationsSolved;
+    var _timeElapsedArray = timeElapsedArray;
+    var _calculationLogArray = calculationLogArray;
+
+    // Log Current time:
+    _timeElapsedArray[currentIndex] = timeElapsed;
+
+    //Calculate time difference
+    if (calculationsSolved === 1) {
+      var timeDifference = _timeElapsedArray[0];
+      timeDifference = Math.round(10 * timeDifference) / 10;
+      _calculationLogArray[currentIndex - 1].calculationTime = timeDifference;
+    }
+    if (calculationsSolved > 1) {
+      timeDifference =
+        _timeElapsedArray[currentIndex - 1] -
+        _timeElapsedArray[currentIndex - 2];
+      timeDifference = Math.round(10 * timeDifference) / 10;
+      _calculationLogArray[currentIndex - 1].calculationTime = timeDifference;
+    }
+
+    var calculationLog = {
+      questionNumber: calculationsSolved+1,
+      questionString: currentQuestion,
+      solutionString: currentSolution,
+      errorCount: errorArray[currentIndex],
+      calculationTime:"0",
+    };
+
+    _calculationLogArray[currentIndex]=calculationLog
+
+    // Assign back to hooks:
+    setCalculationLogArray(_calculationLogArray);
+    setTimeElapsedArray(_timeElapsedArray);
+    // }
+  }, [calculationsSolved, currentQuestion,currentSolution, timeElapsedArray, timeElapsed]);
 
   // MANAGE COMPETITION STAGES -------------------------------------------------
 
@@ -392,10 +448,7 @@ export default function CompetitionPage() {
 
   // JSX OF COMPETITION STAGES -------------------------------------------------
   const stageMounted = () => {
-    return (
-      <div>
-      </div>
-    );
+    return <div></div>;
   };
 
   const stageReadySetGo = () => {
@@ -406,15 +459,13 @@ export default function CompetitionPage() {
     return (
       <div>
         <div className="outliner">
-          <QuestionDisplay questionString={calculationQuestion} />
+          <QuestionDisplay questionString={currentQuestion} />
 
           <UserInput
-            solution={calculationSolution}
+            solution={currentSolution}
             getNewCalculation={getNewCalculation}
             countOneUp={countOneUp}
-            markUserError={() => {
-              console.log("user input error");
-            }}
+            markUserError={markUserError}
           />
         </div>
         <ShowSpeed
@@ -432,9 +483,10 @@ export default function CompetitionPage() {
   const stageCompleted = () => {
     return (
       <div>
-        <CompetitionFeedback 
-        calculationsSolved={calculationsSolved}
-        overviewArray={[3,4,5,6]} />
+        <CompetitionFeedback
+          calculationsSolved={calculationsSolved}
+          overviewArray={calculationLogArray}
+        />
       </div>
     );
   };

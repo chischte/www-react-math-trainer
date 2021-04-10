@@ -18,18 +18,28 @@ export default function CompetitionFeedback(props) {
     }
   }, [authContext]);
 
+  // Sort overview array by calculation time:
+  useEffect(() => {
+    overviewArray.pop(); //last calculation entry is unsolved
+    overviewArray.sort(function (a, b) {
+      return b.calculationTime - a.calculationTime;
+    });
+  }, [overviewArray]);
+
   return (
     <div>
       <div className="show-congrats">
         <div className="show-congrats__haudi">
-          HaudiHo {userName}! 
+          HaudiHo {userName}!
           <h5>
             du hast{" "}
             <span className="show-congrats__count">
               {" "}
               {props.calculationsSolved}{" "}
             </span>{" "}
-            Rechnungen<br/>in einer Minute gelöst!
+            Rechnungen
+            <br />
+            in einer Minute gelöst!
           </h5>
         </div>
       </div>
@@ -52,16 +62,16 @@ export default function CompetitionFeedback(props) {
         <tfoot>
           {overviewArray.map((array, index) => (
             <tr key={array[4]}>
-              <td className="tra_td">{array[4]}</td>
-              <td className="tra_td">{array[0]}</td>
+              <td className="tra_td">{array.questionNumber}</td>
+              <td className="tra_td">{array.questionString}</td>
               {index < 3 ? (
-                <td className="tra_td error_td">{array[2]}s</td>
+                <td className="tra_td error_td">{array.calculationTime}s</td>
               ) : (
-                <td className="tra_td">{array[2]}s</td>
+                <td className="tra_td">{array.calculationTime}s</td>
               )}
 
-              {array[3] === true ? (
-                <td className="tra_td error_td">&times;</td>
+              {array.errorCount >= 1 ? (
+                <td className="tra_td error_td">{array.errorCount}</td>
               ) : (
                 <td className="tra_td"></td>
               )}
