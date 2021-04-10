@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import firebase from "firebase";
-
 import GenerateCalculations from "../calculation_generator/generateCalculations";
-
 import Countdown from "../components/competition/Countdown";
 import QuestionDisplay from "../components/QuestionDisplay";
 import CompetitionSelector from "../components/competition/CompetitionSelector";
@@ -17,7 +15,8 @@ const generateCalculations = new GenerateCalculations();
 
 export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
-
+  
+  //#region useState HOOKS -------------------------------------------------------
   const [recordCheckIsEnabled, setRecordCheckIsEnabled] = useState(false);
   const [competitionCountIsEnabled, setCompetitionCountIsEnabled] = useState(
     false
@@ -53,13 +52,15 @@ export default function CompetitionPage() {
   const [calculationLogArray, setCalculationLogArray] = useState([]);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [timeElapsedArray, setTimeElapsedArray] = useState([]);
+  //#endregion
+
+  //#region WRITE COMPETITION INFO TO DB/GROUPS -----------------------
 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
     return newAverage;
   }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
-  //#region WRITE COMPETITION INFO TO DB/GROUPS -----------------------
   const writeToDatabase = useCallback(() => {
     if (userIsLoggedIn && dbWriteDataIsReady) {
       let dbEntry = {
@@ -113,6 +114,23 @@ export default function CompetitionPage() {
   //#endregion
 
   //#region CHECK FOR RECORDS --------------------------------------------------
+
+  const setRecordValueOfCurrentMode = () => {
+    let recordCpm = 0;
+    if (mode === "addition") {
+      recordCpm = cpmAdd;
+    }
+    if (mode === "subtraction") {
+      recordCpm = cpmSub;
+    }
+    if (mode === "multiplication") {
+      recordCpm = cpmMul;
+    }
+    if (mode === "division") {
+      recordCpm = cpmDiv;
+    }
+  };
+
   const checkForAdditionRecord = useCallback(() => {
     if (cpmAdd < calculationsSolved) {
       setCpmAdd(calculationsSolved);
@@ -229,6 +247,7 @@ export default function CompetitionPage() {
   //#endregion
 
   //#region GET USER'S NAME AVATAR FAVORITE GROUP FROM DB/USERS ----------------
+
   const getUsersDB = useCallback((uid) => {
     var dbUserData = 0;
     let ref = firebase.database().ref("/users/" + uid);
@@ -259,6 +278,7 @@ export default function CompetitionPage() {
   //#endregion
 
   //#region GET USER AUTH STATUS AND INFO --------------------------------------
+
   useEffect(() => {
     if (!!authContext.currentUser) {
       const uid = authContext.currentUser.uid;
@@ -270,6 +290,7 @@ export default function CompetitionPage() {
   }, [authContext]);
   //#endregion
 
+  //#region VARIOUS ------------------------------------------------------------
 
   const selectMode = (mode) => {
     setMode(mode);
@@ -320,25 +341,13 @@ export default function CompetitionPage() {
     setCurrentSpeed(cpm);
   }, [calculationsSolved, timeElapsed]);
 
-  const setRecordValueOfCurrentMode = () => {
-    let recordCpm = 0;
-    if (mode === "addition") {
-      recordCpm = cpmAdd;
-    }
-    if (mode === "subtraction") {
-      recordCpm = cpmSub;
-    }
-    if (mode === "multiplication") {
-      recordCpm = cpmMul;
-    }
-    if (mode === "division") {
-      recordCpm = cpmDiv;
-    }
+  const updateTimeElapsed = (_timeElapsed) => {
+    setTimeElapsed(_timeElapsed);
   };
 
-  //#region GET DATA FOR COMPETITION FEEDBACK SUB-PAGE -------------------------
+  //#endregion
 
-  // [0 = question,1 = answer, 2 = timeElapsed, 3= time to solve, 4= mark error]
+  //#region GET DATA FOR COMPETITION FEEDBACK SUB-PAGE -------------------------
 
   const markUserError = () => {
     var _errorArray = errorArray;
@@ -357,9 +366,9 @@ export default function CompetitionPage() {
     var _calculationLogArray = calculationLogArray;
 
     // Log Current time:
-    _timeElapsedArray[currentIndex] = timeElapsed;
+    _timeElapsedArray[currentIndex] = Math.round(10 * timeElapsed) / 10;
 
-    //Calculate time difference
+    //Calculate time difference and update log:
     if (calculationsSolved === 1) {
       var timeDifference = _timeElapsedArray[0];
       timeDifference = Math.round(10 * timeDifference) / 10;
@@ -373,19 +382,22 @@ export default function CompetitionPage() {
       _calculationLogArray[currentIndex - 1].calculationTime = timeDifference;
     }
 
+    // Update log:
     var calculationLog = {
       questionNumber: calculationsSolved + 1,
       questionString: currentQuestion,
       solutionString: currentSolution,
       errorCount: errorArray[currentIndex],
-      calculationTime: "0",
+      calculationTime: "", // not calculated yet
     };
 
+    // Update log array:
     _calculationLogArray[currentIndex] = calculationLog;
 
     // Assign back to hooks:
     setCalculationLogArray(_calculationLogArray);
     setTimeElapsedArray(_timeElapsedArray);
+
     // }
   }, [
     calculationsSolved,
@@ -393,11 +405,13 @@ export default function CompetitionPage() {
     currentSolution,
     timeElapsedArray,
     timeElapsed,
+    calculationLogArray,
+    errorArray,
   ]);
 
   //#endregion
 
-  // MANAGE COMPETITION STAGES -------------------------------------------------
+  //#region MANAGE COMPETITION STAGES ------------------------------------------
 
   const setStageReadySetGo = () => {
     setCompetitionStage("readySetGo");
@@ -462,11 +476,10 @@ export default function CompetitionPage() {
     }
   }, [competitionCountIsEnabled, updateCompetitionCounter]);
 
-  const updateTimeElapsed = (_timeElapsed) => {
-    setTimeElapsed(_timeElapsed);
-  };
+  //#endregion
 
-  // JSX OF COMPETITION STAGES -------------------------------------------------
+  //#region JSX OF COMPETITION STAGES ------------------------------------------
+
   const stageMounted = () => {
     return <div></div>;
   };
@@ -510,7 +523,7 @@ export default function CompetitionPage() {
       </div>
     );
   };
-  //------------------------------------------------------------------------------
+  //#endregion
 
   return (
     <div>

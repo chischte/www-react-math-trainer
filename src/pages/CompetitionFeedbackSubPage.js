@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import { AuthContext } from "../components/firebase/Auth";
 
 export default function CompetitionFeedback(props) {
@@ -6,15 +6,12 @@ export default function CompetitionFeedback(props) {
 
   const [overviewArray] = useState(props.overviewArray);
   const [userName, setUserName] = useState();
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
-      setUserIsLoggedIn(true);
     } else {
       setUserName("guest");
-      setUserIsLoggedIn(false);
     }
   }, [authContext]);
 
