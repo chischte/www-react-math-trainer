@@ -195,11 +195,10 @@ export default function CreateGroupPage() {
         <div className="outliner_wide">
           <div className="infotext">
           <br></br>
-          Du hast die gruppe <span className="it-blue">{groupName}</span> erstellt
+          Du hast die Gruppe <span className="it-blue">{groupName}</span> erstellt.
           <br></br>
           Mit dem Gruppencode <span className="it-blue">{groupCode}</span> können andere Benutzer der Gruppe
-          beitreten<br></br>
-          Du findest den Gruppencode auch unter "meine Gruppen"
+          beitreten.          
           </div>
         </div>
       )}

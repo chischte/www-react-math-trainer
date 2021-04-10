@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
-import GenerateCalculations from "../calculation_generator/generateCalculations";
+import GenerateCalculations from "../calculation_generator/generateCompetitionCalculations";
 import Countdown from "../components/competition/Countdown";
 import QuestionDisplay from "../components/QuestionDisplay";
 import CompetitionSelector from "../components/competition/CompetitionSelector";
