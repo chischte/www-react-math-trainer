@@ -250,7 +250,11 @@ export default function TrainingRunPage() {
 
   const markUserError = () => {
     var _errorArray = errorArray;
-    _errorArray[calculationsSolved] = true;
+    if(!_errorArray[calculationsSolved]){
+      _errorArray[calculationsSolved] = 1;
+    }else{
+      _errorArray[calculationsSolved] += 1;
+    }
     setErrorArray(_errorArray);
   };
 
