@@ -25,7 +25,7 @@ export default function Stopwatch(props) {
 
   return (
     <div>
-      <div className="countdown">Stoppuhr: {Math.round(timeElapsed)}</div>
+      <div className="infotext">{Math.round(timeElapsed)}</div>
     </div>
   );
 }

@@ -365,9 +365,7 @@ export default function TrainingRunPage() {
           countOneUp={countOneUp}
           markUserError={markUserError}
         />
-        <br></br>
-        Noch zu lösen: {numberOfQuestions - calculationsSolved} Rechnungen
-        <br></br>
+        <div className="infotext">Noch <span className="it-blue">{numberOfQuestions - calculationsSolved}</span> Rechnungen</div>
         <Stopwatch
           updateTimeElapsed={updateTimeElapsed}
           startTime={previousTimeElapsed}

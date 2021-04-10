@@ -48,7 +48,7 @@ export default function AccountPage(props) {
                   color="primary"
                   fullWidth
                 >
-                  Eine Gruppe erzeugen
+                  Eine Gruppe erstellen
                 </Button>
               </Box>
               <Box m={0} pt={1}>

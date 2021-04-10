@@ -159,7 +159,7 @@ export default function TrainingDashPage() {
   return (
     <div>
       <Header />
-      <h1>{dashOperator}</h1>
+      <div className="huge-operator">{dashOperator}</div>
       {generateButtonRow("STEP")}
       {generateButtonRow("JUMP")}
       {generateButtonRow("BIG JUMP")}

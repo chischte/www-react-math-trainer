@@ -185,7 +185,7 @@ export default function TrainingPointPage() {
   return (
     <div>
       <Header />
-      <h1>{pointOperator}</h1>
+      <div className="huge-operator">{pointOperator}</div>
       {generateButtonRow(1)}
       {generateButtonRow(2)}
       {generateButtonRow(3)}

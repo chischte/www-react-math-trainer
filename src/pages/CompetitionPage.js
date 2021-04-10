@@ -527,7 +527,6 @@ export default function CompetitionPage() {
   return (
     <div>
       <Header />
-      <br></br>
       <div className="user-at-group">
         {userName}@{groupName}
       </div>
@@ -536,9 +535,6 @@ export default function CompetitionPage() {
         selectMode={selectMode}
         setStageReadySetGo={setStageReadySetGo}
       />
-      {competitionStage === "mounted" && (
-        <div className="infotext">WÄHLE EINEN WETTKAMPF</div>
-      )}
       {competitionStage === "mounted" && stageMounted()}
       {competitionStage === "readySetGo" && stageReadySetGo()}
       {competitionStage === "running" && stageRunning()}

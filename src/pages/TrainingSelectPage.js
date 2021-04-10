@@ -7,7 +7,7 @@ export default function TrainingSelectPage() {
     <div>
       <Header />
       <br></br>
-      <div className="infotext">WÄHLE EIN TRAINING</div>
+      {/* <div className="infotext">Wähle eine Trainingsdisziplin</div> */}
       <TrainingSelector></TrainingSelector>
     </div>
   );

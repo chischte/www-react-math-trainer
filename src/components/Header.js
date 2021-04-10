@@ -20,6 +20,7 @@ export default function Header() {
   }, [authContext]);
 
   // Get url location to hide irrelevant links:
+  // Currently not in use because does not look as cool as inteded
   const getModeFromUrl = useCallback(() => {
     var currentUrl = window.location.href;
     if (currentUrl.includes("training")) {
@@ -27,7 +28,7 @@ export default function Header() {
     } else if (currentUrl.includes("competition")) {
       setMode("competition");
     } else if (currentUrl.includes("highscore")) {
-      setMode("highscore");
+      setMode("training");
     }
   }, []);
 
@@ -38,35 +39,31 @@ export default function Header() {
   return (
     <div className="header">
       <br></br>
-      {mode != "training" && (
-        <NavLink
-          to="/training_select"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          training
-        </NavLink>
-      )}
+      <NavLink
+        to="/training_select"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        training
+      </NavLink>
       <span> </span>
-      {mode != "competition" && (
-        <NavLink
-          to="/competition"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          wettkampf
-        </NavLink>
-      )}
+
+      <NavLink
+        to="/competition"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        wettkampf
+      </NavLink>
       <span> </span>
-      {mode != "highscore" && (
-        <NavLink
-          to="/highscore"
-          className="header_link"
-          activeClassName="is-active"
-        >
-          highscore
-        </NavLink>
-      )}
+
+      <NavLink
+        to="/highscore"
+        className="header_link"
+        activeClassName="is-active"
+      >
+        highscore
+      </NavLink>
       <span> </span>
 
       {userIsLoggedIn ? (

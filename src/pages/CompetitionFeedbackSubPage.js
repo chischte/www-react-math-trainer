@@ -29,7 +29,7 @@ export default function CompetitionFeedback(props) {
         <div className="show-congrats__haudi">
           HaudiHo {userName}!
           <h5>
-            du hast{" "}
+            Du hast{" "}
             <span className="show-congrats__count">
               {" "}
               {props.calculationsSolved}{" "}
