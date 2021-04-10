@@ -21,6 +21,7 @@ export default function TrainingPointPage() {
     var urlDiscipline = splitUrl[splitUrl.length - 1];
     switch (urlDiscipline) {
       case "multiplication":
+                
         setTrainingDiscipline("multiplication");
         setPointOperator("×");
         break;
@@ -52,7 +53,7 @@ export default function TrainingPointPage() {
     return dbPath;
   }, [trainingDiscipline, userUid]);
 
-  // get DB connection:
+  // Get DB connection:
   function getDbConnection(ref) {
     return new Promise((resolve, reject) => {
       const userRef = firebase.database().ref(ref);
@@ -62,7 +63,7 @@ export default function TrainingPointPage() {
     });
   }
 
-  // wait for DB connection and get snapshot:
+  // Wait for DB connection and get snapshot:
   const getDbSnapshot = React.useCallback(async (ref) => {
     try {
       const dbUserData = await getDbConnection(ref);
@@ -75,7 +76,7 @@ export default function TrainingPointPage() {
     }
   }, []);
 
-  // establish DB connection only if user is logged in:
+  // Establish DB connection only if user is logged in:
   useEffect(() => {
     if (!!userIsLoggedIn) {
       getDbSnapshot(getDbPath()); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"

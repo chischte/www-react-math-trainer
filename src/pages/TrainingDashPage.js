@@ -77,7 +77,7 @@ export default function TrainingDashPage() {
   // establish DB connection only if user is logged in:
   useEffect(() => {
     if (!!userIsLoggedIn) {
-      getDbSnapshot(getDbPath()); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+      getDbSnapshot(getDbPath());
     }
   }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
 

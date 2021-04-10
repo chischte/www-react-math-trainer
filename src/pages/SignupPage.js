@@ -27,6 +27,7 @@ export default function SignupPage() {
   const [nicknameDatabaseSnapshot, setNicknameDatabaseSnapshot] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
+  // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserIsLoggedIn(true);
@@ -36,6 +37,7 @@ export default function SignupPage() {
     }
   }, [authContext]);
 
+  // Get nicknames from db/nicknames:
   const getNicknameDatabaseSnapshot = () => {
     try {
       let ref = firebase.database().ref("/nicknames/");
@@ -55,6 +57,8 @@ export default function SignupPage() {
   useEffect(() => {
     getNicknameDatabaseSnapshot();
   }, []);
+
+  //#region GET AND PROCESS USER INPUT -----------------------------------------
 
   const assignUserCharacter = (event) => {
     setUserCharacter(event.target.value);
@@ -80,8 +84,7 @@ export default function SignupPage() {
           "Der Name darf maximal 15 Zeichen lang sein."
       );
       nicknameIsAvailable = false;
-    }
-    else if (!!nicknameDatabaseSnapshot) {
+    } else if (!!nicknameDatabaseSnapshot) {
       if (!!nicknameDatabaseSnapshot.find((x) => x.name === name)) {
         nicknameIsAvailable = false;
         alert(
@@ -97,6 +100,11 @@ export default function SignupPage() {
     return email;
   };
 
+  //#endregion
+
+  //#region CREATE FIREBASE USER AUTH AND DB ENTRIES ---------------------------
+
+  // Create user in firebase auth:
   const createUserEmailAuth = useCallback(async () => {
     try {
       await firebaseInitializeApp
@@ -120,6 +128,13 @@ export default function SignupPage() {
     }
   }, [userEmail, userName, userPassword]);
 
+  useEffect(() => {
+    if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
+      createUserEmailAuth();
+    }
+  }, [userEmail, userPassword, userName, createUserEmailAuth, userIsLoggedIn]);
+
+  // Create user entry in db/users:
   const createUserEntryInDB = useCallback(() => {
     if (userIsLoggedIn) {
       let dbEntry = {
@@ -142,6 +157,7 @@ export default function SignupPage() {
     }
   }, [userCharacter, userIsLoggedIn, userName, userUid]);
 
+  // Create nickname entry in db/nicknames:::::
   const createNicknameEntryDB = useCallback(() => {
     if (!!firebase.auth().currentUser) {
       let dbEntry = {
@@ -155,14 +171,6 @@ export default function SignupPage() {
     }
   }, [userName]);
 
-  // If all data is provided, create user
-  useEffect(() => {
-    if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
-      createUserEmailAuth();
-    }
-  }, [userEmail, userPassword, userName, createUserEmailAuth, userIsLoggedIn]);
-
-  // If email auth worked, create nickname and user db entryies
   useEffect(() => {
     if (userEmail && userPassword && !!userName && userIsLoggedIn) {
       createNicknameEntryDB();
@@ -177,6 +185,7 @@ export default function SignupPage() {
     userIsLoggedIn,
   ]);
 
+  // Set user display name in firebase auth:
   const setUserDisplayName = useCallback(() => {
     let user = firebase.auth().currentUser;
     user
@@ -191,12 +200,13 @@ export default function SignupPage() {
       });
   }, [userName]);
 
-  // If user is logged in, set user display name:
   useEffect(() => {
     if (userIsLoggedIn) {
       setUserDisplayName();
     }
   }, [userIsLoggedIn, setUserDisplayName]);
+
+  //#endregion
 
   return (
     <div>

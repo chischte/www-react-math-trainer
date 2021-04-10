@@ -6,7 +6,7 @@ export default function Countdown(props) {
   const [timeElapsed, setTimeElapsed] = useState(0);
 
   const clockInterval = 100; // [ms]
-  const resolution = clockInterval / 1000 //[s]
+  const resolution = clockInterval / 1000; //[s]
 
   const communicateWithParent = useCallback(() => {
     if (timeRemaining > 0) {
@@ -14,7 +14,7 @@ export default function Countdown(props) {
     } else {
       props.setStageCompleted();
     }
-  }, [props, timeElapsed, timeRemaining])
+  }, [props, timeElapsed, timeRemaining]);
 
   // Update time periodically:
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function Countdown(props) {
 
       let newTimeRemaining = initialTime - newTimeElapsed;
       newTimeRemaining = Math.round(newTimeRemaining / resolution) * resolution;
-      setTimeRemaining(newTimeRemaining)
+      setTimeRemaining(newTimeRemaining);
 
       communicateWithParent();
     }, clockInterval);
@@ -37,14 +37,11 @@ export default function Countdown(props) {
 
   return (
     <div>
-      {timeRemaining === 0
-        ?
+      {timeRemaining === 0 ? (
         <div className="countdown">time's up !</div>
-        :
+      ) : (
         <div className="countdown">{Math.ceil(timeRemaining)}</div>
-      }
+      )}
     </div>
   );
 }
-
-

@@ -8,13 +8,13 @@ export default function ReadySetGo(props) {
   }
 
   useEffect(() => {
-    // save intervalId to clear the interval when the
-    // component re-renders
+    // Save intervalId to clear the interval when the
+    // component re-renders:
     const intervalId = setInterval(() => {
       setStage(stage - 1);
     }, 800);
 
-    // clear interval on re-render to avoid memory leaks
+    // Clear interval on re-render to avoid memory leaks:
     return () =>
       clearInterval(intervalId);
   }, [stage]);

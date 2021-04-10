@@ -9,7 +9,9 @@ import TrainingFeedback from "./TrainingFeedbackSubPage";
 const generateCalculations = new GenerateCalculations();
 
 export default function TrainingRunPage() {
-  const [numberOfQuestions, setNumberOfQuestions] = useState();
+ //#region useState HOOKS ------------------------------------------------------
+  
+ const [numberOfQuestions, setNumberOfQuestions] = useState();
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [questionArray, setQuestionArray] = useState([]);
   const [solutionArray, setSolutionArray] = useState();
@@ -27,8 +29,9 @@ export default function TrainingRunPage() {
   const [trainingStage, setTrainingStage] = useState("readyToStart");
   const [totalTrainingTime, setTotalTrainingTime] = useState();
   const [previousTimeElapsed, setPreviousTimeElapsed] = useState(0);
+  //#endregion
 
-  // GET URL INFORMATION -------------------------------------------------------
+  //#region GET URL INFORMATION ------------------------------------------------
 
   const setDisciplineFromUrl = useCallback(() => {
     var splitUrl = window.location.href.split("/");
@@ -93,7 +96,9 @@ export default function TrainingRunPage() {
     setNumberRangeFromUrl();
   }, [setDisciplineFromUrl]);
 
-  // GET INITIAL CALCULATIONS --------------------------------------------------
+  //#endregion
+
+  //#region GET INITIAL CALCULATIONS -------------------------------------------
 
   const getCalculation = useCallback(() => {
     generateCalculations.generateCalculations(
@@ -124,7 +129,9 @@ export default function TrainingRunPage() {
     console.log(currentSolution);
   }, [currentSolution]);
 
-  // VARIOUS FUNCTIONS: --------------------------------------------------------
+  //#endregion
+
+  //#region VARIOUS ------------------------------------------------------------
 
   const getNewCalculation = () => {
     return currentQuestion;
@@ -137,6 +144,11 @@ export default function TrainingRunPage() {
     setCalculationsSolved(calculationsSolved + 1);
   };
 
+  const updateTimeElapsed = (timeElapsed) => {
+    setTimeElapsed(timeElapsed);
+  };
+
+  // Generate Overview Array:
   const getOverviewArray = useCallback(() => {
     var overviewArray = [];
 
@@ -148,12 +160,15 @@ export default function TrainingRunPage() {
       var _key = [i + 1];
       overviewArray.push([_question, _answer, _time, _error, _key]);
     }
-    // SortOverviewArray by slowest calculations
+    // Sort Overview Array by slowest calculations
     overviewArray.sort(function (a, b) {
       return b[2] - a[2];
     });
     return overviewArray;
   }, [errorArray, questionArray, solutionArray, solvingTimeArray]);
+  //#endregion
+
+  //#region CREATE ADDITIONAL DRILL QUESTIONS ----------------------------------
 
   const addSlowestAnswersToDrill = useCallback(() => {
     var overviewArray = getOverviewArray();
@@ -168,8 +183,9 @@ export default function TrainingRunPage() {
     }
     setNumberOfQuestions(_questionArray.length);
   }, [questionArray, solutionArray, getOverviewArray]);
+  //#endregion
 
-  // MANAGE TRAINING STAGES ----------------------------------------------------
+  //#region MANAGE TRAINING STAGES ---------------------------------------------
 
   const manageTrainingStages = useCallback(() => {
     switch (trainingStage) {
@@ -240,19 +256,17 @@ export default function TrainingRunPage() {
     manageTrainingStages();
   }, [manageTrainingStages]);
 
-  const updateTimeElapsed = (timeElapsed) => {
-    setTimeElapsed(timeElapsed);
-  };
+  //#endregion
 
-  // MONITOR TRAINING PERFORMANCE ----------------------------------------------
+  //#region MONITOR TRAINING PERFORMANCE ---------------------------------------
 
   // [0 = question,1 = answer, 2 = timeElapsed, 3= time to solve, 4= mark error]
 
   const markUserError = () => {
     var _errorArray = errorArray;
-    if(!_errorArray[calculationsSolved]){
+    if (!_errorArray[calculationsSolved]) {
       _errorArray[calculationsSolved] = 1;
-    }else{
+    } else {
       _errorArray[calculationsSolved] += 1;
     }
     setErrorArray(_errorArray);
@@ -301,7 +315,9 @@ export default function TrainingRunPage() {
     timeElapsed,
   ]);
 
-  // MANAGE DISPLAY OF TRAINING STAGES -----------------------------------------
+  //#endregion
+
+  //#region MANAGE DISPLAY OF TRAINING STAGES ----------------------------------
 
   const showReadyToStart = () => {
     return (
@@ -374,7 +390,8 @@ export default function TrainingRunPage() {
       </div>
     );
   };
-  // ---------------------------------------------------------------------------
+  //#endregion
+
   return (
     <div>
       <Header />
@@ -392,4 +409,3 @@ export default function TrainingRunPage() {
     </div>
   );
 }
-

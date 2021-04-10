@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import firebase from "firebase";
+import { AuthContext } from "../components/firebase/Auth";
 import GenerateCalculations from "../calculation_generator/generateCalculations";
 import Countdown from "../components/competition/Countdown";
 import QuestionDisplay from "../components/QuestionDisplay";
@@ -9,13 +10,12 @@ import CompetitionFeedback from "../pages/CompetitionFeedbackSubPage";
 import UserInput from "../components/UserInput";
 import Header from "../components/Header";
 import ShowSpeed from "../components/competition/ShowSpeed";
-import { AuthContext } from "../components/firebase/Auth";
 
 const generateCalculations = new GenerateCalculations();
 
 export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
-  
+
   //#region useState HOOKS -------------------------------------------------------
   const [recordCheckIsEnabled, setRecordCheckIsEnabled] = useState(false);
   const [competitionCountIsEnabled, setCompetitionCountIsEnabled] = useState(

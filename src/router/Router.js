@@ -9,6 +9,7 @@ import HighScorePage from "../pages/HighScorePage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import AccountPage from "../pages/AccountPage";
+import CreateGroupPage from "../pages/CreateGroupPage";
 import ManageGroupsPage from "../pages/ManageGroupsPage";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { AuthProvider } from "../components/firebase/Auth";
@@ -30,6 +31,7 @@ const Router = () => (
         <Route path="/highscore" exact={true} component={HighScorePage} />)
         <Route path="/login" exact={true} component={LoginPage} />)
         <Route path="/signup" exact={true} component={SignupPage} />)
+        <Route path="/creategroup" component={CreateGroupPage} />
         <Route path="/managegroups" component={ManageGroupsPage} />
         <Route path="/account" component={AccountPage} />
         <Route path="/" exact={true} component={Homepage} />)

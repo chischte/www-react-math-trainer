@@ -66,10 +66,8 @@ export default function ManageGroupsPage() {
                 <tbody>
                   {userGroups.map((group) => (
                     <tr key={group.code}>
-
                       <td>{group.name}</td>
                       <td> {group.code}</td>
-
                     </tr>
                   ))}
                 </tbody>
