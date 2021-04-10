@@ -10,12 +10,13 @@ import CompetitionFeedback from "../pages/CompetitionFeedbackSubPage";
 import UserInput from "../components/UserInput";
 import Header from "../components/Header";
 import ShowSpeed from "../components/competition/ShowSpeed";
+import GroupSelector from "../components/GroupSelector";
 
 const generateCalculations = new GenerateCalculations();
 
 export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
-  
+
   //#region useState HOOKS -------------------------------------------------------
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
@@ -530,6 +531,7 @@ export default function CompetitionPage() {
       <div className="user-at-group">
         {userName}@{groupName}
       </div>
+      <GroupSelector/>
       <CompetitionSelector
         selectMode={selectMode}
         setStageReadySetGo={setStageReadySetGo}
