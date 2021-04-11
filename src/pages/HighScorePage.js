@@ -7,15 +7,15 @@ import GroupSelector from "../components/GroupSelector";
 import { AuthContext } from "../components/firebase/Auth";
 
 // JEDI PICS:
-import joda from "../pics/joda_crop.png";
+import joda from "../pics/jedi_joda.png";
 import rey from "../pics/jedi_rey.jpg";
-import luke from "../pics/luke.png";
-import ewok from "../pics/ewok.png";
+import luke from "../pics/jedi_luke.png";
+import ewok from "../pics/jedi_ewok.png";
 // SITH PICS:
-import emperor from "../pics/emperor_sidious.png";
-import darthVader from "../pics/darth_vader.png";
-import redTrooper from "../pics/red_trooper.jpg";
-import whiteTrooper from "../pics/white_trooper.png";
+import emperor from "../pics/sith_emperor_sidious.png";
+import darthVader from "../pics/sith_darth_vader.png";
+import redTrooper from "../pics/sith_red_trooper.jpg";
+import whiteTrooper from "../pics/sith_white_trooper.png";
 // UNICORN PICS:
 import unicorn1 from "../pics/unicorn_1st.png";
 import unicorn2 from "../pics/unicorn_2nd.png";
