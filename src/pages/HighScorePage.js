@@ -53,23 +53,41 @@ export default function HighscorePage() {
   }, [userUid]);
 
   // Get snapshot of group highscore:
+  const getGroupsHighscoreDbSnapshot = useCallback(() => {
+    let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
+    ref.once("value", (snapshot) => {
+      let _databaseSnapshot = snapshot.val();
+
+      if (!!_databaseSnapshot) {
+        // Convert object containing objects to an array of objects:
+        _databaseSnapshot = Object.values(_databaseSnapshot);
+        setHighscoreAvailable(true);
+        setDatabaseSnapshot(_databaseSnapshot);
+        console.log("update highscore info from db/groups")
+      } else {
+        setHighscoreAvailable(false);
+      }
+    });
+  },[groupCode]);
+
   useEffect(() => {
     if (groupCode) {
       let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
       ref.once("value", (snapshot) => {
-        let _databaseSnapshot = snapshot.val();
-
-        if (!!_databaseSnapshot) {
-          // Convert object containing objects to an array of objects:
-          _databaseSnapshot = Object.values(_databaseSnapshot);
-          setHighscoreAvailable(true);
-          setDatabaseSnapshot(_databaseSnapshot);
-        } else {
-          setHighscoreAvailable(false);
-        }
+        getGroupsHighscoreDbSnapshot(snapshot);
       });
     }
-  }, [groupCode]);
+  }, [groupCode,getGroupsHighscoreDbSnapshot]);
+
+  // Update highscore periodically
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getGroupsHighscoreDbSnapshot();
+    }, 15000);
+
+    // clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId);
+  },[getGroupsHighscoreDbSnapshot]);
 
   const getCpmRecords = useCallback(() => {
     let highscoreSnapshot = databaseSnapshot;
@@ -106,7 +124,7 @@ export default function HighscorePage() {
     let unicornRank = 1;
     let index = 0;
 
-    setLeadingCharacter(highscoreSnapshot[0].character)
+    setLeadingCharacter(highscoreSnapshot[0].character);
 
     for (index = 0; index < highscoreSnapshot.length; index++) {
       let character = highscoreSnapshot[index].character;

@@ -18,14 +18,14 @@ export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
 
   //#region useState HOOKS -------------------------------------------------------
-  const [cpmAdd, setCpmAdd] = useState(0);
-  const [cpmSub, setCpmSub] = useState(0);
-  const [cpmMul, setCpmMul] = useState(0);
-  const [cpmDiv, setCpmDiv] = useState(0);
   const [countAdd, setCountAdd] = useState(0);
   const [countSub, setCountSub] = useState(0);
   const [countMul, setCountMul] = useState(0);
   const [countDiv, setCountDiv] = useState(0);
+  const [cpmAdd, setCpmAdd] = useState(0);
+  const [cpmSub, setCpmSub] = useState(0);
+  const [cpmMul, setCpmMul] = useState(0);
+  const [cpmDiv, setCpmDiv] = useState(0);
   const [countTotal, setCountTotal] = useState(0);
   const [groupName, setGroupName] = useState("public");
   const [groupCode, setGroupCode] = useState("public");
@@ -208,7 +208,6 @@ export default function CompetitionPage() {
       ref.once("value", (snapshot) => {
         const dbUserData = snapshot.val();
         console.log("get high score data from db/groups: ");
-        console.log(dbUserData);
 
         if (!!dbUserData) {
           setCpmAdd(dbUserData.cpm_add);
@@ -237,20 +236,12 @@ export default function CompetitionPage() {
     [groupCode]
   );
 
-  // Get DB /groups data if snaphot is out of date:
+  // Get DB /groups data if group changed:
   useEffect(() => {
-    if (userUid && !groupDbSnapshotIsCreated) {
+    if (userUid) {
       getGroupsHighscoreDB(userUid);
-      setGroupDbSnapshotIsCreated(true);
     }
   }, [userUid, getGroupsHighscoreDB, groupCode]);
-
-    // Get DB /groups data if group changed:
-    useEffect(() => {
-      if (userUid) {
-        getGroupsHighscoreDB(userUid);
-      }
-    }, [userUid, getGroupsHighscoreDB, groupCode]);
   //#endregion
 
   //#region GET USER'S NAME AVATAR FAVORITE GROUP FROM DB/USERS ----------------
@@ -261,7 +252,6 @@ export default function CompetitionPage() {
     ref.on("value", (snapshot) => {
       dbUserData = snapshot.val();
       console.log("get user data from db/user:");
-      console.log(dbUserData);
       if (dbUserData) {
         try {
           setUserCharacter(dbUserData.character);
