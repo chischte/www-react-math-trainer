@@ -37,7 +37,7 @@ export default function Header() {
   }, [getModeFromUrl]);
 
   return (
-    <div className="header">
+        <div className="header_outliner">
       <br></br>
       <NavLink
         to="/training_select"

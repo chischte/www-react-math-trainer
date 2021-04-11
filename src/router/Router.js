@@ -5,7 +5,7 @@ import TrainingSelectPage from "../pages/TrainingSelectPage";
 import TrainingPointPage from "../pages/TrainingPointPage";
 import TrainingDashPage from "../pages/TrainingDashPage";
 import CompetitionPage from "../pages/CompetitionPage";
-import HighScorePage from "../pages/HighScorePage";
+import HighScorePage from "../pages/HighscorePage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import AccountPage from "../pages/AccountPage";

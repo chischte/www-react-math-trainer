@@ -1,8 +1,22 @@
-.header {
+.header_outliner {
+  display: flex;
+  justify-content:space-around;
+  background-color:$background;
   border-radius: $s-radius;
-  margin: 0.0rem auto 1rem auto;
+  max-width: 35rem;
+  height: 2.5rem;
+  margin: auto;
+  margin-top: 0.7rem;
+  margin-bottom: 0rem;
+  padding-top: 0.3rem;
+  padding-left: 0.5rem;
+  padding-bottom: auto;
+  padding-right: 0.8rem;
 }
 
 .header_link{
-  background-color:none;
+  padding-bottom: 3rem;
 }
+
+
+

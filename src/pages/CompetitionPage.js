@@ -18,6 +18,17 @@ export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
 
   //#region useState HOOKS -------------------------------------------------------
+  const [cpmAdd, setCpmAdd] = useState(0);
+  const [cpmSub, setCpmSub] = useState(0);
+  const [cpmMul, setCpmMul] = useState(0);
+  const [cpmDiv, setCpmDiv] = useState(0);
+  const [countAdd, setCountAdd] = useState(0);
+  const [countSub, setCountSub] = useState(0);
+  const [countMul, setCountMul] = useState(0);
+  const [countDiv, setCountDiv] = useState(0);
+  const [countTotal, setCountTotal] = useState(0);
+  const [groupName, setGroupName] = useState("public");
+  const [groupCode, setGroupCode] = useState("public");
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
   const [userCharacter, setUserCharacter] = useState("");
@@ -31,21 +42,10 @@ export default function CompetitionPage() {
   const [groupDbSnapshotIsCreated, setGroupDbSnapshotIsCreated] = useState(
     false
   );
-  const [cpmSub, setCpmSub] = useState(0);
-  const [cpmAdd, setCpmAdd] = useState(0);
-  const [cpmDiv, setCpmDiv] = useState(0);
-  const [countAdd, setCountAdd] = useState(0);
-  const [countSub, setCountSub] = useState(0);
-  const [countMul, setCountMul] = useState(0);
-  const [countDiv, setCountDiv] = useState(0);
-  const [countTotal, setCountTotal] = useState(0);
-  const [groupName, setGroupName] = useState("public");
-  const [groupCode, setGroupCode] = useState("public");
   const [questionStrings, setQuestionStrings] = useState([]);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
   const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
-  const [cpmMul, setCpmMul] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [errorArray, setErrorArray] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
@@ -84,6 +84,7 @@ export default function CompetitionPage() {
         .ref("/groups/" + groupCode + "/highscore/" + userUid)
         .update(dbEntry);
       console.log("stored high score data to db/groups:");
+      setGroupDbSnapshotIsCreated(false);
       console.log(dbEntry);
     }
   }, [
@@ -236,13 +237,20 @@ export default function CompetitionPage() {
     [groupCode]
   );
 
-  // Get DB /groups data:
+  // Get DB /groups data if snaphot is out of date:
   useEffect(() => {
     if (userUid && !groupDbSnapshotIsCreated) {
       getGroupsHighscoreDB(userUid);
       setGroupDbSnapshotIsCreated(true);
     }
-  }, [userUid, getGroupsHighscoreDB, groupDbSnapshotIsCreated]);
+  }, [userUid, getGroupsHighscoreDB, groupCode]);
+
+    // Get DB /groups data if group changed:
+    useEffect(() => {
+      if (userUid) {
+        getGroupsHighscoreDB(userUid);
+      }
+    }, [userUid, getGroupsHighscoreDB, groupCode]);
   //#endregion
 
   //#region GET USER'S NAME AVATAR FAVORITE GROUP FROM DB/USERS ----------------
@@ -250,7 +258,7 @@ export default function CompetitionPage() {
   const getUsersDB = useCallback((uid) => {
     var dbUserData = 0;
     let ref = firebase.database().ref("/users/" + uid);
-    ref.once("value", (snapshot) => {
+    ref.on("value", (snapshot) => {
       dbUserData = snapshot.val();
       console.log("get user data from db/user:");
       console.log(dbUserData);

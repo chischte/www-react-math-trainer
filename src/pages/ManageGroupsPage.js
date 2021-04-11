@@ -53,7 +53,7 @@ export default function ManageGroupsPage() {
           {!!userGroups & !!favoriteGroup
             ?
             <div className="ooutliner outliner-flex">
-              <table className="groups-table">
+              <table className="groups_table">
                 <thead>
                   <tr>
                     <th className="groups_title-header " colSpan={2}>MEINE GRUPPEN</th>

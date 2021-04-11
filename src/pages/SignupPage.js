@@ -282,11 +282,17 @@ export default function SignupPage() {
         </div>
       )}
       {userIsLoggedIn && (
-        <div>
-          You are logged in
+        <div className="infotext">
           <br></br>
-          <NavLink to="/" activeClassName="is-active" exact={true}>
-            start a competition
+          Super, du bist eingelogged!
+          <br></br>
+          <br></br>
+          <NavLink to="/training_select" activeClassName="is-active" exact={true}>
+            Beginne mit dem Training
+          </NavLink>
+          <br></br>oder<br></br>
+          <NavLink to="/competition" activeClassName="is-active" exact={true}>
+            Mach einen Wettkampf
           </NavLink>
         </div>
       )}

@@ -142,7 +142,7 @@ function JoinGroupPage() {
           .database()
           .ref("/users/" + uid)
           .update({
-            favorite_group: { newGroupObject },
+            favorite_group: newGroupObject
           });
         console.log("update favorite group in user database");
       }
