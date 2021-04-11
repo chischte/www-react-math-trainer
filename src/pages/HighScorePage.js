@@ -195,7 +195,7 @@ export default function HighscorePage() {
                   <th className="high_th symbol__th">−</th>
                   <th className="high_th symbol__th">&times;</th>
                   <th className="high_th symbol__th">&divide;</th>
-                  <th className="high_th" style={{ fontSize: "12px" }}>
+                  <th className="high_th" style={{ fontSize: "13px" }}>
                     LAST<br></br>SEEN
                   </th>
                 </tr>
