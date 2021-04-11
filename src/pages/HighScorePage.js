@@ -52,6 +52,8 @@ export default function HighscorePage() {
     }
   }, [userUid]);
 
+  //#region GET HIGHSCORE DATA FROM DB/GROUPS ----------------------------------
+
   // Get snapshot of group highscore:
   const getGroupsHighscoreDbSnapshot = useCallback(() => {
     let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
@@ -63,12 +65,12 @@ export default function HighscorePage() {
         _databaseSnapshot = Object.values(_databaseSnapshot);
         setHighscoreAvailable(true);
         setDatabaseSnapshot(_databaseSnapshot);
-        console.log("update highscore info from db/groups")
+        console.log("update highscore info from db/groups");
       } else {
         setHighscoreAvailable(false);
       }
     });
-  },[groupCode]);
+  }, [groupCode]);
 
   useEffect(() => {
     if (groupCode) {
@@ -77,7 +79,7 @@ export default function HighscorePage() {
         getGroupsHighscoreDbSnapshot(snapshot);
       });
     }
-  }, [groupCode,getGroupsHighscoreDbSnapshot]);
+  }, [groupCode, getGroupsHighscoreDbSnapshot]);
 
   // Update highscore periodically
   useEffect(() => {
@@ -87,8 +89,11 @@ export default function HighscorePage() {
 
     // clear interval on re-render to avoid memory leaks
     return () => clearInterval(intervalId);
-  },[getGroupsHighscoreDbSnapshot]);
+  }, [getGroupsHighscoreDbSnapshot]);
 
+  //#endregion
+
+  //#region PROCESS DB DATA, GET RECORDS, ASSIGN HIERARCHY ---------------------
   const getCpmRecords = useCallback(() => {
     let highscoreSnapshot = databaseSnapshot;
 
@@ -152,6 +157,9 @@ export default function HighscorePage() {
     }
   }, [databaseSnapshot, sortAndAssignHierachy, getCpmRecords]);
 
+  //#endregion
+
+  // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
