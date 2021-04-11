@@ -256,7 +256,6 @@ export default function CompetitionPage() {
       console.log(dbUserData);
       if (dbUserData) {
         try {
-          setUserName(dbUserData.name);
           setUserCharacter(dbUserData.character);
           setGroupName(dbUserData.favorite_group.name);
           setGroupCode(dbUserData.favorite_group.code);
@@ -280,8 +279,8 @@ export default function CompetitionPage() {
 
   useEffect(() => {
     if (!!authContext.currentUser) {
-      const uid = authContext.currentUser.uid;
-      setUserUid(uid);
+      setUserUid(authContext.currentUser.uid);
+      setUserName(authContext.currentUser.displayName);
       setUserIsLoggedIn(true);
     } else {
       setUserIsLoggedIn(false);
