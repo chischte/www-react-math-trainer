@@ -1,0 +1,407 @@
+{
+  "groups" : {
+    "mkkz6" : {
+      "group_info" : {
+        "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+          "creator" : "michi",
+          "date" : "2021-04-11T12:46:07.626Z",
+          "group_name" : "UnicornGroup"
+        }
+      },
+      "highscore" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "character" : "unicorn",
+          "count_add" : 0,
+          "count_div" : 0,
+          "count_mul" : 1,
+          "count_sub" : 0,
+          "count_total" : 1,
+          "cpm_add" : 0,
+          "cpm_avg" : 1.25,
+          "cpm_div" : 0,
+          "cpm_mul" : 5,
+          "cpm_sub" : 0,
+          "name" : "***lexa***",
+          "timestamp" : "2021-04-11T13:00:15.510Z"
+        },
+        "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+          "character" : "sith",
+          "count_add" : 0,
+          "count_div" : 0,
+          "count_mul" : 1,
+          "count_sub" : 0,
+          "count_total" : 1,
+          "cpm_add" : 0,
+          "cpm_avg" : 0.5,
+          "cpm_div" : 0,
+          "cpm_mul" : 2,
+          "cpm_sub" : 0,
+          "name" : "michi",
+          "timestamp" : "2021-04-11T12:59:31.409Z"
+        },
+        "oq5SOYdKQpWlzU07BCah6FAwaC13" : {
+          "character" : "jedi",
+          "count_add" : 0,
+          "count_div" : 0,
+          "count_mul" : 0,
+          "count_sub" : 1,
+          "count_total" : 1,
+          "cpm_add" : 0,
+          "cpm_avg" : 0.5,
+          "cpm_div" : 0,
+          "cpm_mul" : 0,
+          "cpm_sub" : 2,
+          "name" : "JediMasterRolf",
+          "timestamp" : "2021-04-12T08:14:09.134Z"
+        }
+      }
+    },
+    "p9ngm" : {
+      "group_info" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "creator" : "***lexa***",
+          "date" : "2021-04-11T09:53:46.692Z",
+          "group_name" : "SithGroup"
+        }
+      },
+      "highscore" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "character" : "unicorn",
+          "count_add" : 1,
+          "count_div" : 1,
+          "count_mul" : 1,
+          "count_sub" : 1,
+          "count_total" : 4,
+          "cpm_add" : 3,
+          "cpm_avg" : 2.75,
+          "cpm_div" : 3,
+          "cpm_mul" : 4,
+          "cpm_sub" : 1,
+          "name" : "***lexa***",
+          "timestamp" : "2021-04-11T09:54:15.784Z"
+        },
+        "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+          "character" : "sith",
+          "count_add" : 1,
+          "count_div" : 0,
+          "count_mul" : 3,
+          "count_sub" : 1,
+          "count_total" : 5,
+          "cpm_add" : 33,
+          "cpm_avg" : 33,
+          "cpm_div" : 1,
+          "cpm_mul" : 44,
+          "cpm_sub" : 2,
+          "name" : "michi",
+          "timestamp" : "2021-04-11T20:52:05.151Z"
+        },
+        "oq5SOYdKQpWlzU07BCah6FAwaC13" : {
+          "character" : "jedi",
+          "count_add" : 0,
+          "count_div" : 0,
+          "count_mul" : 1,
+          "count_sub" : 0,
+          "count_total" : 1,
+          "cpm_add" : 0,
+          "cpm_avg" : 0.75,
+          "cpm_div" : 0,
+          "cpm_mul" : 3,
+          "cpm_sub" : 0,
+          "name" : "JediMasterRolf",
+          "timestamp" : "2021-04-12T08:10:46.579Z"
+        }
+      }
+    },
+    "public" : {
+      "highscore" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "character" : "unicorn",
+          "count_add" : 1,
+          "count_div" : 1,
+          "count_mul" : 1,
+          "count_sub" : 1,
+          "count_total" : 4,
+          "cpm_add" : 3,
+          "cpm_avg" : 9.75,
+          "cpm_div" : 3,
+          "cpm_mul" : 32,
+          "cpm_sub" : 1,
+          "name" : "***lexa***",
+          "timestamp" : "2021-04-11T21:32:40.508Z"
+        },
+        "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+          "character" : "sith",
+          "count_add" : 2,
+          "count_div" : 0,
+          "count_mul" : 2,
+          "count_sub" : 2,
+          "count_total" : 6,
+          "cpm_add" : 29,
+          "cpm_avg" : 13.25,
+          "cpm_div" : 0,
+          "cpm_mul" : 4,
+          "cpm_sub" : 20,
+          "name" : "michi",
+          "timestamp" : "2021-04-12T08:05:37.506Z"
+        },
+        "oq5SOYdKQpWlzU07BCah6FAwaC13" : {
+          "character" : "jedi",
+          "count_add" : 0,
+          "count_div" : 1,
+          "count_mul" : 0,
+          "count_sub" : 0,
+          "count_total" : 1,
+          "cpm_add" : 0,
+          "cpm_avg" : 1,
+          "cpm_div" : 4,
+          "cpm_mul" : 0,
+          "cpm_sub" : 0,
+          "name" : "JediMasterRolf",
+          "timestamp" : "2021-04-11T08:35:56.591Z"
+        }
+      }
+    },
+    "t2geq" : {
+      "group_info" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "creator" : "***lexa***",
+          "date" : "2021-04-11T10:00:02.548Z",
+          "group_name" : "JediGroup"
+        }
+      },
+      "highscore" : {
+        "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+          "character" : "unicorn",
+          "count_add" : 1,
+          "count_div" : 1,
+          "count_mul" : 1,
+          "count_sub" : 1,
+          "count_total" : 4,
+          "cpm_add" : 3,
+          "cpm_avg" : 2,
+          "cpm_div" : 3,
+          "cpm_mul" : 1,
+          "cpm_sub" : 1,
+          "name" : "***lexa***",
+          "timestamp" : "2021-04-11T10:00:38.914Z"
+        },
+        "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+          "character" : "sith",
+          "count_add" : 3,
+          "count_div" : 1,
+          "count_mul" : 3,
+          "count_sub" : 1,
+          "count_total" : 7,
+          "cpm_add" : 2,
+          "cpm_avg" : 2.5,
+          "cpm_div" : 3,
+          "cpm_mul" : 4,
+          "cpm_sub" : 1,
+          "name" : "michi",
+          "timestamp" : "2021-04-11T21:29:06.614Z"
+        },
+        "oq5SOYdKQpWlzU07BCah6FAwaC13" : {
+          "character" : "jedi",
+          "count_add" : 1,
+          "count_div" : 1,
+          "count_mul" : 2,
+          "count_sub" : 1,
+          "count_total" : 5,
+          "cpm_add" : 2,
+          "cpm_avg" : 3,
+          "cpm_div" : 3,
+          "cpm_mul" : 5,
+          "cpm_sub" : 2,
+          "name" : "JediMasterRolf",
+          "timestamp" : "2021-04-11T13:01:42.829Z"
+        }
+      }
+    }
+  },
+  "nicknames" : {
+    "***lexa***" : {
+      "name" : "***lexa***"
+    },
+    "JediMasterRolf" : {
+      "name" : "JediMasterRolf"
+    },
+    "michi" : {
+      "name" : "michi"
+    }
+  },
+  "users" : {
+    "DDvUjA4dHKe8RqsZOX0VQy0acfy1" : {
+      "character" : "unicorn",
+      "favorite_group" : {
+        "code" : "public",
+        "name" : "public"
+      },
+      "groups" : [ {
+        "code" : "public",
+        "name" : "public"
+      }, {
+        "code" : "mkkz6",
+        "name" : "UnicornGroup"
+      }, {
+        "code" : "t2geq",
+        "name" : "JediGroup"
+      }, {
+        "code" : "p9ngm",
+        "name" : "SithGroup"
+      } ],
+      "name" : "***lexa***",
+      "training" : {
+        "addition" : {
+          "big_jump" : [ null, {
+            "rpm" : 20
+          } ],
+          "jump" : [ null, {
+            "rpm" : 5
+          } ],
+          "step" : [ null, {
+            "rpm" : 20
+          } ]
+        },
+        "division" : {
+          "level1" : [ null, {
+            "rpm" : 98
+          } ]
+        },
+        "multiplication" : {
+          "drill" : {
+            "1" : {
+              "rpm" : 90
+            },
+            "5" : {
+              "rpm" : 30
+            },
+            "8" : {
+              "rpm" : 12
+            }
+          },
+          "level1" : {
+            "1" : {
+              "rpm" : 118
+            },
+            "2" : {
+              "rpm" : 65
+            },
+            "5" : {
+              "rpm" : 55
+            },
+            "8" : {
+              "rpm" : 56
+            },
+            "10" : {
+              "rpm" : 79
+            }
+          },
+          "level2" : {
+            "1" : {
+              "rpm" : 128
+            },
+            "5" : {
+              "rpm" : 71
+            },
+            "8" : {
+              "rpm" : 68
+            }
+          }
+        },
+        "subtraction" : {
+          "big_jump" : [ null, {
+            "rpm" : 65
+          } ],
+          "jump" : [ null, {
+            "rpm" : 56
+          } ],
+          "step" : [ null, {
+            "rpm" : 49
+          } ]
+        }
+      },
+      "uid" : "DDvUjA4dHKe8RqsZOX0VQy0acfy1"
+    },
+    "eAov1km3Uph0d4a8Fugkc3QP10l1" : {
+      "character" : "sith",
+      "favorite_group" : {
+        "code" : "public",
+        "name" : "public"
+      },
+      "groups" : [ {
+        "code" : "public",
+        "name" : "public"
+      }, {
+        "code" : "t2geq",
+        "name" : "JediGroup"
+      }, {
+        "code" : "p9ngm",
+        "name" : "SithGroup"
+      }, {
+        "code" : "mkkz6",
+        "name" : "UnicornGroup"
+      } ],
+      "name" : "michi",
+      "training" : {
+        "addition" : {
+          "big_jump" : [ null, {
+            "rpm" : 12
+          } ],
+          "jump" : [ null, {
+            "rpm" : 30
+          } ],
+          "step" : [ null, {
+            "rpm" : 25
+          } ]
+        },
+        "multiplication" : {
+          "drill" : [ null, {
+            "rpm" : 87
+          } ],
+          "level1" : {
+            "1" : {
+              "rpm" : 133
+            },
+            "4" : {
+              "rpm" : 58
+            }
+          },
+          "level2" : [ null, {
+            "rpm" : 113
+          } ]
+        },
+        "subtraction" : {
+          "jump" : [ null, {
+            "rpm" : 18
+          } ],
+          "step" : [ null, {
+            "rpm" : 39
+          } ]
+        }
+      },
+      "uid" : "eAov1km3Uph0d4a8Fugkc3QP10l1"
+    },
+    "oq5SOYdKQpWlzU07BCah6FAwaC13" : {
+      "character" : "jedi",
+      "favorite_group" : {
+        "code" : "p9ngm",
+        "name" : "SithGroup"
+      },
+      "groups" : [ {
+        "code" : "public",
+        "name" : "public"
+      }, {
+        "code" : "mkkz6",
+        "name" : "UnicornGroup"
+      }, {
+        "code" : "t2geq",
+        "name" : "JediGroup"
+      }, {
+        "code" : "p9ngm",
+        "name" : "SithGroup"
+      } ],
+      "name" : "JediMasterRolf",
+      "uid" : "oq5SOYdKQpWlzU07BCah6FAwaC13"
+    }
+  }
+}
