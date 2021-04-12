@@ -13,3 +13,14 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+.outliner_wide {
+  //background-color: darken($light-blue, 10%);
+  max-width: 40rem;
+  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0.5rem;
+}

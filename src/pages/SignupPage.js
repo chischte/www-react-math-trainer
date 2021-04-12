@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { AuthContext } from "../components/firebase/Auth";
 import firebaseInitializeApp from "../components/firebase/firebase";
-import firebase from "firebase"
+import firebase from "firebase";
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
 import { NavLink } from "react-router-dom";
@@ -21,12 +21,13 @@ export default function SignupPage() {
   const authContext = useContext(AuthContext);
   const [userEmail, setUserEmail] = useState();
   const [userName, setUserName] = useState();
-  const [userUid, setUserUid] = useState();
-  const [userPassword, setUserPassword] = useState();
   const [userCharacter, setUserCharacter] = useState("jedi");
+  const [userPassword, setUserPassword] = useState();
+  const [userUid, setUserUid] = useState();
   const [nicknameDatabaseSnapshot, setNicknameDatabaseSnapshot] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
+  // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserIsLoggedIn(true);
@@ -36,6 +37,7 @@ export default function SignupPage() {
     }
   }, [authContext]);
 
+  // Get nicknames from db/nicknames:
   const getNicknameDatabaseSnapshot = () => {
     try {
       let ref = firebase.database().ref("/nicknames/");
@@ -56,6 +58,8 @@ export default function SignupPage() {
     getNicknameDatabaseSnapshot();
   }, []);
 
+  //#region GET AND PROCESS USER INPUT -----------------------------------------
+
   const assignUserCharacter = (event) => {
     setUserCharacter(event.target.value);
   };
@@ -64,51 +68,73 @@ export default function SignupPage() {
     event.preventDefault();
     var { password, name } = event.target.elements;
     name = name.value.trim();
-    const email = name + "@mathe-trainer.oo";
 
-    if (checkIfNicknameIsAvailable(name)) {
+    if (checkIfNicknameIsValid(name)) {
       setUserName(name);
-    } else {
-      alert(
-        "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
-      );
+      setUserPassword(password.value);
+      setUserEmail(createEmailFromUserName(name));
     }
-    setUserEmail(email);
-    setUserPassword(password.value);
   };
 
-  const checkIfNicknameIsAvailable = (name) => {
+  const checkIfNicknameIsValid = (name) => {
     let nicknameIsAvailable = true;
-
-    if (!!nicknameDatabaseSnapshot) {
+    if (name.length > 15) {
+      alert(
+        "Bitte wähle einen kürzeren Namen.\r\n" +
+          "Der Name darf maximal 15 Zeichen lang sein."
+      );
+      nicknameIsAvailable = false;
+    } else if (!!nicknameDatabaseSnapshot) {
       if (!!nicknameDatabaseSnapshot.find((x) => x.name === name)) {
         nicknameIsAvailable = false;
+        alert(
+          "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
+        );
       }
     }
     return nicknameIsAvailable;
   };
 
-  const createNewUser = useCallback(async () => {
+  const createEmailFromUserName = (nickName) => {
+    var email = nickName + "@mathe-trainer.oo";
+    return email;
+  };
+
+  //#endregion
+
+  //#region CREATE FIREBASE USER AUTH AND DB ENTRIES ---------------------------
+
+  // Create user in firebase auth:
+  const createUserEmailAuth = useCallback(async () => {
     try {
       await firebaseInitializeApp
         .auth()
         .createUserWithEmailAndPassword(userEmail, userPassword);
       alert(
         "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
-        userName +
-        "\r\nDein Passwort ist:" +
-        userPassword +
-        "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+          userName +
+          "\r\nDein Passwort ist:" +
+          userPassword +
+          "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
       );
     } catch (error) {
       console.log(error);
-      alert("Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
-        "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname und versuche es nocheinmal.")
+      alert(
+        "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
+          "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
+          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~"
+      );
     } finally {
-
     }
   }, [userEmail, userName, userPassword]);
 
+  useEffect(() => {
+    if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
+      createUserEmailAuth();
+    }
+  }, [userEmail, userPassword, userName, createUserEmailAuth, userIsLoggedIn]);
+
+  // Create user entry in db/users:
   const createUserEntryInDB = useCallback(() => {
     if (userIsLoggedIn) {
       let dbEntry = {
@@ -131,6 +157,7 @@ export default function SignupPage() {
     }
   }, [userCharacter, userIsLoggedIn, userName, userUid]);
 
+  // Create nickname entry in db/nicknames:::::
   const createNicknameEntryDB = useCallback(() => {
     if (!!firebase.auth().currentUser) {
       let dbEntry = {
@@ -140,26 +167,25 @@ export default function SignupPage() {
         .database()
         .ref("/nicknames/" + userName)
         .update(dbEntry);
+      console.log("created nickname entry in database");
     }
   }, [userName]);
 
-  // If all data is provided, create user
   useEffect(() => {
-    if (userEmail && userPassword && !!userName && !userIsLoggedIn) {
-      createNewUser();
-      createUserEntryInDB();
+    if (userEmail && userPassword && !!userName && userIsLoggedIn) {
       createNicknameEntryDB();
+      createUserEntryInDB();
     }
   }, [
     userEmail,
     userPassword,
     userName,
-    createNewUser,
     createNicknameEntryDB,
     createUserEntryInDB,
-    userIsLoggedIn
+    userIsLoggedIn,
   ]);
 
+  // Set user display name in firebase auth:
   const setUserDisplayName = useCallback(() => {
     let user = firebase.auth().currentUser;
     user
@@ -167,19 +193,20 @@ export default function SignupPage() {
         displayName: userName,
       })
       .then(function () {
-        console.log("user display name update successful")
+        console.log("user display name update successful");
       })
       .catch(function (e) {
-        console.log(e)
+        console.log(e);
       });
   }, [userName]);
 
-  // If user is logged in, set user display name:
   useEffect(() => {
     if (userIsLoggedIn) {
       setUserDisplayName();
     }
   }, [userIsLoggedIn, setUserDisplayName]);
+
+  //#endregion
 
   return (
     <div>
@@ -255,11 +282,17 @@ export default function SignupPage() {
         </div>
       )}
       {userIsLoggedIn && (
-        <div>
-          You are logged in
+        <div className="infotext">
           <br></br>
-          <NavLink to="/" activeClassName="is-active" exact={true}>
-            start a competition
+          Super, du bist eingelogged!
+          <br></br>
+          <br></br>
+          <NavLink to="/training_select" activeClassName="is-active" exact={true}>
+            Beginne mit dem Training
+          </NavLink>
+          <br></br>oder<br></br>
+          <NavLink to="/competition" activeClassName="is-active" exact={true}>
+            Mach einen Wettkampf
           </NavLink>
         </div>
       )}

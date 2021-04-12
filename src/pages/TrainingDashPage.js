@@ -77,7 +77,7 @@ export default function TrainingDashPage() {
   // establish DB connection only if user is logged in:
   useEffect(() => {
     if (!!userIsLoggedIn) {
-      getDbSnapshot(getDbPath()); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+      getDbSnapshot(getDbPath());
     }
   }, [userIsLoggedIn, getDbPath, getDbSnapshot]);
 
@@ -159,7 +159,7 @@ export default function TrainingDashPage() {
   return (
     <div>
       <Header />
-      <h1>{dashOperator}</h1>
+      <div className="huge-operator">{dashOperator}</div>
       {generateButtonRow("STEP")}
       {generateButtonRow("JUMP")}
       {generateButtonRow("BIG JUMP")}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function ReadySetGo(props) {
+export default function ReadySetGo(props) {
   const [stage, setStage] = useState(3);
 
   if (stage <= 0) {
@@ -8,13 +8,13 @@ function ReadySetGo(props) {
   }
 
   useEffect(() => {
-    // save intervalId to clear the interval when the
-    // component re-renders
+    // Save intervalId to clear the interval when the
+    // component re-renders:
     const intervalId = setInterval(() => {
       setStage(stage - 1);
     }, 800);
 
-    // clear interval on re-render to avoid memory leaks
+    // Clear interval on re-render to avoid memory leaks:
     return () =>
       clearInterval(intervalId);
   }, [stage]);
@@ -26,5 +26,3 @@ function ReadySetGo(props) {
     </div>
   );
 }
-
-export default ReadySetGo;

@@ -1,0 +1,33 @@
+.group-selector {
+  margin: 1rem 0 1rem 0;
+}
+
+.group-selector_button {
+  //width: 7rem;
+  height: 2rem;
+  border: none;
+  border-radius: 0.4rem;
+  font-weight: 650;
+  font-size: $s-size;
+  margin: 0.15rem;
+  padding-bottom: 0.25rem;
+  transition: all 0.5s linear;
+  outline: none;
+}
+
+.group-selector_button_inactive {
+  background-color: $orange;
+  color:$off-black;
+}
+
+.group-selector_button_active {
+  height: 2.6rem;
+  font-size: 1.5rem;
+  background-color:$off-black;
+  color: $orange;
+}
+
+.group-selector_button:hover {
+  background-color:$off-black;
+  color: $orange;
+}

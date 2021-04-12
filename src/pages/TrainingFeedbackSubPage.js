@@ -159,8 +159,8 @@ export default function TrainingFeedback(props) {
                 <td className="tra_td">{array[2]}s</td>
               )}
 
-              {array[3] === true ? (
-                <td className="tra_td error_td">&times;</td>
+              {array[3] >= 1 ? (
+                <td className="tra_td error_td">{array[3]}</td>
               ) : (
                 <td className="tra_td"></td>
               )}

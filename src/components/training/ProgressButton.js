@@ -9,13 +9,15 @@ export default function ProgressButton(props) {
 
   const calculateButtonParameters = useCallback(() => {
     const widthQuotient = rpm / rpmGreen;
+    
     // Calculate width:
     var greenWidth = 30;
     var currentWidth = greenWidth * widthQuotient;
     currentWidth = Math.floor(currentWidth);
     currentWidth += "rem";
     setWidth(currentWidth);
-    //AssignColor:
+    
+    // AssignColor:
     if (widthQuotient < 0.25) {
       setColor("red");
     } else if (widthQuotient < 0.6) {

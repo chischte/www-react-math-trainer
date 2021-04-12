@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../components/firebase/Auth";
 
@@ -6,7 +6,9 @@ export default function Header() {
   const authContext = useContext(AuthContext);
   const [userName, setUserName] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
+  const [mode, setMode] = useState();
 
+  // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
@@ -17,18 +19,26 @@ export default function Header() {
     }
   }, [authContext]);
 
+  // Get url location to hide irrelevant links:
+  // Currently not in use because does not look as cool as inteded
+  const getModeFromUrl = useCallback(() => {
+    var currentUrl = window.location.href;
+    if (currentUrl.includes("training")) {
+      setMode("training");
+    } else if (currentUrl.includes("competition")) {
+      setMode("competition");
+    } else if (currentUrl.includes("highscore")) {
+      setMode("training");
+    }
+  }, []);
+
+  useEffect(() => {
+    getModeFromUrl();
+  }, [getModeFromUrl]);
+
   return (
-    <div className="header">
+        <div className="header_outliner">
       <br></br>
-      <NavLink
-        to="/"
-        exact={true}
-        className="header_link"
-        activeClassName="is-active"
-      >
-        home
-      </NavLink>
-      <span> </span>
       <NavLink
         to="/training_select"
         className="header_link"
