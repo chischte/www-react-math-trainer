@@ -105,13 +105,13 @@ export default function TrainingDashPage() {
     var rpmGreen;
     switch (level) {
       case "STEP":
-        rpmGreen = 50;
+        rpmGreen = 22;
         break;
       case "JUMP":
-        rpmGreen = 30;
+        rpmGreen = 19;
         break;
       case "BIG JUMP":
-        rpmGreen = 15;
+        rpmGreen = 10;
         break;
       default:
         alert("invalid level");

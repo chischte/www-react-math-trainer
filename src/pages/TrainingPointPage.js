@@ -166,7 +166,7 @@ export default function TrainingPointPage() {
                     {getRpmFromDb("drill", rowNumber) > 0 && (
                       <ProgressButton
                         rpm={getRpmFromDb("drill", rowNumber)}
-                        rpmGreen={70}
+                        rpmGreen={60}
                         pointOrDash="point"
                       />
                     )}

@@ -11,16 +11,16 @@ export default function ProgressButton(props) {
     const widthQuotient = rpm / rpmGreen;
     
     // Calculate width:
-    var greenWidth = 30;
+    var greenWidth = 20;
     var currentWidth = greenWidth * widthQuotient;
     currentWidth = Math.floor(currentWidth);
     currentWidth += "rem";
     setWidth(currentWidth);
     
     // AssignColor:
-    if (widthQuotient < 0.25) {
+    if (widthQuotient < 0.33) {
       setColor("red");
-    } else if (widthQuotient < 0.6) {
+    } else if (widthQuotient < 1) {
       setColor("orange");
     } else {
       setColor("green");
