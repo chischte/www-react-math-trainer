@@ -24,8 +24,8 @@ import unicorn4 from "../pics/unicorn_4th.png";
 export default function HighscorePage() {
   const authContext = useContext(AuthContext);
   const [leadingCharacter, setLeadingCharacter] = useState();
-  const [groupName, setGroupName] = useState("public");
-  const [groupCode, setGroupCode] = useState("public");
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
   const [userName, setUserName] = useState();
   const [userUid, setUserUid] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
@@ -166,6 +166,8 @@ export default function HighscorePage() {
       setUserIsLoggedIn(true);
     } else {
       setUserIsLoggedIn(false);
+      setGroupName("public");
+      setGroupCode("public");
     }
   }, [authContext]);
 
