@@ -1,0 +1,16 @@
+.speedometer__container {
+  position: relative;
+  height: 3rem;
+  z-index: 0;
+}
+
+.speedometer {
+  position: absolute;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: darken($light-blue, 30%);
+  left: 50%;
+  top: 50%;
+  margin-left: -8.7rem;
+  margin-top: -6.9rem;
+}

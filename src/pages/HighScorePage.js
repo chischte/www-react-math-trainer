@@ -1,7 +1,6 @@
 import React, { useState, useContext, useCallback, useEffect } from "react";
 import firebase from "firebase";
 import "firebase/auth";
-import { config } from "../components/firebase/firebase";
 import Header from "../components/Header";
 import GroupSelector from "../components/GroupSelector";
 import { AuthContext } from "../components/firebase/Auth";
@@ -222,7 +221,7 @@ export default function HighscorePage() {
                   <th className="high_th symbol__th">&times;</th>
                   <th className="high_th symbol__th">&divide;</th>
                   <th className="high_th" style={{ fontSize: "13px" }}>
-                    LAST<br></br>SEEN
+                    ZULETZT<br></br>GESEHEN
                   </th>
                 </tr>
               </thead>

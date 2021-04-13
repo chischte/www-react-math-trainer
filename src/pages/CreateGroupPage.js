@@ -18,7 +18,6 @@ export default function CreateGroupPage() {
   const [userName, setUserName] = useState();
   const [uid, setUid] = useState();
   const [userGroups, setUserGroups] = useState();
-  const [groupsDbSnapshot, setGroupsDbSnapshot] = useState();
 
   //#region GET USER AUTH INFO
 

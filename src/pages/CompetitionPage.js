@@ -11,6 +11,7 @@ import UserInput from "../components/UserInput";
 import Header from "../components/Header";
 import ShowSpeed from "../components/competition/ShowSpeed";
 import GroupSelector from "../components/GroupSelector";
+import Speedometer from "../components/competition/Speedometer";
 
 const generateCalculations = new GenerateCalculations();
 
@@ -18,6 +19,7 @@ export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
 
   //#region useState HOOKS -------------------------------------------------------
+  const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
   const [countAdd, setCountAdd] = useState(0);
   const [countSub, setCountSub] = useState(0);
   const [countMul, setCountMul] = useState(0);
@@ -39,14 +41,12 @@ export default function CompetitionPage() {
   );
   const [checkForRecordTrack, setCheckForRecordTrack] = useState(false);
   const [dbWriteDataIsReady, setDbWriteDataIsReady] = useState(false);
-  const [groupDbSnapshotIsCreated, setGroupDbSnapshotIsCreated] = useState(
-    false
-  );
   const [questionStrings, setQuestionStrings] = useState([]);
   const [calculationsSolved, setCalculationsSolved] = useState(0);
   const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
   const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
   const [currentSpeed, setCurrentSpeed] = useState(0);
+  const [speedometerSpeed, setSpeedometerSpeed] = useState(0);
   const [errorArray, setErrorArray] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentSolution, setCurrentSolution] = useState("");
@@ -84,7 +84,6 @@ export default function CompetitionPage() {
         .ref("/groups/" + groupCode + "/highscore/" + userUid)
         .update(dbEntry);
       console.log("stored high score data to db/groups:");
-      setGroupDbSnapshotIsCreated(false);
       console.log(dbEntry);
     }
   }, [
@@ -117,7 +116,7 @@ export default function CompetitionPage() {
 
   //#region CHECK FOR RECORDS --------------------------------------------------
 
-  const setRecordValueOfCurrentMode = () => {
+  const setRecordValueOfCurrentMode = useCallback(() => {
     let recordCpm = 0;
     if (mode === "addition") {
       recordCpm = cpmAdd;
@@ -131,7 +130,14 @@ export default function CompetitionPage() {
     if (mode === "division") {
       recordCpm = cpmDiv;
     }
-  };
+    setCurrentModeRecordCpm(recordCpm);
+  }, [cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
+
+  useEffect(() => {
+    if (mode) {
+      setRecordValueOfCurrentMode();
+    }
+  }, [mode, setRecordValueOfCurrentMode]);
 
   const checkForAdditionRecord = useCallback(() => {
     if (cpmAdd < calculationsSolved) {
@@ -290,7 +296,6 @@ export default function CompetitionPage() {
 
   const selectMode = (mode) => {
     setMode(mode);
-    setRecordValueOfCurrentMode();
   };
 
   const getNewCalculation = useCallback(() => {
@@ -340,6 +345,15 @@ export default function CompetitionPage() {
   const updateTimeElapsed = (_timeElapsed) => {
     setTimeElapsed(_timeElapsed);
   };
+
+  // Minimize speedometer overshooting:
+  useEffect(() => {
+    if (timeElapsed > 5) {
+      setSpeedometerSpeed(currentSpeed);
+    } else {
+      setSpeedometerSpeed(currentModeRecordCpm/2);
+    }
+  }, [currentSpeed, timeElapsed,currentModeRecordCpm]);
 
   //#endregion
 
@@ -497,13 +511,13 @@ export default function CompetitionPage() {
             markUserError={markUserError}
           />
         </div>
-        <ShowSpeed
-          calculationsSolved={calculationsSolved}
-          currentSpeed={currentSpeed}
-        />
         <Countdown
           setTimeElapsed={updateTimeElapsed}
           setStageCompleted={setStageCompleted}
+        />
+        <Speedometer
+          currentSpeed={speedometerSpeed}
+          currentModeRecordCpm={currentModeRecordCpm}
         />
       </div>
     );

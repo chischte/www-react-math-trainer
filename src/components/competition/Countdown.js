@@ -42,7 +42,6 @@ export default function Countdown(props) {
       ) : (
         <div className="countdown">{Math.ceil(timeRemaining)}</div>
       )}
+    </div>
   );
 }
-
-    </div>
