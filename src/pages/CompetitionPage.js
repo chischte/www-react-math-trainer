@@ -20,17 +20,17 @@ export default function CompetitionPage() {
 
   //#region useState HOOKS -------------------------------------------------------
   const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
-  const [countAdd, setCountAdd] = useState(0);
-  const [countSub, setCountSub] = useState(0);
-  const [countMul, setCountMul] = useState(0);
-  const [countDiv, setCountDiv] = useState(0);
   const [cpmAdd, setCpmAdd] = useState(0);
   const [cpmSub, setCpmSub] = useState(0);
   const [cpmMul, setCpmMul] = useState(0);
   const [cpmDiv, setCpmDiv] = useState(0);
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
+  const [countAdd, setCountAdd] = useState(0);
+  const [countSub, setCountSub] = useState(0);
+  const [countMul, setCountMul] = useState(0);
+  const [countDiv, setCountDiv] = useState(0);
   const [countTotal, setCountTotal] = useState(0);
-  const [groupName, setGroupName] = useState("public");
-  const [groupCode, setGroupCode] = useState("public");
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
   const [userCharacter, setUserCharacter] = useState("");
@@ -206,6 +206,18 @@ export default function CompetitionPage() {
 
   //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
 
+  const clearAllFields=()=>{
+    setCpmAdd(0);
+    setCpmSub(0);
+    setCpmMul(0);
+    setCpmDiv(0);
+    setCountAdd(0);
+    setCountSub(0);
+    setCountMul(0);
+    setCountDiv(0);
+    setCountTotal(0);
+  }
+  
   const getGroupsHighscoreDB = useCallback(
     (uid) => {
       let ref = firebase
@@ -214,7 +226,7 @@ export default function CompetitionPage() {
       ref.once("value", (snapshot) => {
         const dbUserData = snapshot.val();
         console.log("get high score data from db/groups: ");
-
+        console.log(dbUserData);
         if (!!dbUserData) {
           setCpmAdd(dbUserData.cpm_add);
           setCpmSub(dbUserData.cpm_sub);
@@ -227,15 +239,7 @@ export default function CompetitionPage() {
           setCountTotal(dbUserData.count_total);
         } else {
           // no group highscore created yet, clear fields:
-          setCpmAdd(0);
-          setCpmSub(0);
-          setCpmMul(0);
-          setCpmDiv(0);
-          setCountAdd(0);
-          setCountSub(0);
-          setCountMul(0);
-          setCountDiv(0);
-          setCountTotal(0);
+         clearAllFields();
         }
       });
     },
@@ -288,6 +292,7 @@ export default function CompetitionPage() {
       setUserIsLoggedIn(true);
     } else {
       setUserIsLoggedIn(false);
+      setGroupName("public");
     }
   }, [authContext]);
   //#endregion
@@ -351,9 +356,9 @@ export default function CompetitionPage() {
     if (timeElapsed > 5) {
       setSpeedometerSpeed(currentSpeed);
     } else {
-      setSpeedometerSpeed(currentModeRecordCpm/2);
+      setSpeedometerSpeed(currentModeRecordCpm / 2);
     }
-  }, [currentSpeed, timeElapsed,currentModeRecordCpm]);
+  }, [currentSpeed, timeElapsed, currentModeRecordCpm]);
 
   //#endregion
 
