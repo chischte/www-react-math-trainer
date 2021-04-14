@@ -77,7 +77,7 @@ export default function Header() {
         </NavLink>
       ) : (
         <NavLink
-          to="/login"
+          to="/login_select_page"
           className="header_link"
           activeClassName="is-active"
         >

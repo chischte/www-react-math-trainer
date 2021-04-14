@@ -5,8 +5,9 @@ import TrainingSelectPage from "../pages/TrainingSelectPage";
 import TrainingPointPage from "../pages/TrainingPointPage";
 import TrainingDashPage from "../pages/TrainingDashPage";
 import CompetitionPage from "../pages/CompetitionPage";
-import HighScorePage from "../pages/HighScorePage";
+import HighscorePage from "../pages/HighscorePage";
 import LoginPage from "../pages/LoginPage";
+import LoginSelectPage from "../pages/LoginSelectPage";
 import SignupPage from "../pages/SignupPage";
 import AccountPage from "../pages/AccountPage";
 import CreateGroupPage from "../pages/CreateGroupPage";
@@ -29,7 +30,8 @@ const Router = () => (
         />
         )
         <Route path="/competition" exact={true} component={CompetitionPage} />)
-        <Route path="/highscore" exact={true} component={HighScorePage} />)
+        <Route path="/highscore" exact={true} component={HighscorePage} />)
+        <Route path="/login_select_page" exact={true} component={LoginSelectPage} />)
         <Route path="/login" exact={true} component={LoginPage} />)
         <Route path="/signup" exact={true} component={SignupPage} />)
         <Route path="/creategroup" exact={true} component={CreateGroupPage} />

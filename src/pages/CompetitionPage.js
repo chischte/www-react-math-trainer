@@ -115,85 +115,41 @@ export default function CompetitionPage() {
 
   //#region CHECK FOR RECORDS --------------------------------------------------
 
-  const setRecordValueOfCurrentMode = useCallback(() => {
-    let recordCpm = 0;
-    if (mode === "addition") {
-      recordCpm = cpmAdd;
-    }
-    if (mode === "subtraction") {
-      recordCpm = cpmSub;
-    }
-    if (mode === "multiplication") {
-      recordCpm = cpmMul;
-    }
-    if (mode === "division") {
-      recordCpm = cpmDiv;
-    }
-    setCurrentModeRecordCpm(recordCpm);
-  }, [cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
-
-  useEffect(() => {
-    if (mode) {
-      setRecordValueOfCurrentMode();
-    }
-  }, [mode, setRecordValueOfCurrentMode]);
-
-  const checkForAdditionRecord = useCallback(() => {
-    if (cpmAdd < calculationsSolved) {
-      setCpmAdd(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmAdd]);
-
-  const checkForSubtractionRecord = useCallback(() => {
-    if (cpmSub < calculationsSolved) {
-      setCpmSub(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmSub]);
-
-  const checkForMultiplicationRecord = useCallback(() => {
-    if (cpmMul < calculationsSolved) {
-      setCpmMul(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmMul]);
-
-  const checkForDivisionRecord = useCallback(() => {
-    if (cpmDiv < calculationsSolved) {
-      setCpmDiv(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmDiv]);
+  const showRecordMessage = () => {
+    alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+  };
 
   const checkForNewRecord = useCallback(() => {
-    if (mode === "addition") {
-      checkForAdditionRecord();
+    switch (mode) {
+      case "addition":
+        if (calculationsSolved > cpmAdd) {
+          setCpmAdd(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "subtraction":
+        if (calculationsSolved > cpmSub) {
+          setCpmSub(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "multiplication":
+        if (calculationsSolved > cpmMul) {
+          setCpmMul(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "division":
+        if (calculationsSolved > cpmDiv) {
+          setCpmDiv(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      default:
+        console.log("this was not a new record");
+        break;
     }
-    if (mode === "subtraction") {
-      checkForSubtractionRecord();
-    }
-    if (mode === "multiplication") {
-      checkForMultiplicationRecord();
-    }
-    if (mode === "division") {
-      checkForDivisionRecord();
-    }
-  }, [
-    checkForAdditionRecord,
-    checkForSubtractionRecord,
-    checkForMultiplicationRecord,
-    checkForDivisionRecord,
-    mode,
-  ]);
+  }, [mode,calculationsSolved, cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
   useEffect(() => {
     if (recordCheckIsEnabled) {
@@ -205,7 +161,7 @@ export default function CompetitionPage() {
 
   //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
 
-  const clearAllFields=()=>{
+  const clearAllFields = () => {
     setCpmAdd(0);
     setCpmSub(0);
     setCpmMul(0);
@@ -215,8 +171,8 @@ export default function CompetitionPage() {
     setCountMul(0);
     setCountDiv(0);
     setCountTotal(0);
-  }
-  
+  };
+
   const getGroupsHighscoreDB = useCallback(
     (uid) => {
       let ref = firebase
@@ -238,7 +194,7 @@ export default function CompetitionPage() {
           setCountTotal(dbUserData.count_total);
         } else {
           // no group highscore created yet, clear fields:
-         clearAllFields();
+          clearAllFields();
         }
       });
     },
@@ -349,6 +305,34 @@ export default function CompetitionPage() {
   const updateTimeElapsed = (_timeElapsed) => {
     setTimeElapsed(_timeElapsed);
   };
+
+  //#endregion
+
+  //#region SPEEDOMETER --------------------------------------------------------
+
+  // Set speedometer max value:
+  const setRecordValueOfCurrentMode = useCallback(() => {
+    let recordCpm = 0;
+    if (mode === "addition") {
+      recordCpm = cpmAdd;
+    }
+    if (mode === "subtraction") {
+      recordCpm = cpmSub;
+    }
+    if (mode === "multiplication") {
+      recordCpm = cpmMul;
+    }
+    if (mode === "division") {
+      recordCpm = cpmDiv;
+    }
+    setCurrentModeRecordCpm(recordCpm);
+  }, [cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
+
+  useEffect(() => {
+    if (mode) {
+      setRecordValueOfCurrentMode();
+    }
+  }, [mode, setRecordValueOfCurrentMode]);
 
   // Minimize speedometer overshooting:
   useEffect(() => {

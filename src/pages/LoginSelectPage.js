@@ -8,7 +8,7 @@ import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
 
-export default function LoginPage(props) {
+export default function LoginSelectPage(props) {
   const authContext = useContext(AuthContext);
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
@@ -20,23 +20,14 @@ export default function LoginPage(props) {
     }
   }, [authContext]);
 
-  const handleLogIn = (event) => {
-    event.preventDefault();
-    var { email, password } = event.target.elements;
-    email = email.value + "@mathe-trainer.oo";
-    logInExistingUser(email, password.value);
+  const handleSwitchToLogin = (event) => {
+    props.history.push("/login");
   };
 
-  const logInExistingUser = async (email, password) => {
-    try {
-      await firebaseInitializeApp
-        .auth()
-        .signInWithEmailAndPassword(email, password);
-    } catch (error) {
-      alert(error);
-    }
+  const handleSwitchToSignup = () => {
+    props.history.push("/signup");
   };
- 
+
   return (
     <div>
       <Header />
@@ -44,26 +35,7 @@ export default function LoginPage(props) {
         <ThemeProvider theme={theme}>
           {!userIsLoggedIn && (
             <div>
-              <form onSubmit={handleLogIn}>
-                <Box m={0} pt={1}>
-                  <TextField
-                    name="email"
-                    fullWidth
-                    id="outlined-basic"
-                    label="nickname"
-                    variant="outlined"
-                  />
-                </Box>
-                <Box m={0} pt={1}>
-                  <TextField
-                    name="password"
-                    type="password"
-                    fullWidth
-                    id="outlined-basic"
-                    label="password"
-                    variant="outlined"
-                  />
-                </Box>
+              <form onSubmit={handleSwitchToSignup}>
                 <Box m={0} pt={1}>
                   <Button
                     type="submit"
@@ -71,10 +43,21 @@ export default function LoginPage(props) {
                     color="primary"
                     fullWidth
                   >
-                    ANMELDEN
+                    ICH BIN NEU HIER
                   </Button>
                 </Box>
               </form>
+              <h5> ODER</h5>
+              <Box m={0} pt={1}>
+                <Button
+                  onClick={handleSwitchToLogin}
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                >
+                  ICH HABE SCHON EINEN ACCOUNT
+                </Button>
+              </Box>
             </div>
           )}
         </ThemeProvider>
