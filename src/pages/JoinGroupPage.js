@@ -157,7 +157,7 @@ function JoinGroupPage() {
       <Header userIsLoggedIn={userIsLoggedIn} userName={userName} />
       {!entryCreated && (
         <div>
-          <div className="user-at-group">Trete einer Gruppe bei</div>
+          <div className="user-at-group">Gib den erhaltenen Gruppencode ein:</div>
           <div className="outliner">
             <ThemeProvider theme={theme}>
               <div>
@@ -179,7 +179,7 @@ function JoinGroupPage() {
                       color="secondary"
                       fullWidth
                     >
-                      Join Group
+                      Beitreten
                     </Button>
                   </Box>
                 </form>
