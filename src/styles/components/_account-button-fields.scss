@@ -1,26 +1,39 @@
+.acc_outliner {
+  max-width: 30rem;
+  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0.5rem;
+}
+
 .acc_button,
-.acc_purple
- {
-  width: 7rem;
-  height: 4.2rem;
+.acc_purple {
+  color: white;
+  width: 100%;
+  height: 3rem;
   border: none;
-  border-radius: $s-radius;
-  font-weight: 900;
-  font-size: $xl-size;
-  padding-bottom: 0.55rem;
-  margin: 0.1rem;
-  transition: all 0.5s linear;
+  border-radius: $xs-radius;
+  font-weight: 400;
+  font-size: $s-size;
+  padding-bottom: 0.2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.1s linear;
 }
 
-.acc_purple{
-  background-color: $purple;
+.acc_purple {
+  background-color: $button-blue;
+}
+.acc_red {
+  background-color: $button-red;
 }
 
-.acc_button {
-  background-color: $blue;
-  color: black;
-}
+
+
 .acc_button:hover {
-  color: orange;
-  background-color: $off-black;
+ color: black;
+ font-weight: 600;
+  transition: all 0.1s linear;
 }

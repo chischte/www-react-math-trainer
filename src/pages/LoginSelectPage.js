@@ -1,9 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import firebaseInitializeApp from "../components/firebase/firebase";
 import "firebase/auth";
-import TextField from "@material-ui/core/TextField";
-import { Button, Box } from "@material-ui/core";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
@@ -31,39 +27,27 @@ export default function LoginSelectPage(props) {
   return (
     <div>
       <Header />
-      <div className="outliner">
-        <ThemeProvider theme={theme}>
-          {!userIsLoggedIn && (
-            <div>
-              <div>
-                <Button className="comp_calculator_button">ff</Button>
-              </div>
-              <form onSubmit={handleSwitchToSignup}>
-                <Box m={0} pt={1}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                  >
-                    ICH BIN NEU HIER
-                  </Button>
-                </Box>
-              </form>
-              <h5> ODER</h5>
-              <Box m={0} pt={1}>
-                <Button
-                  onClick={handleSwitchToLogin}
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                >
-                  ICH HABE SCHON EINEN ACCOUNT
-                </Button>
-              </Box>
-            </div>
-          )}
-        </ThemeProvider>
+      <div className="acc_outliner">
+        {!userIsLoggedIn && (
+          <div>
+            <br></br>
+            <button
+              className="acc_purple acc_button "
+              onClick={handleSwitchToSignup}
+            >
+              ICH BIN NEU HIER
+            </button>
+
+            <form onSubmit={handleSwitchToSignup}></form>
+            <h5> ODER</h5>
+            <button
+              className="acc_red acc_button "
+              onClick={handleSwitchToLogin}
+            >
+              ICH HABE SCHON EINEN ACCOUNT
+            </button>
+          </div>
+        )}
         {userIsLoggedIn && (
           <div>
             <Redirect to="/" />
@@ -73,9 +57,3 @@ export default function LoginSelectPage(props) {
     </div>
   );
 }
-
-const theme = createMuiTheme({
-  typography: {
-    fontSize: 20,
-  },
-});
