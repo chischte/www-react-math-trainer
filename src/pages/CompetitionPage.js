@@ -9,7 +9,6 @@ import ReadySetGo from "../components/competition/ReadySetGo";
 import CompetitionFeedback from "../pages/CompetitionFeedbackSubPage";
 import UserInput from "../components/UserInput";
 import Header from "../components/Header";
-import ShowSpeed from "../components/competition/ShowSpeed";
 import GroupSelector from "../components/GroupSelector";
 import Speedometer from "../components/competition/Speedometer";
 
@@ -20,17 +19,17 @@ export default function CompetitionPage() {
 
   //#region useState HOOKS -------------------------------------------------------
   const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
-  const [countAdd, setCountAdd] = useState(0);
-  const [countSub, setCountSub] = useState(0);
-  const [countMul, setCountMul] = useState(0);
-  const [countDiv, setCountDiv] = useState(0);
   const [cpmAdd, setCpmAdd] = useState(0);
   const [cpmSub, setCpmSub] = useState(0);
   const [cpmMul, setCpmMul] = useState(0);
   const [cpmDiv, setCpmDiv] = useState(0);
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
+  const [countAdd, setCountAdd] = useState(0);
+  const [countSub, setCountSub] = useState(0);
+  const [countMul, setCountMul] = useState(0);
+  const [countDiv, setCountDiv] = useState(0);
   const [countTotal, setCountTotal] = useState(0);
-  const [groupName, setGroupName] = useState("public");
-  const [groupCode, setGroupCode] = useState("public");
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
   const [userCharacter, setUserCharacter] = useState("");
@@ -116,85 +115,41 @@ export default function CompetitionPage() {
 
   //#region CHECK FOR RECORDS --------------------------------------------------
 
-  const setRecordValueOfCurrentMode = useCallback(() => {
-    let recordCpm = 0;
-    if (mode === "addition") {
-      recordCpm = cpmAdd;
-    }
-    if (mode === "subtraction") {
-      recordCpm = cpmSub;
-    }
-    if (mode === "multiplication") {
-      recordCpm = cpmMul;
-    }
-    if (mode === "division") {
-      recordCpm = cpmDiv;
-    }
-    setCurrentModeRecordCpm(recordCpm);
-  }, [cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
-
-  useEffect(() => {
-    if (mode) {
-      setRecordValueOfCurrentMode();
-    }
-  }, [mode, setRecordValueOfCurrentMode]);
-
-  const checkForAdditionRecord = useCallback(() => {
-    if (cpmAdd < calculationsSolved) {
-      setCpmAdd(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmAdd]);
-
-  const checkForSubtractionRecord = useCallback(() => {
-    if (cpmSub < calculationsSolved) {
-      setCpmSub(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmSub]);
-
-  const checkForMultiplicationRecord = useCallback(() => {
-    if (cpmMul < calculationsSolved) {
-      setCpmMul(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmMul]);
-
-  const checkForDivisionRecord = useCallback(() => {
-    if (cpmDiv < calculationsSolved) {
-      setCpmDiv(calculationsSolved);
-      alert(
-        "SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"
-      );
-    }
-  }, [calculationsSolved, cpmDiv]);
+  const showRecordMessage = () => {
+    alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+  };
 
   const checkForNewRecord = useCallback(() => {
-    if (mode === "addition") {
-      checkForAdditionRecord();
+    switch (mode) {
+      case "addition":
+        if (calculationsSolved > cpmAdd) {
+          setCpmAdd(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "subtraction":
+        if (calculationsSolved > cpmSub) {
+          setCpmSub(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "multiplication":
+        if (calculationsSolved > cpmMul) {
+          setCpmMul(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      case "division":
+        if (calculationsSolved > cpmDiv) {
+          setCpmDiv(calculationsSolved);
+          showRecordMessage();
+        }
+        break;
+      default:
+        console.log("this was not a new record");
+        break;
     }
-    if (mode === "subtraction") {
-      checkForSubtractionRecord();
-    }
-    if (mode === "multiplication") {
-      checkForMultiplicationRecord();
-    }
-    if (mode === "division") {
-      checkForDivisionRecord();
-    }
-  }, [
-    checkForAdditionRecord,
-    checkForSubtractionRecord,
-    checkForMultiplicationRecord,
-    checkForDivisionRecord,
-    mode,
-  ]);
+  }, [mode,calculationsSolved, cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
   useEffect(() => {
     if (recordCheckIsEnabled) {
@@ -206,6 +161,18 @@ export default function CompetitionPage() {
 
   //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
 
+  const clearAllFields = () => {
+    setCpmAdd(0);
+    setCpmSub(0);
+    setCpmMul(0);
+    setCpmDiv(0);
+    setCountAdd(0);
+    setCountSub(0);
+    setCountMul(0);
+    setCountDiv(0);
+    setCountTotal(0);
+  };
+
   const getGroupsHighscoreDB = useCallback(
     (uid) => {
       let ref = firebase
@@ -214,7 +181,7 @@ export default function CompetitionPage() {
       ref.once("value", (snapshot) => {
         const dbUserData = snapshot.val();
         console.log("get high score data from db/groups: ");
-
+        console.log(dbUserData);
         if (!!dbUserData) {
           setCpmAdd(dbUserData.cpm_add);
           setCpmSub(dbUserData.cpm_sub);
@@ -227,15 +194,7 @@ export default function CompetitionPage() {
           setCountTotal(dbUserData.count_total);
         } else {
           // no group highscore created yet, clear fields:
-          setCpmAdd(0);
-          setCpmSub(0);
-          setCpmMul(0);
-          setCpmDiv(0);
-          setCountAdd(0);
-          setCountSub(0);
-          setCountMul(0);
-          setCountDiv(0);
-          setCountTotal(0);
+          clearAllFields();
         }
       });
     },
@@ -288,6 +247,7 @@ export default function CompetitionPage() {
       setUserIsLoggedIn(true);
     } else {
       setUserIsLoggedIn(false);
+      setGroupName("public");
     }
   }, [authContext]);
   //#endregion
@@ -346,14 +306,42 @@ export default function CompetitionPage() {
     setTimeElapsed(_timeElapsed);
   };
 
+  //#endregion
+
+  //#region SPEEDOMETER --------------------------------------------------------
+
+  // Set speedometer max value:
+  const setRecordValueOfCurrentMode = useCallback(() => {
+    let recordCpm = 0;
+    if (mode === "addition") {
+      recordCpm = cpmAdd;
+    }
+    if (mode === "subtraction") {
+      recordCpm = cpmSub;
+    }
+    if (mode === "multiplication") {
+      recordCpm = cpmMul;
+    }
+    if (mode === "division") {
+      recordCpm = cpmDiv;
+    }
+    setCurrentModeRecordCpm(recordCpm);
+  }, [cpmAdd, cpmDiv, cpmMul, cpmSub, mode]);
+
+  useEffect(() => {
+    if (mode) {
+      setRecordValueOfCurrentMode();
+    }
+  }, [mode, setRecordValueOfCurrentMode]);
+
   // Minimize speedometer overshooting:
   useEffect(() => {
     if (timeElapsed > 5) {
       setSpeedometerSpeed(currentSpeed);
     } else {
-      setSpeedometerSpeed(currentModeRecordCpm/2);
+      setSpeedometerSpeed(currentModeRecordCpm / 2);
     }
-  }, [currentSpeed, timeElapsed,currentModeRecordCpm]);
+  }, [currentSpeed, timeElapsed, currentModeRecordCpm]);
 
   //#endregion
 

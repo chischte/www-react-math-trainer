@@ -9,6 +9,8 @@ $grey-text: rgb(90, 90, 90);
 $light-grey-text: rgb(110, 110, 110);
 $orange:rgb(255, 153, 0);
 $pink:rgb(251,72,169);
+$button-blue:rgb(63,81,181);//purple account button
+$button-red:rgb(245,0,87);//purple account button
 
 // Spacing and font height (factor:1.2)
 $xxs-size: 1.0rem;
@@ -21,5 +23,6 @@ $xl-size: 2.5rem;
 $xxl-size: 3.0rem;
 
 // Corners
+$xs-radius: 0.3rem;
 $s-radius: 0.5rem;
 $m-radius: 1rem;

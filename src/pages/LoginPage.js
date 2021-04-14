@@ -1,4 +1,4 @@
-import React,{useState, useContext,useEffect} from "react";
+import React, { useState, useContext, useEffect } from "react";
 import firebaseInitializeApp from "../components/firebase/firebase";
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
@@ -8,9 +8,9 @@ import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
 
-export default function LoginPage(props){
+export default function LoginPage(props) {
   const authContext = useContext(AuthContext);
-  const[userIsLoggedIn,setUserIsLoggedIn]=useState();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 
   useEffect(() => {
     if (!!authContext.currentUser) {
@@ -27,7 +27,7 @@ export default function LoginPage(props){
     logInExistingUser(email, password.value);
   };
 
-  const logInExistingUser=async(email, password) =>{
+  const logInExistingUser = async (email, password) => {
     try {
       await firebaseInitializeApp
         .auth()
@@ -35,72 +35,58 @@ export default function LoginPage(props){
     } catch (error) {
       alert(error);
     }
-  }
-  const handleSwitchToSignup = () => {
-    props.history.push("/signup");
   };
-
-    return (
-      <div>
-        <Header />
-        <div className="outliner">
-          <ThemeProvider theme={theme}>
-            {!userIsLoggedIn && (
-              <div>
-                <form onSubmit={handleLogIn}>
-                  <Box m={0} pt={1}>
-                    <TextField
-                      name="email"
-                      fullWidth
-                      id="outlined-basic"
-                      label="nickname"
-                      variant="outlined"
-                    />
-                  </Box>
-                  <Box m={0} pt={1}>
-                    <TextField
-                      name="password"
-                      type="password"
-                      fullWidth
-                      id="outlined-basic"
-                      label="password"
-                      variant="outlined"
-                    />
-                  </Box>
-                  <Box m={0} pt={1}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                    >
-                      Melde dich an
-                    </Button>
-                  </Box>
-                </form>
-                <h5> ODER</h5>
+ 
+  return (
+    <div>
+      <Header />
+      <div className="outliner">
+        <ThemeProvider theme={theme}>
+          {!userIsLoggedIn && (
+            <div>
+              <form onSubmit={handleLogIn}>
+                <Box m={0} pt={1}>
+                  <TextField
+                    name="email"
+                    fullWidth
+                    id="outlined-basic"
+                    label="nickname"
+                    variant="outlined"
+                  />
+                </Box>
+                <Box m={0} pt={1}>
+                  <TextField
+                    name="password"
+                    type="password"
+                    fullWidth
+                    id="outlined-basic"
+                    label="password"
+                    variant="outlined"
+                  />
+                </Box>
                 <Box m={0} pt={1}>
                   <Button
-                    onClick={handleSwitchToSignup}
+                    type="submit"
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     fullWidth
                   >
-                    Erstelle einen neuen Account
+                    ANMELDEN
                   </Button>
                 </Box>
-              </div>
-            )}
-          </ThemeProvider>
-          {userIsLoggedIn && (
-            <div>
-              <Redirect to="/" />
+              </form>
             </div>
           )}
-        </div>
+        </ThemeProvider>
+        {userIsLoggedIn && (
+          <div>
+            <Redirect to="/" />
+          </div>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+}
 
 const theme = createMuiTheme({
   typography: {

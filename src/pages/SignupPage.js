@@ -26,6 +26,7 @@ export default function SignupPage() {
   const [userUid, setUserUid] = useState();
   const [nicknameDatabaseSnapshot, setNicknameDatabaseSnapshot] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
+  const [displayNameIsAssigned, setDisplayNameIsAssigned] = useState();
 
   // Get user auth info:
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function SignupPage() {
     if (name.length > 15) {
       alert(
         "Bitte wähle einen kürzeren Namen.\r\n" +
-          "Der Name darf maximal 15 Zeichen lang sein."
+        "Der Name darf maximal 15 Zeichen lang sein."
       );
       nicknameIsAvailable = false;
     } else if (!!nicknameDatabaseSnapshot) {
@@ -112,17 +113,18 @@ export default function SignupPage() {
         .createUserWithEmailAndPassword(userEmail, userPassword);
       alert(
         "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
-          userName +
-          "\r\nDein Passwort ist:" +
-          userPassword +
-          "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+        userName +
+        "\r\nDein Passwort ist:" +
+        userPassword +
+        "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
       );
     } catch (error) {
       console.log(error);
       alert(
         "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
-          "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
-          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~"
+        "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
+        "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~\r\n\r\n" +
+        "Das Passwort muss mindestens 6 Stellen haben \r\n\r\n" + error
       );
     } finally {
     }
@@ -193,6 +195,7 @@ export default function SignupPage() {
         displayName: userName,
       })
       .then(function () {
+        setDisplayNameIsAssigned(true);
         console.log("user display name update successful");
       })
       .catch(function (e) {
@@ -210,9 +213,9 @@ export default function SignupPage() {
 
   return (
     <div>
-      <Header />
       {!userIsLoggedIn && (
         <div>
+          <Header />
           <div className="outliner">
             <ThemeProvider theme={theme}>
               <div>
@@ -281,10 +284,11 @@ export default function SignupPage() {
           </div>
         </div>
       )}
-      {userIsLoggedIn && (
+      {userIsLoggedIn && displayNameIsAssigned&&(
         <div className="infotext">
+          <Header />
           <br></br>
-          Super, du bist eingelogged!
+          Super {userName}, du bist eingeloggt!
           <br></br>
           <br></br>
           <NavLink to="/training_select" activeClassName="is-active" exact={true}>
