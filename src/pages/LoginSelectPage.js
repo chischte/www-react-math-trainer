@@ -30,7 +30,6 @@ export default function LoginSelectPage(props) {
       <div className="acc_outliner">
         {!userIsLoggedIn && (
           <div>
-            <br></br>
             <button
               className="acc_purple acc_button "
               onClick={handleSwitchToSignup}
