@@ -35,6 +35,9 @@ export default function LoginSelectPage(props) {
         <ThemeProvider theme={theme}>
           {!userIsLoggedIn && (
             <div>
+              <div>
+                <Button className="comp_calculator_button">ff</Button>
+              </div>
               <form onSubmit={handleSwitchToSignup}>
                 <Box m={0} pt={1}>
                   <Button

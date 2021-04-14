@@ -1,0 +1,26 @@
+.acc_button,
+.acc_purple
+ {
+  width: 7rem;
+  height: 4.2rem;
+  border: none;
+  border-radius: $s-radius;
+  font-weight: 900;
+  font-size: $xl-size;
+  padding-bottom: 0.55rem;
+  margin: 0.1rem;
+  transition: all 0.5s linear;
+}
+
+.acc_purple{
+  background-color: $purple;
+}
+
+.acc_button {
+  background-color: $blue;
+  color: black;
+}
+.acc_button:hover {
+  color: orange;
+  background-color: $off-black;
+}
