@@ -122,7 +122,8 @@ export default function SignupPage() {
       alert(
         "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
           "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
-          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~\r\n\r\n"+error
+          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~\r\n\r\n"+
+          "Das Passwort muss mindestens 6 Stellen haben \r\n\r\n"+error
       );
     } finally {
     }

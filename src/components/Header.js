@@ -30,14 +30,15 @@ export default function Header() {
     } else if (currentUrl.includes("highscore")) {
       setMode("training");
     }
-  }, []);
+    console.log("header mode: " + mode)
+  }, [mode]);
 
   useEffect(() => {
     getModeFromUrl();
   }, [getModeFromUrl]);
 
   return (
-        <div className="header_outliner">
+    <div className="header_outliner">
       <br></br>
       <NavLink
         to="/training_select"

@@ -9,7 +9,6 @@ import ReadySetGo from "../components/competition/ReadySetGo";
 import CompetitionFeedback from "../pages/CompetitionFeedbackSubPage";
 import UserInput from "../components/UserInput";
 import Header from "../components/Header";
-import ShowSpeed from "../components/competition/ShowSpeed";
 import GroupSelector from "../components/GroupSelector";
 import Speedometer from "../components/competition/Speedometer";
 
