@@ -100,55 +100,6 @@ export default class GenerateCalculations {
     this.solution = this.minuend - this.subtrahend;
   }
 
-  generateJumpDrill() {
-    // Naming: --> Minuend - Subtrahend = Difference
-    //           > (10-18) -            =
-    //           >         - (1-9)      =
-    //           >         -            = (1-9)
-    const minMinuend = 10;
-    const maxMinuend = 18;
-    this.minuend = Math.floor(Math.random() * (maxMinuend - minMinuend + 1) + minMinuend);
-
-    const minSubtrahend = this.minuend - 9;
-    const maxSubtrahend = 9;
-    this.subtrahend = Math.floor(Math.random() * (maxSubtrahend - minSubtrahend + 1) + minSubtrahend);
-
-    // Add random tenner digits:
-    this.randomTenner = Math.floor(Math.random() * 9) * 10;
-    this.minuend += this.randomTenner;
-
-
-    this.questionString = `${this.minuend} - ${this.subtrahend}`;
-    this.solution = this.minuend - this.subtrahend;
-  }
-
-
-  generateEyeDrill() {
-    // In the ey drill mode, only te first step of a difficult subtraction will be trained
-    // example question: 77-52
-    // example solution: 27- 2
-
-    // Naming: --> Minuend - Subtrahend = Difference
-    //           > (11-99) -            =
-    //           >         - (10-98)    =
-    //           >         -            = Minuend minus tener-digit of the subtrahend
-    const minMinuend = 11;
-    const maxMinuend = 99;
-    this.minuend = Math.floor(Math.random() * (maxMinuend - minMinuend + 1) + minMinuend);
-
-    const minSubtrahend = 10;
-    const maxSubtrahend = this.minuend - 1;
-    this.subtrahend = Math.floor(Math.random() * (maxSubtrahend - minSubtrahend + 1) + minSubtrahend);
-
-    this.questionString = `${this.minuend} - ${this.subtrahend}`;
-
-    const subtrahendSecondDigitValue = Math.floor(this.subtrahend / 10) * 10;
-    const resultMinuend = this.minuend - subtrahendSecondDigitValue;
-    const resultSubtrahend = this.subtrahend - subtrahendSecondDigitValue;
-
-    this.solution = `${resultMinuend}-${resultSubtrahend}`;
-  }
-
   getQuestion() {
     return this.questionString;
   }
