@@ -1,18 +1,16 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
-import firebase from "firebase";
+import React, { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { AuthContext } from "../components/firebase/Auth";
 import DatabaseHelper from "../database_helper/databaseHelper";
 
 function GroupSelector() {
   const authContext = useContext(AuthContext);
 
-  // const dbHelperMemo=useMemo(dbHelper,[dbHelper]);
   const dbHelper = useMemo(() => {
     const _dbHelper = new DatabaseHelper();
     return _dbHelper;
   }, []);
-  const [dbSnapshot, setDbSnapshot] = useState();
 
+  const [dbSnapshot, setDbSnapshot] = useState();
   const [user, setUser] = useState(0);
   const [userGroups, setUserGroups] = useState(0);
   const [favoriteGroup, setFavoriteGroup] = useState({ name: "", code: "" });
@@ -24,15 +22,12 @@ function GroupSelector() {
     }
   }, [authContext]);
 
-
   //#region GET FAVORITE GROUP FROM DB/USERS/USER ------------------------------
 
   // wait for databesHelper snapshot
   const getDbSnapshot = React.useCallback(async (ref) => {
     try {
-      alert("heere");
-      const dbUserData = await dbHelper.getDataContinuous(ref);
-      setDbSnapshot(dbUserData);
+      setDbSnapshot(await dbHelper.getDataContinuous(ref));
     } catch (e) {
       console.log(e);
     }
@@ -57,18 +52,22 @@ function GroupSelector() {
   //#endregion
 
   // update favorite group in DB:
+  const updateData = useCallback((data, ref) => { dbHelper.updateData(data, ref) }, [dbHelper])
+
+
   useEffect(() => {
     if (dbSnapshot) {
       let dbEntry = {
         favorite_group: favoriteGroup,
       };
-      firebase
-        .database()
-        .ref("/users/" + user.uid)
-        .update(dbEntry);
+      const ref = "/users/" + user.uid
+      const data = dbEntry;
+      updateData(data, ref);
+
+
       console.log("update favorite group in user database");
     }
-  }, [favoriteGroup, dbSnapshot, user.uid]);
+  }, [favoriteGroup, dbSnapshot, user.uid, dbHelper, updateData]);
 
   return (
     <div className="group-selector">
