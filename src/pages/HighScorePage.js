@@ -24,7 +24,6 @@ import unicorn4 from "../pics/unicorn_4th.png";
 export default function HighscorePage() {
   const authContext = useContext(AuthContext);
   
-  const [loescher, setLoescher] = useState();
   const [leadingCharacter, setLeadingCharacter] = useState();
   const [groupName, setGroupName] = useState();
   const [groupCode, setGroupCode] = useState();
@@ -46,7 +45,6 @@ export default function HighscorePage() {
       ref.on("value", (snapshot) => {
         const dbUserData = snapshot.val();
         if (!!dbUserData) {
-          setLoescher(dbUserData);
           setGroupName(dbUserData.favorite_group.name);
           setGroupCode(dbUserData.favorite_group.code);
         }

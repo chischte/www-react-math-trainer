@@ -1,84 +1,70 @@
 import React, { useEffect, useState, useContext } from "react";
-import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
 import DatabaseProvider from "../components/firebase/DataProvider";
 
 export default function GroupSelector() {
   const authContext = useContext(AuthContext);
-  const [continuousRef, setContinuousRef] = useState();
-  const [providerData, setProviderData] = useState(0);
-  const [user, setUser] = useState(0);
   const [userGroups, setUserGroups] = useState(0);
+  const [userGroupsRef, setUserGroupsRef] = useState();
+  const [dbUserData, setDbUserData] = useState(0);
+  const [userUid, setUserUid] = useState(0);
   const [favoriteGroup, setFavoriteGroup] = useState({ name: "", code: "" });
-  const [dbSnapshot, setDbSnapshot] = useState();
+  const [dbUpdateEntry, setDbUpdateEntry] = useState(false);
 
-  // get User:
+  //#region GET USER AUTH INFO -------------------------------------------------
   useEffect(() => {
     if (!!authContext.currentUser) {
-      setUser(authContext.currentUser);
+      setUserUid(authContext.currentUser.uid);
     }
   }, [authContext]);
 
-  // get DB connection:
-  function getDbConnection(ref) {
-    return new Promise((resolve, reject) => {
-      const userRef = firebase.database().ref(ref);
-      const onError = (error) => reject(error);
-      const onData = (snapshot) => resolve(snapshot.val());
-      userRef.on("value", onData, onError);
-    });
+  //#endregion
+
+
+  //#region GET FAVORITE GROUP FROM DB/USERS/USER ------------------------------
+
+  // Get DB connection after changed uid:
+  useEffect(() => {
+    if (userUid) {
+      setUserGroupsRef("/users/" + userUid);
+    }
+  }, [userUid]);
+
+  // Update component with new snapshot:
+  useEffect(() => {
+    if (dbUserData) {
+      setUserGroups(dbUserData.groups);
+      setFavoriteGroup(dbUserData.favorite_group);
+    }
+  }, [dbUserData]);
+
+  // Props function for the db provider:
+  const getDbUserData = (dbProviderData) => {
+    setDbUserData(dbProviderData);
   }
+  //#endregion
 
-  // wait for DB connection and get snapshot:
-  const getDbSnapshot = React.useCallback(async (ref) => {
-    try {
-      const dbUserData = await getDbConnection(ref);
-      setDbSnapshot(dbUserData);
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  //#region UPDATE FAVORITE GROUP IN DB/USERS/USER -----------------------------
 
-  // get DB connection after changed uid:
   useEffect(() => {
-    if (!!user.uid) {
-      getDbSnapshot("/users/" + user.uid); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
-      setContinuousRef("/users/" + user.uid);
-    }
-  }, [user.uid, getDbSnapshot]);
-
-  // update component with new snapshot:
-  useEffect(() => {
-    if (dbSnapshot) {
-      setUserGroups(dbSnapshot.groups);
-      console.log(dbSnapshot.favorite_group);
-      setFavoriteGroup(dbSnapshot.favorite_group);
-    }
-  }, [dbSnapshot]);
-
-  // update favorite group in DB:
-  useEffect(() => {
-    if (dbSnapshot) {
+    if (dbUserData) {
       let dbEntry = {
         favorite_group: favoriteGroup,
       };
-      firebase
-        .database()
-        .ref("/users/" + user.uid)
-        .update(dbEntry);
-      console.log("update favorite group in user database");
+      setDbUpdateEntry(dbEntry);
     }
-  }, [favoriteGroup, dbSnapshot, user.uid]);
-
-  const setData = (dataFromProvider) => {
-    setProviderData(dataFromProvider);
-  }
+  }, [favoriteGroup, dbUserData, userUid]);
+  //#endregion
 
   return (
     <div className="group-selector">
       <DatabaseProvider
-        continuousRef={continuousRef}
-        setData={setData}
+        continuousRef={userGroupsRef}
+        updateFunction={getDbUserData}
+      />
+      <DatabaseProvider
+        updateRef={userGroupsRef}
+        updateData={dbUpdateEntry}
       />
       {!!userGroups & !!favoriteGroup ? (
         <div>

@@ -3,71 +3,106 @@ import firebase from "firebase";
 
 export default function DataProvider(props) {
 
-    const [continuousData, setContinuousData] = useState();
-    const [referenceIsSet, setReferenceIsSet] = useState(false);
-    const [listener, setListener] = useState(false);
+    // Hooks to listen for data in db:
+    const [onceRef, setOnceRef] = useState();
+    const [continuousRef, setContinuousRef] = useState();
+    const [receivedDataFromDb, setNewDataFromDb] = useState();
+    // Hooks to update db:
+    const [updateRef, setUpdateRef] = useState();
+    const [newDataForDb, setNewDataForDb] = useState();
 
-    //eAov1km3Uph0d4a8Fugkc3QP10l1
+    //#region MONITOR PROPS ----------------------------------------------------
 
-    const getDataContinuous = useCallback((contRef) => {
-        let ref = firebase.database().ref(contRef);
-        // if (listener) {
-        //     ref.off("value", listener);
-        // }
-        // var _listener = ref.on("value", (snapshot) => {
-        ref.on("value", (snapshot) => {
+    // Function to update the parent component:
+    const updateParentFunction = props.updateFunction;
+
+    useEffect(() => {
+        setContinuousRef(props.continuousRef) // triggers a db query once
+        setOnceRef(props.onceRefRef) // triggers a db query that updates on changes
+        setUpdateRef(props.updateRef); // defines where to write to in db
+        setNewDataForDb(props.updateData); // data to write to db
+    }, [props]);
+    //#endregion
+
+    //#region GET DATA ONCE ----------------------------------------------------
+
+    const getDataOnce = useCallback(() => {
+        let ref = firebase.database().ref(onceRef);
+        ref.once("value", (snapshot) => {
             try {
-                console.log("get data from db helper:**************************");
-                console.log(snapshot.val());
-                setContinuousData(snapshot.val());
+                if (snapshot) {
+                    console.log("get data from db helper");
+                    setNewDataFromDb(snapshot.val());
+                }
             } catch (e) {
                 console.log(e);
             }
         });
-        //setListener(_listener);
-    }, [listener]);
+    }, [onceRef]);
 
-    // Get DB /user data:
     useEffect(() => {
-        if (props.continuousRef && !referenceIsSet) {
-            //alert(props.continuousRef);
-            getDataContinuous(props.continuousRef);
-            setReferenceIsSet(true);
+        if (onceRef) {
+            getDataOnce();
         }
-    }, [getDataContinuous, props.continuousRef, referenceIsSet]);
+    }, [onceRef, getDataOnce]);
 
-    // Get DB /user data:
+    //#endregion
+
+    //#region GET DATA CONTINUOUSLY --------------------------------------------
+
+    const getDataContinuous = useCallback(() => {
+        let ref = firebase.database().ref(continuousRef);
+        ref.on("value", (snapshot) => {
+            try {
+                if (snapshot) {
+                    console.log("get data from db helper");
+                    setNewDataFromDb(snapshot.val());
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    }, [continuousRef]);
+
     useEffect(() => {
-        if (continuousData) {
-            props.setData(continuousData);
+        if (continuousRef) {
+            getDataContinuous();
         }
-        getDataContinuous();
-    }, [getDataContinuous, props, continuousData]);
+    }, [continuousRef, getDataContinuous]);
 
-    // const getDataOnce = (ref) => {
-    //     return new Promise((resolve, reject) => {
-    //         const userRef = firebase
-    //             .database()
-    //             .ref(ref);
-    //         const onError = (error) => reject(error);
-    //         const onData = (snapshot) => resolve(snapshot.val());
-    //         userRef.once("value", onData, onError);
-    //     });
-    // }
+    //#endregion
 
+    //#region SEND UPDATED DATA TO PARENT --------------------------------------
 
-    // const updateData = (data, ref) => {
-    //     firebase
-    //         .database()
-    //         .ref(ref)
-    //         .update(data);
-    // }
+    useEffect(() => {
+        if (receivedDataFromDb) {
+            updateParentFunction(receivedDataFromDb);
+        }
+    }, [updateParentFunction, receivedDataFromDb]);
+    //#endregion
 
-    // closeDbConnection() { }
+    //#region UPDATE DATA TO DB ------------------------------------------------
+
+    const updateDbEntry = useCallback((updateRef, data) => {
+        console.log("write data to db");
+        firebase
+            .database()
+            .ref(updateRef)
+            .update(data)
+            .catch(function (error) { console.log(error) });
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (updateRef && newDataForDb) {
+                updateDbEntry(updateRef, newDataForDb);
+            }
+        }, 50); // this prevents an eternal loop, god knows why
+        return () => clearTimeout(timer);
+    }, [updateRef, newDataForDb, updateDbEntry]);
+    //#endregion
 
     return (
-        <div>
-
-        </div>
+        <React.Fragment></React.Fragment>
     )
 }
