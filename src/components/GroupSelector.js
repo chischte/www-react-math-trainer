@@ -4,27 +4,25 @@ import DatabaseHelper from "../database_helper/databaseHelper";
 
 function GroupSelector() {
   const authContext = useContext(AuthContext);
-
-  const dbHelper = useMemo(() => {
-    const _dbHelper = new DatabaseHelper();
-    return _dbHelper;
-  }, []);
-
   const [dbSnapshot, setDbSnapshot] = useState();
   const [user, setUser] = useState(0);
   const [userGroups, setUserGroups] = useState(0);
   const [favoriteGroup, setFavoriteGroup] = useState({ name: "", code: "" });
 
-  // get User:
+  const dbHelper = useMemo(() => { return new DatabaseHelper(); }, []);
+
+  //#region GET USER AUTH INFO -------------------------------------------------
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUser(authContext.currentUser);
     }
   }, [authContext]);
 
+  //#endregion
+
   //#region GET FAVORITE GROUP FROM DB/USERS/USER ------------------------------
 
-  // wait for databesHelper snapshot
+  // Get snapshot from DatabaseHelper:
   const getDbSnapshot = React.useCallback(async (ref) => {
     try {
       setDbSnapshot(await dbHelper.getDataContinuous(ref));
@@ -33,27 +31,29 @@ function GroupSelector() {
     }
   }, [dbHelper]);
 
-  // get DB connection after changed uid:
   useEffect(() => {
     if (!!user.uid) {
-      getDbSnapshot("/users/" + user.uid); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+      const ref = "/users/" + user.uid
+      getDbSnapshot(ref);
     }
   }, [user.uid, getDbSnapshot]);
 
-  // update component with new snapshot:
+  // Update component with new snapshot:
   useEffect(() => {
     if (dbSnapshot) {
       setUserGroups(dbSnapshot.groups);
-      console.log(dbSnapshot.favorite_group);
       setFavoriteGroup(dbSnapshot.favorite_group);
     }
   }, [dbSnapshot]);
 
   //#endregion
 
-  // update favorite group in DB:
-  const updateData = useCallback((data, ref) => { dbHelper.updateData(data, ref) }, [dbHelper])
+  //#region UPDATE FAVORITE GROUP IN DB/USERS/USER -----------------------------
 
+  // Update db using DatabaseHelper:
+  const updateData = useCallback((data, ref) => {
+    dbHelper.updateData(data, ref)
+  }, [dbHelper])
 
   useEffect(() => {
     if (dbSnapshot) {
@@ -63,11 +63,11 @@ function GroupSelector() {
       const ref = "/users/" + user.uid
       const data = dbEntry;
       updateData(data, ref);
-
-
       console.log("update favorite group in user database");
     }
   }, [favoriteGroup, dbSnapshot, user.uid, dbHelper, updateData]);
+
+  //#endregion
 
   return (
     <div className="group-selector">
