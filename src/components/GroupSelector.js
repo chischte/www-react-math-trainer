@@ -1,9 +1,12 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
+import DatabaseProvider from "../components/firebase/DataProvider";
 
-function GroupSelector() {
+export default function GroupSelector() {
   const authContext = useContext(AuthContext);
+  const [continuousRef, setContinuousRef] = useState();
+  const [providerData, setProviderData] = useState(0);
   const [user, setUser] = useState(0);
   const [userGroups, setUserGroups] = useState(0);
   const [favoriteGroup, setFavoriteGroup] = useState({ name: "", code: "" });
@@ -40,6 +43,7 @@ function GroupSelector() {
   useEffect(() => {
     if (!!user.uid) {
       getDbSnapshot("/users/" + user.uid); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+      setContinuousRef("/users/" + user.uid);
     }
   }, [user.uid, getDbSnapshot]);
 
@@ -66,8 +70,16 @@ function GroupSelector() {
     }
   }, [favoriteGroup, dbSnapshot, user.uid]);
 
+  const setData = (dataFromProvider) => {
+    setProviderData(dataFromProvider);
+  }
+
   return (
     <div className="group-selector">
+      <DatabaseProvider
+        continuousRef={continuousRef}
+        setData={setData}
+      />
       {!!userGroups & !!favoriteGroup ? (
         <div>
           {userGroups.map((group) => (
@@ -94,4 +106,3 @@ function GroupSelector() {
   );
 }
 
-export default GroupSelector;

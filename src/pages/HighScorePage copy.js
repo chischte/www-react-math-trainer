@@ -1,5 +1,6 @@
-import React, { useState, useContext, useCallback, useEffect } from "react";
+import React, { useState, useContext, useCallback, useEffect, useMemo } from "react";
 import firebase from "firebase";
+import DatabaseHelper from "../database_helper/databaseHelper";
 import "firebase/auth";
 import Header from "../components/Header";
 import GroupSelector from "../components/GroupSelector";
@@ -23,11 +24,11 @@ import unicorn4 from "../pics/unicorn_4th.png";
 
 export default function HighscorePage() {
   const authContext = useContext(AuthContext);
-  
-  const [loescher, setLoescher] = useState();
-  const [leadingCharacter, setLeadingCharacter] = useState();
+  const dbHelper = useMemo(() => { return new DatabaseHelper() }, []);
+  const [dbUserSnapshot, setDbUserSnapshot] = useState();
   const [groupName, setGroupName] = useState();
   const [groupCode, setGroupCode] = useState();
+  const [leadingCharacter, setLeadingCharacter] = useState();
   const [userName, setUserName] = useState();
   const [userUid, setUserUid] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
@@ -39,20 +40,53 @@ export default function HighscorePage() {
   const [mulCpm, setMulCpm] = useState();
   const [divCpm, setDivCpm] = useState();
 
-  // Get users selected (favorite) group:
+
+  //#region GET USERS SELECTED (FAVORITE) GROUP FROM DB/USERS/USER
+
+  // Get snapshot from DatabaseHelper:
+  const getDbSnapshot = React.useCallback(async (ref) => {
+    try {
+      var snapshot=await dbHelper.getDataContinuous("/users/" + userUid);
+      
+      setDbUserSnapshot(snapshot);
+      setGroupName(snapshot.favorite_group.name);
+      setGroupCode(snapshot.favorite_group.code);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [dbHelper,userUid]);
+
+
+  useEffect(() => {
+    if (dbUserSnapshot) {
+      const dbUserData = dbUserSnapshot;
+      
+    }
+
+  }, [dbUserSnapshot])
+
   useEffect(() => {
     if (userUid) {
-      let ref = firebase.database().ref("/users/" + userUid);
-      ref.on("value", (snapshot) => {
-        const dbUserData = snapshot.val();
-        if (!!dbUserData) {
-          setLoescher(dbUserData);
-          setGroupName(dbUserData.favorite_group.name);
-          setGroupCode(dbUserData.favorite_group.code);
-        }
-      });
+      const ref = "/users/" + userUid
+      getDbSnapshot(ref);
     }
-  }, [userUid]);
+  }, [userUid, getDbSnapshot])
+
+
+  // useEffect(() => {
+  //   if (userUid) {
+  //     let ref = firebase.database().ref("/users/" + userUid);
+  //     ref.on("value", (snapshot) => {
+  //       const dbUserData = snapshot.val();
+  //       if (!!dbUserData) {
+  //         setGroupName(dbUserData.favorite_group.name);
+  //         setGroupCode(dbUserData.favorite_group.code);
+  //       }
+  //     });
+  //   }
+  // }, [userUid]);
+
+  //#endregion
 
   //#region GET HIGHSCORE DATA FROM DB/GROUPS ----------------------------------
 
@@ -242,28 +276,28 @@ export default function HighscorePage() {
                     <td className="high_td bold-field">{highscore.name}</td>
                     <td className="high_td picture__td">
                       {(highscore.character === "sith") &
-                      (highscore.hierarchy_rank === 1) ? (
+                        (highscore.hierarchy_rank === 1) ? (
                         <img className="picture" src={emperor} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "sith") &
-                      (highscore.hierarchy_rank === 2) ? (
+                        (highscore.hierarchy_rank === 2) ? (
                         <img className="picture" src={darthVader} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "sith") &
-                      (highscore.hierarchy_rank === 3) ? (
+                        (highscore.hierarchy_rank === 3) ? (
                         <img className="picture" src={redTrooper} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "sith") &
-                      (highscore.hierarchy_rank > 3) ? (
+                        (highscore.hierarchy_rank > 3) ? (
                         <img
                           className="picture"
                           src={whiteTrooper}
@@ -274,52 +308,52 @@ export default function HighscorePage() {
                       )}
 
                       {(highscore.character === "jedi") &
-                      (highscore.hierarchy_rank === 1) ? (
+                        (highscore.hierarchy_rank === 1) ? (
                         <img className="picture" src={joda} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "jedi") &
-                      (highscore.hierarchy_rank === 2) ? (
+                        (highscore.hierarchy_rank === 2) ? (
                         <img className="picture" src={rey} alt=""></img>
                       ) : (
                         <div></div>
                       )}
                       {(highscore.character === "jedi") &
-                      (highscore.hierarchy_rank === 3) ? (
+                        (highscore.hierarchy_rank === 3) ? (
                         <img className="picture" src={luke} alt=""></img>
                       ) : (
                         <div></div>
                       )}
                       {(highscore.character === "jedi") &
-                      (highscore.hierarchy_rank > 3) ? (
+                        (highscore.hierarchy_rank > 3) ? (
                         <img className="picture" src={ewok} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "unicorn") &
-                      (highscore.hierarchy_rank === 1) ? (
+                        (highscore.hierarchy_rank === 1) ? (
                         <img className="picture" src={unicorn1} alt=""></img>
                       ) : (
                         <div></div>
                       )}
 
                       {(highscore.character === "unicorn") &
-                      (highscore.hierarchy_rank === 2) ? (
+                        (highscore.hierarchy_rank === 2) ? (
                         <img className="picture" src={unicorn2} alt=""></img>
                       ) : (
                         <div></div>
                       )}
                       {(highscore.character === "unicorn") &
-                      (highscore.hierarchy_rank === 3) ? (
+                        (highscore.hierarchy_rank === 3) ? (
                         <img className="picture" src={unicorn3} alt=""></img>
                       ) : (
                         <div></div>
                       )}
                       {(highscore.character === "unicorn") &
-                      (highscore.hierarchy_rank > 3) ? (
+                        (highscore.hierarchy_rank > 3) ? (
                         <img className="picture" src={unicorn4} alt=""></img>
                       ) : (
                         <div></div>
