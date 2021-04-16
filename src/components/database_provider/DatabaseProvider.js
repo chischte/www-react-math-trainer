@@ -1,12 +1,20 @@
 import React, { useEffect, useCallback, useState } from "react";
 import firebase from "firebase";
 
+/**
+ * EACH DatabaseProvider CAN PROVIDE A PARENT COMPONENT WITH 1 READ
+ * AND 1 UPDATE POSSIBILITY FOR ONE REFERENCE PATH.
+ * IF A SECOND DATABASE LOCATION SHOULD BE USED SIMULTANOUSLY, A
+ * SECOND DatabaseProvider HAS TO BE IMPLEMENTED IN THE PARENT COMPONENT.
+ */
+
 export default function DatabaseProvider(props) {
-  const [counter, setCounter] = useState(0);
-  // Hooks to listen for data in db:
+  
+    // Hooks to listen for data in db:
   const [onceRef, setOnceRef] = useState();
   const [continuousRef, setContinuousRef] = useState();
   const [receivedDataFromDb, setNewDataFromDb] = useState();
+  
   // Hooks to update db:
   const [updateRef, setUpdateRef] = useState();
   const [newDataForDb, setNewDataForDb] = useState();

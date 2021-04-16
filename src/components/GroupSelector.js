@@ -20,7 +20,6 @@ export default function GroupSelector() {
 
   //#endregion
 
-
   //#region GET FAVORITE GROUP FROM DB/USERS/USER ------------------------------
 
   // Get DB connection after changed uid:
@@ -41,7 +40,7 @@ export default function GroupSelector() {
   // Props function for the db provider:
   const getDbUserData = (dbProviderData) => {
     setDbUserData(dbProviderData);
-  }
+  };
   //#endregion
 
   //#region UPDATE FAVORITE GROUP IN DB/USERS/USER -----------------------------
@@ -61,8 +60,6 @@ export default function GroupSelector() {
       <DatabaseProvider
         continuousRef={userGroupsRef}
         updateFunction={getDbUserData}
-      />
-      <DatabaseProvider
         updateRef={userGroupsRef}
         updateData={dbUpdateEntry}
       />
@@ -91,4 +88,3 @@ export default function GroupSelector() {
     </div>
   );
 }
-
