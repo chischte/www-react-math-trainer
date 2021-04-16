@@ -74,17 +74,17 @@ export default function CreateGroupPage() {
     }
   }, [dbGroupCodeData, getUniquePassword]);
 
-  // Props function for the db provider:
-  const getDbGroupCodeData = (dbProviderData) => {
-    setDbGroupCodeData(dbProviderData);
-  };
-
-  // Trigger DB snapshot if untestedGroupCode is available:
+  // Trigger db snapshot:
   useEffect(() => {
     if (groupCode) {
       setGroupCodeRef("/groups/" + groupCode + "/highscore/");
     }
   }, [groupCode]);
+
+  // Props function for the db provider:
+  const getDbGroupCodeData = (dbProviderData) => {
+    setDbGroupCodeData(dbProviderData);
+  };
 
   //#endregion
 
