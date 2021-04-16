@@ -1,35 +1,46 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
-import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
 import { Button, Box } from "@material-ui/core";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import Header from "../components/Header";
+import DatabaseProvider from "../components/database_provider/DatabaseProvider";
 
 var generator = require("generate-password"); //www.npmjs.com/package/generate-password
 
 export default function CreateGroupPage() {
   const authContext = useContext(AuthContext);
-  const [groupName, setGroupName] = useState("");
-  const [groupCode, setGroupCode] = useState("");
-  const [groupCreated, setGroupCreated] = useState(false);
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState("");
-  const [userName, setUserName] = useState();
-  const [uid, setUid] = useState();
+
+  //#region USE STATE HOOKS ----------------------------------------------------
+
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
+
+  // CHECK FOR EXISTING ENTRIES:
+  const [groupDbPath, setGroupDbPath] = useState();
+  const [groupDbData, setGroupDbData] = useState();
+
+  // CREATE NEW ENTRY IN DB/GROUPS:
+  const [newGroupDbPath, setNewGroupDbPath] = useState();
+  const [newGroupDbData, setNewGroupDbData] = useState();
+
+  // GET EXISTING DATA AND UPDATE NEW DATA TO DB/USERS/USER:
+  const [userDbPath, setUserDbPath] = useState();
+  const [userDbData, setUserDbData] = useState();
   const [userGroups, setUserGroups] = useState();
+
+  // USER AUTH INFO:
+  const [userName, setUserName] = useState();
+  const [userUid, setUserUid] = useState();
+  const [groupCreated, setGroupCreated] = useState(false);
+  //#endregion
 
   //#region GET USER AUTH INFO
 
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
-      setUid(authContext.currentUser.uid);
-      setUserIsLoggedIn(true);
-      getUserGroupsDB();
-    } else {
-      setUserName("guest");
-      setUserIsLoggedIn(false);
+      setUserUid(authContext.currentUser.uid);
     }
   }, [authContext]);
 
@@ -51,104 +62,111 @@ export default function CreateGroupPage() {
     return password;
   };
 
+  // Generate password
   const getUniquePassword = useCallback(() => {
-    let groupCode = generatePassword();
-    let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
-    ref.on("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      if (!!dbUserData) {
-        // groupCode exists already, get new code:
-        getUniquePassword();
-      } else {
-        setGroupCode(groupCode);
-      }
-    });
+    console.log("get a new group code");
+    setGroupCode(generatePassword());
   }, []);
 
+  // Generate new code once at beginning:
   useEffect(() => {
     getUniquePassword();
   }, [getUniquePassword]);
 
-  //#endregion
+  // Generate new code if code already exists in db:
+  useEffect(() => {
+    if (groupDbData) {
+      console.log("group code already exists");
+      getUniquePassword();
+    }
+  }, [groupDbData, getUniquePassword]);
 
-  //#region GET USER GROUPS FROM DB/USERS/USER ---------------------------------
+  // Trigger db snapshot:
+  useEffect(() => {
+    if (groupCode) {
+      setGroupDbPath("/groups/" + groupCode + "/highscore/");
+    }
+  }, [groupCode]);
 
-  const getUserGroupsDB = () => {
-    const user = firebase.auth().currentUser;
-    const uid = user.uid;
-
-    let ref = firebase.database().ref("/users/" + uid);
-    ref.on("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      if (!!dbUserData.groups) {
-        setUserGroups(dbUserData.groups);
-      }
-    });
+  // Props function for the db provider:
+  const getDbGroupCodeData = (dbProviderData) => {
+    setGroupDbData(dbProviderData);
   };
 
-  useEffect(() => {
-    getUserGroupsDB();
-  }, []);
   //#endregion
 
-  //#region UPDATE DB/USER AND DB/GROUPS WITH NEW GROUP ------------------------
+  //#region GET USER GROUPS FROM DB/USERS/USER ----------------------------------
 
-  const createGroupInDB = useCallback(() => {
-    if (!!firebase.auth().currentUser) {
-      let user = firebase.auth().currentUser;
-      let uid = user.uid;
+  // Props function for the dbProvider
+  const getDbUserData = (dbProviderData) => {
+    try {
+      setUserGroups(dbProviderData.groups);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  //#endregion
+
+  //#region CREATE GROUP IN DB/GROUPS ------------------------
+
+  // Set db path:
+  useEffect(() => {
+    if (groupName && groupCode && !groupCreated) {
+      setGroupCreated(true);
+      setNewGroupDbPath("/groups/" + groupCode + "/group_info/" + userUid);
+    }
+  }, [groupCode, groupCreated, groupName, userUid]);
+
+  // Create db data:
+  useEffect(() => {
+    if (!!groupName & !!groupCode) {
       let dbEntry = {
         group_name: groupName,
         creator: userName,
         date: new Date(),
       };
-
-      firebase
-        .database()
-        .ref("/groups/" + groupCode + "/group_info/" + uid)
-        .update(dbEntry);
-      console.log("created group in database");
+      setNewGroupDbData(dbEntry);
     }
-  }, [groupCode, groupName, userName]);
-
-  const updateUserGroupsDB = useCallback(() => {
-    if (userIsLoggedIn) {
-      let newGroupObject = { name: groupName, code: groupCode };
-      let arrayOfGroupObjects = userGroups;
-      arrayOfGroupObjects.push(newGroupObject);
-      console.log(arrayOfGroupObjects);
-      let dbEntry = {
-        groups: arrayOfGroupObjects,
-      };
-      firebase
-        .database()
-        .ref("/users/" + uid)
-        .update(dbEntry);
-      console.log("update group in user database");
-
-      // Update favorite group:
-      dbEntry = {
-        favorite_group: { name: groupName, code: groupCode },
-      };
-      firebase
-        .database()
-        .ref("/users/" + uid)
-        .update(dbEntry);
-      console.log("update favorite group in user database");
-    }
-  }, [groupCode, groupName, uid, userGroups, userIsLoggedIn]);
-
-  useEffect(() => {
-    if (!!groupName & !!groupCode & !groupCreated) {
-      setGroupCreated(true);
-      createGroupInDB();
-      updateUserGroupsDB();
-    }
-  }, [createGroupInDB, updateUserGroupsDB, groupCreated, groupName, groupCode]);
+  }, [groupCode, groupCreated, groupName, userName]);
 
   //#endregion
 
-  
+  //#region UPDATE DB/USER WITH NEW GROUP ------------------------
+
+  // Create db data:
+  useEffect(() => {
+    if (groupName && groupCode && userGroups) {
+      // Update array of groups
+      let newGroupObject = { name: groupName, code: groupCode };
+      let arrayOfGroupObjects = userGroups;
+      arrayOfGroupObjects.push(newGroupObject);
+      let dbEntry = {
+        groups: arrayOfGroupObjects,
+        favorite_group: { name: groupName, code: groupCode },
+      };
+      console.log("update group in user database");
+      console.log("update favorite group in user database");
+      setUserDbData(dbEntry);
+    }
+  }, [groupCode, groupName, userName, userGroups]);
+
+  // Set db path:
+  useEffect(() => {
+    if (groupName && groupCode && userUid) {
+      setUserDbPath("/users/" + userUid);
+    }
+  }, [groupCode, groupName, userUid]);
+
+  //#endregion
+
+  // Set group created:
+  useEffect(() => {
+    if (newGroupDbData && userDbData) {
+      setGroupCreated(true);
+    }
+  }, [newGroupDbData, userDbData]);
+
   const handleCreateGroup = (event) => {
     event.preventDefault();
     const { groupName } = event.target.elements;
@@ -157,6 +175,19 @@ export default function CreateGroupPage() {
 
   return (
     <div>
+      <DatabaseProvider
+        dbPath={groupDbPath}
+        addDbListener={false}
+        updateParentFunction={getDbGroupCodeData}
+      />
+      <DatabaseProvider dbPath={newGroupDbPath} updateDbData={newGroupDbData} />
+
+      <DatabaseProvider
+        dbPath={userDbPath}
+        updateDbData={userDbData}
+        addDbListener={false}
+        updateParentFunction={getDbUserData}
+      />
       <Header />
       {!groupCreated && (
         <div>

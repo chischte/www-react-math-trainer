@@ -6,77 +6,98 @@ import firebase from "firebase";
  * AND 1 UPDATE POSSIBILITY FOR ONE REFERENCE PATH.
  * IF A SECOND DATABASE LOCATION SHOULD BE USED SIMULTANOUSLY, A
  * SECOND DatabaseProvider HAS TO BE IMPLEMENTED IN THE PARENT COMPONENT.
+ * 
+ * 
+ * IMPLEMENTATION EXAMPLE IN PARENT COMPONENT:
+ *      .....
+ *      // Get DB connection after changed uid:
+ *      useEffect(() => {
+ *        if (userUid) {
+ *          setUserGroupsDbPath("/users/" + userUid);
+ *        }
+ *      }, [userUid]);
+ *      .....
+ *      // Props function for the db provider:
+ *      const getDbUserData = (dbProviderData) => {
+ *        setDbUserData(dbProviderData);
+ *      };
+ *      .....
+ *      return (   
+ *        <DatabaseProvider
+ *          dbPath={userGroupsDbPath}
+ *          addDbListener={true}
+ *          updateParentFunction={getDbUserData}
+ *          updateDbData={dbUpdateEntry} // = useState hook containing data
+ *         />
+ *      )
+ *      .....
  */
 
 export default function DatabaseProvider(props) {
-  
-    // Hooks to listen for data in db:
-  const [onceRef, setOnceRef] = useState();
-  const [continuousRef, setContinuousRef] = useState();
-  const [receivedDataFromDb, setNewDataFromDb] = useState();
-  
+  // Hooks to listen for data in db:
+  const [dbPath, setDbPath] = useState();
+  const [receivedDataFromDb, setReceivedDataFromDb] = useState();
+  const [addDbListener, setAddDbListener] = useState(null);
   // Hooks to update db:
-  const [updateRef, setUpdateRef] = useState();
-  const [newDataForDb, setNewDataForDb] = useState();
+  const [updateDbData, setUpdateDbData] = useState();
 
   //#region MONITOR PROPS ----------------------------------------------------
 
   // Function to update the parent component:
-  const updateParentFunction = props.updateFunction;
+  const updateParentFunction = props.updateParentFunction;
 
   useEffect(() => {
-    setContinuousRef(props.continuousRef); // triggers a db query once
-    setOnceRef(props.onceRefRef); // triggers a db query that updates on changes
-    setUpdateRef(props.updateRef); // defines where to write to in db
-    setNewDataForDb(props.updateData); // data to write to db
+    setDbPath(props.dbPath); // triggers a db query
+    setAddDbListener(props.addDbListener); //"true" adds a listener, "false" doesn't
+    setUpdateDbData(props.updateDbData); // data to write to db
   }, [props]);
   //#endregion
 
   //#region GET DATA ONCE ----------------------------------------------------
 
   const getDataOnce = useCallback(() => {
-    let ref = firebase.database().ref(onceRef);
+    let ref = firebase.database().ref(dbPath);
     ref.once("value", (snapshot) => {
       try {
         if (snapshot) {
-          console.log("get data from db helper");
-          setNewDataFromDb(snapshot.val());
+          console.log("get data from db helper once");
+          setReceivedDataFromDb(snapshot.val());
         }
       } catch (e) {
         console.log(e);
       }
     });
-  }, [onceRef]);
+  }, [dbPath]);
 
   useEffect(() => {
-    if (onceRef) {
+    if (dbPath && addDbListener === false) {
       getDataOnce();
     }
-  }, [onceRef, getDataOnce]);
+  }, [dbPath, addDbListener,getDataOnce]);
 
   //#endregion
 
   //#region GET DATA CONTINUOUSLY --------------------------------------------
 
   const getDataContinuous = useCallback(() => {
-    let ref = firebase.database().ref(continuousRef);
+    let ref = firebase.database().ref(dbPath);
     ref.on("value", (snapshot) => {
       try {
         if (snapshot) {
-          console.log("get data from db helper");
-          setNewDataFromDb(snapshot.val());
+          console.log("get data from db helper continuously");
+          setReceivedDataFromDb(snapshot.val());
         }
       } catch (e) {
         console.log(e);
       }
     });
-  }, [continuousRef]);
+  }, [dbPath]);
 
   useEffect(() => {
-    if (continuousRef) {
+    if (dbPath && addDbListener === true) {
       getDataContinuous();
     }
-  }, [continuousRef, getDataContinuous]);
+  }, [dbPath, addDbListener,getDataContinuous]);
 
   //#endregion
 
@@ -91,17 +112,16 @@ export default function DatabaseProvider(props) {
 
   //#region UPDATE DATA TO DB ------------------------------------------------
 
-  const updateDbEntry = useCallback((updateRef, data) => {
+  const updateDbEntry = useCallback(() => {
     console.log("write data to db");
-    console.log(data.favorite_group.name);
     firebase
       .database()
-      .ref(updateRef)
-      .update(data)
+      .ref(dbPath)
+      .update(updateDbData)
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [dbPath,updateDbData]);
 
   // The timeout in the following useEffect was necessary because
   // if the database update is triggerd by the same stateHooks that read
@@ -111,12 +131,12 @@ export default function DatabaseProvider(props) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (updateRef && newDataForDb) {
-        updateDbEntry(updateRef, newDataForDb);
+      if (dbPath && updateDbData) {
+        updateDbEntry();
       }
     }, 50); // prevents an eternal loop of updating hooks
     return () => clearTimeout(timer);
-  }, [updateRef, newDataForDb, updateDbEntry]);
+  }, [dbPath, updateDbData, updateDbEntry]);
   // The timeout g hooks in o
   //#endregion
 
