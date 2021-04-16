@@ -83,33 +83,33 @@ export default function DatabaseProvider(props) {
 
   //#region UPDATE DATA TO DB ------------------------------------------------
 
-  const updateCounter = useCallback(() => {
-    setCounter(counter + 1);
-  }, [counter]);
-
   const updateDbEntry = useCallback((updateRef, data) => {
-    updateCounter();
-    if (counter < 20) {
-      console.log("write data to db");
-      console.log(data.favorite_group.name);
-      firebase
-        .database()
-        .ref(updateRef)
-        .update(data)
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    console.log("write data to db");
+    console.log(data.favorite_group.name);
+    firebase
+      .database()
+      .ref(updateRef)
+      .update(data)
+      .catch(function (error) {
+        console.log(error);
+      });
   }, []);
+
+  // The timeout in the following useEffect was necessary because
+  // if the database update is triggerd by the same stateHooks that read
+  // from the database, an eternal render loop can happen.
+  // The timeout gives the depending state hook a moment to settle for the
+  // current database data, before updating again.
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (updateRef && newDataForDb) {
         updateDbEntry(updateRef, newDataForDb);
       }
-    }, 50); // this prevents an eternal loop, god knows why
+    }, 50); // prevents an eternal loop of updating hooks
     return () => clearTimeout(timer);
   }, [updateRef, newDataForDb, updateDbEntry]);
+  // The timeout g hooks in o
   //#endregion
 
   return <React.Fragment></React.Fragment>;
