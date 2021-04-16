@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
 import "firebase/auth";
 import TextField from "@material-ui/core/TextField";
@@ -14,13 +13,19 @@ export default function CreateGroupPage() {
   const authContext = useContext(AuthContext);
 
   const [dbGroupCodeData, setDbGroupCodeData] = useState();
-  const [groupName, setGroupName] = useState("");
-  const [groupCode, setGroupCode] = useState("");
-  const [groupCodeDbPath, setGroupCodeDbPath] = useState("");
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
+  const [groupCodeDbPath, setGroupCodeDbPath] = useState();
+
+  const [newGroupDbPath, setNewGroupDbPath] = useState();
+  const [newGroupDbData, setNewGroupDbData] = useState();
+
+  const [newUserGroupDbPath, setNewUserGroupDbPath] = useState();
+  const [newUserGroupDbData, setNewUserGroupDbData] = useState();
+
   const [groupCreated, setGroupCreated] = useState(false);
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState("");
   const [userName, setUserName] = useState();
-  const [uid, setUid] = useState();
+  const [userUid, setUserUid] = useState();
   const [userGroups, setUserGroups] = useState();
 
   //#region GET USER AUTH INFO
@@ -28,12 +33,7 @@ export default function CreateGroupPage() {
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
-      setUid(authContext.currentUser.uid);
-      setUserIsLoggedIn(true);
-      getUserGroupsDB();
-    } else {
-      setUserName("guest");
-      setUserIsLoggedIn(false);
+      setUserUid(authContext.currentUser.uid);
     }
   }, [authContext]);
 
@@ -88,48 +88,49 @@ export default function CreateGroupPage() {
 
   //#endregion
 
-  //#region GET USER GROUPS FROM DB/USERS/USER ---------------------------------
+  //#region GET USER GROUPS FROM DB/USERS/USER ----------------------------------
 
-  const getUserGroupsDB = () => {
-    const user = firebase.auth().currentUser;
-    const uid = user.uid;
-
-    let ref = firebase.database().ref("/users/" + uid);
-    ref.on("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      if (!!dbUserData.groups) {
-        setUserGroups(dbUserData.groups);
-      }
-    });
+  // Props function for the dbProvider
+  const getDbUserData = (dbProviderData) => {
+    try {
+      setUserGroups(dbProviderData.groups);
+    } catch (error) {
+      alert(error);
+    }
   };
 
-  useEffect(() => {
-    getUserGroupsDB();
-  }, []);
   //#endregion
 
-  //#region UPDATE DB/USER AND DB/GROUPS WITH NEW GROUP ------------------------
+  //#region CREATE GROUP IN DB/GROUPS ------------------------
 
-  const createGroupInDB = useCallback(() => {
-    if (!!firebase.auth().currentUser) {
-      let user = firebase.auth().currentUser;
-      let uid = user.uid;
+  // Set db path:
+  useEffect(() => {
+    if (!!groupName & !!groupCode & !groupCreated) {
+      setGroupCreated(true);
+      setNewGroupDbPath("/groups/" + groupCode + "/group_info/" + userUid);
+    }
+  }, [groupCode, groupCreated, groupName, userUid]);
+
+  // Create db data:
+  useEffect(() => {
+    if (!!groupName & !!groupCode) {
       let dbEntry = {
         group_name: groupName,
         creator: userName,
         date: new Date(),
       };
-
-      firebase
-        .database()
-        .ref("/groups/" + groupCode + "/group_info/" + uid)
-        .update(dbEntry);
-      console.log("created group in database");
+      setNewGroupDbData(dbEntry);
     }
-  }, [groupCode, groupName, userName]);
+  }, [groupCode, groupCreated, groupName, userName]);
 
-  const updateUserGroupsDB = useCallback(() => {
-    if (userIsLoggedIn) {
+  //#endregion
+
+  //#region UPDATE DB/USER WITH NEW GROUP ------------------------
+
+  // Create db data:
+  useEffect(() => {
+    if (!!groupName && !!groupCode && userGroups) {
+      // Update array of groups
       let newGroupObject = { name: groupName, code: groupCode };
       let arrayOfGroupObjects = userGroups;
       arrayOfGroupObjects.push(newGroupObject);
@@ -137,31 +138,23 @@ export default function CreateGroupPage() {
       let dbEntry = {
         groups: arrayOfGroupObjects,
       };
-      firebase
-        .database()
-        .ref("/users/" + uid)
-        .update(dbEntry);
       console.log("update group in user database");
 
       // Update favorite group:
-      dbEntry = {
+      dbEntry += {
         favorite_group: { name: groupName, code: groupCode },
       };
-      firebase
-        .database()
-        .ref("/users/" + uid)
-        .update(dbEntry);
       console.log("update favorite group in user database");
+      setNewUserGroupDbData(dbEntry);
     }
-  }, [groupCode, groupName, uid, userGroups, userIsLoggedIn]);
+  }, [groupCode, groupCreated, groupName, userName, userGroups]);
 
+  // Set db path:
   useEffect(() => {
-    if (!!groupName & !!groupCode & !groupCreated) {
-      setGroupCreated(true);
-      createGroupInDB();
-      updateUserGroupsDB();
+    if (!!groupName && !!groupCode && userUid) {
+      setNewUserGroupDbPath("/users/" + userUid);
     }
-  }, [createGroupInDB, updateUserGroupsDB, groupCreated, groupName, groupCode]);
+  }, [groupCode, groupCreated, groupName, userUid]);
 
   //#endregion
 
@@ -177,8 +170,14 @@ export default function CreateGroupPage() {
         dbPath={groupCodeDbPath}
         addDbListener={false}
         updateParentFunction={getDbGroupCodeData}
-        updateDbData={null}
+      />
+      <DatabaseProvider dbPath={newGroupDbPath} updateDbData={newGroupDbData} />
 
+      <DatabaseProvider
+        dbPath={newUserGroupDbPath}
+        updateDbData={newUserGroupDbData}
+        addDbListener={true}
+        updateParentFunction={getDbUserData}
       />
       <Header />
       {!groupCreated && (

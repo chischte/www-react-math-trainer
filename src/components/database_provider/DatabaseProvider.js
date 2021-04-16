@@ -6,6 +6,31 @@ import firebase from "firebase";
  * AND 1 UPDATE POSSIBILITY FOR ONE REFERENCE PATH.
  * IF A SECOND DATABASE LOCATION SHOULD BE USED SIMULTANOUSLY, A
  * SECOND DatabaseProvider HAS TO BE IMPLEMENTED IN THE PARENT COMPONENT.
+ * 
+ * 
+ * IMPLEMENTATION EXAMPLE IN PARENT COMPONENT:
+ *      .....
+ *      // Get DB connection after changed uid:
+ *      useEffect(() => {
+ *        if (userUid) {
+ *          setUserGroupsDbPath("/users/" + userUid);
+ *        }
+ *      }, [userUid]);
+ *      .....
+ *      // Props function for the db provider:
+ *      const getDbUserData = (dbProviderData) => {
+ *        setDbUserData(dbProviderData);
+ *      };
+ *      .....
+ *      return (   
+ *        <DatabaseProvider
+ *          dbPath={userGroupsDbPath}
+ *          addDbListener={true}
+ *          updateParentFunction={getDbUserData}
+ *          updateDbData={dbUpdateEntry} // = useState hook containing data
+ *         />
+ *      )
+ *      .....
  */
 
 export default function DatabaseProvider(props) {
