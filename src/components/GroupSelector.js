@@ -5,7 +5,7 @@ import DatabaseProvider from "./database_provider/DatabaseProvider";
 export default function GroupSelector() {
   const authContext = useContext(AuthContext);
   const [userGroups, setUserGroups] = useState(0);
-  const [userGroupsRef, setUserGroupsRef] = useState();
+  const [userGroupsDbPath, setUserGroupsDbPath] = useState();
   const [dbUserData, setDbUserData] = useState(0);
   const [userUid, setUserUid] = useState(0);
   const [favoriteGroup, setFavoriteGroup] = useState({ name: "", code: "" });
@@ -25,7 +25,7 @@ export default function GroupSelector() {
   // Get DB connection after changed uid:
   useEffect(() => {
     if (userUid) {
-      setUserGroupsRef("/users/" + userUid);
+      setUserGroupsDbPath("/users/" + userUid);
     }
   }, [userUid]);
 
@@ -58,10 +58,11 @@ export default function GroupSelector() {
   return (
     <div className="group-selector">
       <DatabaseProvider
-        continuousRef={userGroupsRef}
-        updateFunction={getDbUserData}
-        updateRef={userGroupsRef}
-        updateData={dbUpdateEntry}
+        dbPath={userGroupsDbPath}
+        addDbListener={true}
+        updateParentFunction={getDbUserData}
+        updateDbData={dbUpdateEntry}
+
       />
       {!!userGroups & !!favoriteGroup ? (
         <div>

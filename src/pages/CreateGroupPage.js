@@ -173,12 +173,12 @@ export default function CreateGroupPage() {
 
   return (
     <div>
-      <DatabaseProvider
+      {/* <DatabaseProvider
         onceRef={groupCodeRef}
         updateFunction={getDbGroupCodeData}
       // updateRef={userGroupsRef}
       // updateData={dbUpdateEntry}
-      />
+      /> */}
       <Header />
       {!groupCreated && (
         <div>
