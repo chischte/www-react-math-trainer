@@ -12,7 +12,7 @@ var generator = require("generate-password"); //www.npmjs.com/package/generate-p
 
 export default function CreateGroupPage() {
   const authContext = useContext(AuthContext);
-  
+
   const [dbGroupCodeData, setDbGroupCodeData] = useState();
   const [groupName, setGroupName] = useState("");
   const [groupCode, setGroupCode] = useState("");
@@ -57,22 +57,22 @@ export default function CreateGroupPage() {
 
   // Generate password
   const getUniquePassword = useCallback(() => {
-    console.log("get new group code ************************");
-    // setGroupCode(generatePassword());
-    setGroupCode("public");
+    console.log("get a new group code");
+    setGroupCode(generatePassword());
   }, []);
 
-  // Generate new group code if group exists in database
-  useEffect(() => {
-    if (dbGroupCodeData) {
-      console.log("db entry already existssssssssssssssssssssssssssssssssss")
-      getUniquePassword();
-    }
-  }, [dbGroupCodeData,getUniquePassword]);
-
+  // Generate new code once at beginning:
   useEffect(() => {
     getUniquePassword();
   }, [getUniquePassword]);
+
+  // Generate new code if code already exists in database
+  useEffect(() => {
+    if (dbGroupCodeData) {
+      console.log("group code already exists");
+      getUniquePassword();
+    }
+  }, [dbGroupCodeData, getUniquePassword]);
 
   // Props function for the db provider:
   const getDbGroupCodeData = (dbProviderData) => {
@@ -176,8 +176,8 @@ export default function CreateGroupPage() {
       <DatabaseProvider
         onceRef={groupCodeRef}
         updateFunction={getDbGroupCodeData}
-        // updateRef={userGroupsRef}
-        // updateData={dbUpdateEntry}
+      // updateRef={userGroupsRef}
+      // updateData={dbUpdateEntry}
       />
       <Header />
       {!groupCreated && (
