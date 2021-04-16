@@ -98,13 +98,13 @@ export default function HighscorePage() {
     if (groupCode) {
       setHighscoreDbPath("/groups/" + groupCode + "/highscore/");
       // Update higscore periodically
-      const intervalId = setInterval(() => {
-        setHighscoreDbPath("");
-        setHighscoreDbPath("/groups/" + groupCode + "/highscore/");
-      }, 5000);
+      // const intervalId = setInterval(() => {
+      //   setHighscoreDbPath("");
+      //   setHighscoreDbPath("/groups/" + groupCode + "/highscore/");
+      // }, 5000);
 
-      // clear interval on re-render to avoid memory leaks
-      return () => clearInterval(intervalId);
+      // // clear interval on re-render to avoid memory leaks
+      // return () => clearInterval(intervalId);
     }
   }, [groupCode]);
 
@@ -404,7 +404,7 @@ export default function HighscorePage() {
       />
       <DatabaseProvider
         dbPath={highscoreDbPath}
-        addDbListener={false}
+        addDbListener={true}
         updateParentFunction={updateDbHighscoreData}
       />
       {leadingCharacter === "unicorn" && (
