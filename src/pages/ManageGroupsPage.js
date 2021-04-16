@@ -1,62 +1,60 @@
 import React, { useEffect, useState, useContext } from "react";
-import firebase from "firebase";
-import "firebase/auth";
 import Header from "../components/Header";
+import DatabaseProvider from "../components/database_provider/DatabaseProvider";
 import { AuthContext } from "../components/firebase/Auth";
 
 export default function ManageGroupsPage() {
   const authContext = useContext(AuthContext);
-  const [userName, setUserName] = useState();
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState();
-  const [userGroups, setUserGroups] = useState();
-  const [favoriteGroup, setFavoriteGroup] = useState();
+
+  const [userGroups, setUserGroups] = useState(0);
+  const [userGroupsDbPath, setUserGroupsDbPath] = useState();
+  const [userUid, setUserUid] = useState();
+
+  //#region GET USER AUTH INFO -------------------------------------------------
 
   useEffect(() => {
     if (!!authContext.currentUser) {
-      setUserName(authContext.currentUser.displayName);
-      setUserIsLoggedIn(true);
-      getUserGroupsDB();
-    } else {
-      setUserName("guest");
-      setUserIsLoggedIn(false);
+      setUserUid(authContext.currentUser.uid);
     }
   }, [authContext]);
 
+  //#endregion
 
-  function getUserGroupsDB() {
-    const user = firebase.auth().currentUser;
-    const uid = user.uid;
+  //#region GET GROUPS FROM DB/USERS/USER --------------------------------------
 
-    let ref = firebase.database().ref("/users/" + uid);
-    ref.once("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      console.log(dbUserData);
-      if (!!dbUserData.groups) {
-        setUserGroups(dbUserData.groups);
-      }
-      if (!!dbUserData.favorite_group) {
-        setFavoriteGroup(dbUserData.favorite_group);
-      }
-    });
-  }
+  // Set db path:
+  useEffect(() => {
+    if (userUid) {
+      setUserGroupsDbPath("/users/" + userUid + "/groups");
+    }
+  }, [userUid]);
+
+  // Props function for the db provider:
+  const getDbUserData = (dbProviderData) => {
+    setUserGroups(dbProviderData);
+  };
+
+  //#endregion
 
   return (
     <div>
-      <Header
-        userIsLoggedIn={userIsLoggedIn}
-        userName={userName}
+      <DatabaseProvider
+        dbPath={userGroupsDbPath}
+        addDbListener={false}
+        updateParentFunction={getDbUserData}
       />
-
+      <Header />
       <div>
         <div className="group-selector">
           <br></br>
-          {!!userGroups & !!favoriteGroup
-            ?
+          {!!userGroups ? (
             <div className="ooutliner outliner-flex">
               <table className="groups_table">
                 <thead>
                   <tr>
-                    <th className="groups_title-header " colSpan={2}>MEINE GRUPPEN</th>
+                    <th className="groups_title-header " colSpan={2}>
+                      MEINE GRUPPEN
+                    </th>
                   </tr>
                   <tr>
                     <td className="groups_bold-field">GRUPPEN NAME</td>
@@ -73,13 +71,11 @@ export default function ManageGroupsPage() {
                 </tbody>
               </table>
             </div>
-            :
-            <div></div>}
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
-
-
     </div>
   );
-
 }

@@ -35,7 +35,7 @@ export default function CreateGroupPage() {
   const [groupCreated, setGroupCreated] = useState(false);
   //#endregion
 
-  //#region GET USER AUTH INFO
+  //#region GET USER AUTH INFO -------------------------------------------------
 
   useEffect(() => {
     if (!!authContext.currentUser) {
