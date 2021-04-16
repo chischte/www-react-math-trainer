@@ -1,9 +1,10 @@
 import React, { useState, useContext, useCallback, useEffect } from "react";
-import firebase from "firebase";
-import "firebase/auth";
 import Header from "../components/Header";
 import GroupSelector from "../components/GroupSelector";
 import { AuthContext } from "../components/firebase/Auth";
+import DatabaseProvider from "../components/database_provider/DatabaseProvider";
+
+//#region PICTURES -------------------------------------------------------------
 
 // JEDI PICS:
 import joda from "../pics/jedi_joda.png";
@@ -20,11 +21,21 @@ import unicorn1 from "../pics/unicorn_1st.png";
 import unicorn2 from "../pics/unicorn_2nd.png";
 import unicorn3 from "../pics/unicorn_3rd.png";
 import unicorn4 from "../pics/unicorn_4th.png";
+//#endregion
 
 export default function HighscorePage() {
   const authContext = useContext(AuthContext);
 
   //#region USE-STATE HOOKS ----------------------------------------------------
+
+  // GET FAVORITE GROUP OF USER:
+  const [userDbPath, setUserDbPath] = useState();
+  const [userDbData, setUserDbData] = useState();
+
+  // GET FAVORITE HIGHSCORE DATA FROM DB/GROUPS/GROUP:
+  const [highscoreDbPath, setHighscoreDbPath] = useState();
+  const [highscoreDbData, setHighscoreDbData] = useState();
+  const [highscoreDbProviderData, setHighscoreDbProviderData] = useState();
 
   const [leadingCharacter, setLeadingCharacter] = useState();
   const [groupName, setGroupName] = useState();
@@ -33,7 +44,6 @@ export default function HighscorePage() {
   const [userUid, setUserUid] = useState();
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
   const [highscoreAvailable, setHighscoreAvailable] = useState(false);
-  const [databaseSnapshot, setDatabaseSnapshot] = useState();
   const [processedSnapshot, setProcessedSnapshot] = useState();
   const [addCpm, setAddCpm] = useState();
   const [subCpm, setSubCpm] = useState();
@@ -41,66 +51,82 @@ export default function HighscorePage() {
   const [divCpm, setDivCpm] = useState();
   //#endregion
 
+  //#region  GET USER AUTH INFO ------------------------------------------------
+
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      setUserName(authContext.currentUser.displayName);
+      setUserUid(authContext.currentUser.uid);
+      setUserIsLoggedIn(true);
+    } else {
+      setUserIsLoggedIn(false);
+      setGroupName("public");
+      setGroupCode("public");
+    }
+  }, [authContext]);
+
+  //#endregion
+
   //#region GET USERS FAVORITE GROUP FROM DB/USERS/USER ------------------------
-  
+
+  // Generate path for db query:
   useEffect(() => {
     if (userUid) {
-      let ref = firebase.database().ref("/users/" + userUid);
-      ref.on("value", (snapshot) => {
-        const dbUserData = snapshot.val();
-        if (!!dbUserData) {
-          setGroupName(dbUserData.favorite_group.name);
-          setGroupCode(dbUserData.favorite_group.code);
-        }
-      });
+      setUserDbPath("/users/" + userUid);
     }
   }, [userUid]);
+
+  // Props function for the db provider:
+  const updateDbUserData = (dbProviderData) => {
+    setUserDbData(dbProviderData);
+  };
+
+  // Update favorite group on db snapshot:
+  useEffect(() => {
+    if (userDbData) {
+      setGroupName(userDbData.favorite_group.name);
+      setGroupCode(userDbData.favorite_group.code);
+    }
+  }, [userDbData]);
+
   //#endregion
 
   //#region GET HIGHSCORE DATA FROM DB/GROUPS ----------------------------------
 
-  // Get snapshot of group highscore:
-  const getGroupsHighscoreDbSnapshot = useCallback(() => {
-    let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
-    ref.once("value", (snapshot) => {
-      let _databaseSnapshot = snapshot.val();
-
-      if (!!_databaseSnapshot) {
-        // Convert object containing objects to an array of objects:
-        _databaseSnapshot = Object.values(_databaseSnapshot);
-        setHighscoreAvailable(true);
-        setDatabaseSnapshot(_databaseSnapshot);
-        console.log("update highscore info from db/groups");
-      } else {
-        setHighscoreAvailable(false);
-      }
-    });
-  }, [groupCode]);
-
+  // Generate path for db query:
   useEffect(() => {
     if (groupCode) {
-      let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
-      ref.once("value", (snapshot) => {
-        getGroupsHighscoreDbSnapshot(snapshot);
-      });
+      setHighscoreDbPath("/groups/" + groupCode + "/highscore/");
+      // Update higscore periodically
+      const intervalId = setInterval(() => {
+        setHighscoreDbPath("");
+        setHighscoreDbPath("/groups/" + groupCode + "/highscore/");
+      }, 5000);
+
+      // clear interval on re-render to avoid memory leaks
+      return () => clearInterval(intervalId);
     }
-  }, [groupCode, getGroupsHighscoreDbSnapshot]);
+  }, [groupCode]);
 
-  // Update highscore periodically
+  // Props function for the db provider to update highscore data:
+  const updateDbHighscoreData = (dbProviderData) => {
+    setHighscoreDbProviderData(dbProviderData);
+  };
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      getGroupsHighscoreDbSnapshot();
-    }, 15000);
-
-    // clear interval on re-render to avoid memory leaks
-    return () => clearInterval(intervalId);
-  }, [getGroupsHighscoreDbSnapshot]);
+    if (highscoreDbProviderData) {
+      var _dbProviderData = Object.values(highscoreDbProviderData);
+      console.log("update highscore info from db/groups");
+      setHighscoreDbData(_dbProviderData);
+      setHighscoreAvailable(true);
+    }
+  }, [highscoreDbProviderData]);
 
   //#endregion
 
   //#region PROCESS DB DATA, GET RECORDS, ASSIGN HIERARCHY ---------------------
   const getCpmRecords = useCallback(() => {
-    let highscoreSnapshot = databaseSnapshot;
+    let highscoreSnapshot = highscoreDbData;
 
     // Addition record:
     highscoreSnapshot.sort((a, b) => (a.cpm_add < b.cpm_add ? 1 : -1));
@@ -122,10 +148,10 @@ export default function HighscorePage() {
     recordUser = highscoreSnapshot[0];
     setDivCpm(recordUser.cpm_div);
     console.log("records created");
-  }, [databaseSnapshot]);
+  }, [highscoreDbData]);
 
   const sortAndAssignHierachy = useCallback(() => {
-    let highscoreSnapshot = databaseSnapshot;
+    let highscoreSnapshot = highscoreDbData;
 
     highscoreSnapshot.sort((a, b) => (a.cpm_avg < b.cpm_avg ? 1 : -1));
 
@@ -153,30 +179,14 @@ export default function HighscorePage() {
     }
     console.log("hierarchy assigned");
     setProcessedSnapshot(highscoreSnapshot);
-  }, [databaseSnapshot]);
+  }, [highscoreDbData]);
 
   useEffect(() => {
-    if (databaseSnapshot) {
+    if (highscoreDbData) {
       getCpmRecords();
       sortAndAssignHierachy();
     }
-  }, [databaseSnapshot, sortAndAssignHierachy, getCpmRecords]);
-
-  //#endregion
-
-  //#region  GET USER AUTH INFO ------------------------------------------------
-
-  useEffect(() => {
-    if (!!authContext.currentUser) {
-      setUserName(authContext.currentUser.displayName);
-      setUserUid(authContext.currentUser.uid);
-      setUserIsLoggedIn(true);
-    } else {
-      setUserIsLoggedIn(false);
-      setGroupName("public");
-      setGroupCode("public");
-    }
-  }, [authContext]);
+  }, [highscoreDbData, sortAndAssignHierachy, getCpmRecords]);
 
   //#endregion
 
@@ -387,6 +397,16 @@ export default function HighscorePage() {
 
   return (
     <div>
+      <DatabaseProvider
+        dbPath={userDbPath}
+        addDbListener={true}
+        updateParentFunction={updateDbUserData}
+      />
+      <DatabaseProvider
+        dbPath={highscoreDbPath}
+        addDbListener={false}
+        updateParentFunction={updateDbHighscoreData}
+      />
       {leadingCharacter === "unicorn" && (
         <style>{"html { background-color:rgb(251,72,169) }"}</style>
       )}
