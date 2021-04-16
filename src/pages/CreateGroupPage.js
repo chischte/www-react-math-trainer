@@ -66,7 +66,7 @@ export default function CreateGroupPage() {
     getUniquePassword();
   }, [getUniquePassword]);
 
-  // Generate new code if code already exists in database
+  // Generate new code if code already exists in db:
   useEffect(() => {
     if (dbGroupCodeData) {
       console.log("group code already exists");
