@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from "react";
-import "firebase/auth";
 import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
@@ -16,7 +15,7 @@ export default function LoginSelectPage(props) {
     }
   }, [authContext]);
 
-  const handleSwitchToLogin = (event) => {
+  const handleSwitchToLogin = () => {
     props.history.push("/login");
   };
 

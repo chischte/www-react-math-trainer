@@ -62,7 +62,6 @@ export default function GroupSelector() {
         addDbListener={true}
         updateParentFunction={getDbUserData}
         updateDbData={dbUpdateEntry}
-
       />
       {!!userGroups & !!favoriteGroup ? (
         <div>

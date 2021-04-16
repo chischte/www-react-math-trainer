@@ -8,7 +8,7 @@ import { Redirect } from "react-router-dom";
 import Header from "../components/Header";
 import { AuthContext } from "../components/firebase/Auth";
 
-export default function LoginPage(props) {
+export default function LoginPage() {
   const authContext = useContext(AuthContext);
   const [userIsLoggedIn, setUserIsLoggedIn] = useState();
 

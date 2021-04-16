@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import firebase from "firebase";
 
 /**
@@ -6,8 +6,8 @@ import firebase from "firebase";
  * AND 1 UPDATE POSSIBILITY FOR ONE REFERENCE PATH.
  * IF A SECOND DATABASE LOCATION SHOULD BE USED SIMULTANOUSLY, A
  * SECOND DatabaseProvider HAS TO BE IMPLEMENTED IN THE PARENT COMPONENT.
- * 
- * 
+ *
+ *
  * IMPLEMENTATION EXAMPLE IN PARENT COMPONENT:
  *      .....
  *      // Get DB connection after changed uid:
@@ -22,7 +22,7 @@ import firebase from "firebase";
  *        setDbUserData(dbProviderData);
  *      };
  *      .....
- *      return (   
+ *      return (
  *        <DatabaseProvider
  *          dbPath={userGroupsDbPath}
  *          addDbListener={true}
@@ -73,31 +73,43 @@ export default function DatabaseProvider(props) {
     if (dbPath && addDbListener === false) {
       getDataOnce();
     }
-  }, [dbPath, addDbListener,getDataOnce]);
+  }, [dbPath, addDbListener, getDataOnce]);
 
   //#endregion
 
   //#region GET DATA CONTINUOUSLY --------------------------------------------
 
-  const getDataContinuous = useCallback(() => {
-    let ref = firebase.database().ref(dbPath);
-    ref.on("value", (snapshot) => {
-      try {
-        if (snapshot) {
-          console.log("get data from db helper continuously");
-          setReceivedDataFromDb(snapshot.val());
-        }
-      } catch (e) {
-        console.log(e);
+  const processSnapshot = (snapshot) => {
+    try {
+      if (snapshot) {
+        console.log("get data from db helper continuously");
+        setReceivedDataFromDb(snapshot.val());
       }
-    });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const previousDbPath = useRef();
+
+  const getDataContinuous = useCallback(() => {
+    // Detach previous listeners:
+    if (previousDbPath.current) {
+      firebase.database().ref(previousDbPath.current).off();
+    }
+    // Add new listener:
+    let ref = firebase.database().ref(dbPath);
+    ref.on("value", (snapshot) => processSnapshot(snapshot));
+
+    // Store new dbPath as ref:
+    getDataContinuous.current = dbPath;
   }, [dbPath]);
 
   useEffect(() => {
     if (dbPath && addDbListener === true) {
       getDataContinuous();
     }
-  }, [dbPath, addDbListener,getDataContinuous]);
+  }, [dbPath, addDbListener, getDataContinuous]);
 
   //#endregion
 
@@ -121,7 +133,7 @@ export default function DatabaseProvider(props) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [dbPath,updateDbData]);
+  }, [dbPath, updateDbData]);
 
   // The timeout in the following useEffect was necessary because
   // if the database update is triggerd by the same stateHooks that read
