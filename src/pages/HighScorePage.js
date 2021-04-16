@@ -23,7 +23,9 @@ import unicorn4 from "../pics/unicorn_4th.png";
 
 export default function HighscorePage() {
   const authContext = useContext(AuthContext);
-  
+
+  //#region USE-STATE HOOKS ----------------------------------------------------
+
   const [leadingCharacter, setLeadingCharacter] = useState();
   const [groupName, setGroupName] = useState();
   const [groupCode, setGroupCode] = useState();
@@ -37,8 +39,10 @@ export default function HighscorePage() {
   const [subCpm, setSubCpm] = useState();
   const [mulCpm, setMulCpm] = useState();
   const [divCpm, setDivCpm] = useState();
+  //#endregion
 
-  // Get users selected (favorite) group:
+  //#region GET USERS FAVORITE GROUP FROM DB/USERS/USER ------------------------
+  
   useEffect(() => {
     if (userUid) {
       let ref = firebase.database().ref("/users/" + userUid);
@@ -51,6 +55,7 @@ export default function HighscorePage() {
       });
     }
   }, [userUid]);
+  //#endregion
 
   //#region GET HIGHSCORE DATA FROM DB/GROUPS ----------------------------------
 
@@ -159,7 +164,8 @@ export default function HighscorePage() {
 
   //#endregion
 
-  // Get user auth info:
+  //#region  GET USER AUTH INFO ------------------------------------------------
+
   useEffect(() => {
     if (!!authContext.currentUser) {
       setUserName(authContext.currentUser.displayName);
@@ -172,6 +178,9 @@ export default function HighscorePage() {
     }
   }, [authContext]);
 
+  //#endregion
+
+  //#region VARIOUS ------------------------------------------------------------
   const getLastSeenInfo = (timestamp) => {
     const loginDate = new Date(timestamp).getTime();
     let timeDifference = new Date().getTime() - loginDate;
@@ -202,6 +211,9 @@ export default function HighscorePage() {
     return lastSeen;
   };
 
+  //#endregion
+
+  //#region CREATE HIGHSCORE TABLE JSX -----------------------------------------
   const createHighscoreTable = () => {
     return (
       <div>
@@ -370,6 +382,8 @@ export default function HighscorePage() {
       </div>
     );
   };
+
+  //#endregion
 
   return (
     <div>
