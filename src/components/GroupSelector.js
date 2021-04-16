@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../components/firebase/Auth";
-import DatabaseProvider from "../components/firebase/DataProvider";
+import DatabaseProvider from "./database_provider/DatabaseProvider";
 
 export default function GroupSelector() {
   const authContext = useContext(AuthContext);
