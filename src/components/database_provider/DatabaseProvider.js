@@ -17,7 +17,7 @@ import firebase from "firebase";
  *        }
  *      }, [userUid]);
  *      .....
- *      // Props function for the db provider:
+ *      // Props function for the dbProvider:
  *      const getDbUserData = (dbProviderData) => {
  *        setDbUserData(dbProviderData);
  *      };
