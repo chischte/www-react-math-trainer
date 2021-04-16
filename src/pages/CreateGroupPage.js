@@ -16,7 +16,7 @@ export default function CreateGroupPage() {
   const [dbGroupCodeData, setDbGroupCodeData] = useState();
   const [groupName, setGroupName] = useState("");
   const [groupCode, setGroupCode] = useState("");
-  const [groupCodeRef, setGroupCodeRef] = useState("");
+  const [groupCodeDbPath, setGroupCodeDbPath] = useState("");
   const [groupCreated, setGroupCreated] = useState(false);
   const [userIsLoggedIn, setUserIsLoggedIn] = useState("");
   const [userName, setUserName] = useState();
@@ -77,7 +77,7 @@ export default function CreateGroupPage() {
   // Trigger db snapshot:
   useEffect(() => {
     if (groupCode) {
-      setGroupCodeRef("/groups/" + groupCode + "/highscore/");
+      setGroupCodeDbPath("/groups/" + groupCode + "/highscore/");
     }
   }, [groupCode]);
 
@@ -173,12 +173,13 @@ export default function CreateGroupPage() {
 
   return (
     <div>
-      {/* <DatabaseProvider
-        onceRef={groupCodeRef}
-        updateFunction={getDbGroupCodeData}
-      // updateRef={userGroupsRef}
-      // updateData={dbUpdateEntry}
-      /> */}
+      <DatabaseProvider
+        dbPath={groupCodeDbPath}
+        addDbListener={false}
+        updateParentFunction={getDbGroupCodeData}
+        updateDbData={null}
+
+      />
       <Header />
       {!groupCreated && (
         <div>

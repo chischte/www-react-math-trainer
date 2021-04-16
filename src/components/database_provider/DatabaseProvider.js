@@ -45,7 +45,7 @@ export default function DatabaseProvider(props) {
   }, [dbPath]);
 
   useEffect(() => {
-    if (dbPath && addDbListener === true) {
+    if (dbPath && addDbListener === false) {
       getDataOnce();
     }
   }, [dbPath, addDbListener,getDataOnce]);
@@ -69,7 +69,7 @@ export default function DatabaseProvider(props) {
   }, [dbPath]);
 
   useEffect(() => {
-    if (dbPath && addDbListener === false) {
+    if (dbPath && addDbListener === true) {
       getDataContinuous();
     }
   }, [dbPath, addDbListener,getDataContinuous]);
