@@ -1,0 +1,73 @@
+import * as firebase from "firebase/app";
+
+/**
+ * THE DATABASE HELPER COMPONENT IS NOT IN USE IT HAS BEEN REPLACED
+ * BY THE *** <ProvideDatabase/> **** COMPONENT
+ * THE CODE IS JUST HERE FOR DOCUMENTATION PURPOSES
+ */
+export default class DatabaseHelper {
+  getDataContinuous(ref) {
+    return new Promise((resolve, reject) => {
+      const userRef = firebase.database().ref(ref);
+      const onError = (error) => reject(error);
+      const onData = (snapshot) => resolve(snapshot.val());
+      userRef.on("value", onData, onError);
+    });
+  }
+
+  getDataOnce(ref) {
+    return new Promise((resolve, reject) => {
+      const userRef = firebase.database().ref(ref);
+      const onError = (error) => reject(error);
+      const onData = (snapshot) => resolve(snapshot.val());
+      userRef.once("value", onData, onError);
+    });
+  }
+
+  updateData(data, ref) {
+    firebase.database().ref(ref).update(data);
+  }
+
+  closeDbConnection() {}
+}
+
+/**
+ *
+ * CODE SNIPPETS OF DATABASE HELPER IMPLEMENTATION IN GroupSelector COMPONENT
+ *
+ */
+
+// import DatabaseHelper from "./databaseHelper";
+const dbHelper = useCallback(() => {
+  new DatabaseHelper();
+}, []);
+
+// update favorite group in DB:
+const updateData = useCallback(
+  (data, ref) => {
+    dbHelper.updateData(data, ref);
+  },
+  [dbHelper]
+);
+
+//#region GET FAVORITE GROUP FROM DB/USERS/USER ------------------------------
+
+// wait for databesHelper snapshot
+const getDbSnapshot = React.useCallback(
+  async (ref) => {
+    try {
+      const dbUserData = await dbHelper.getDataContinuous(ref);
+      setDbSnapshot(dbUserData);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  [dbHelper]
+);
+
+// get DB connection after changed uid:
+useEffect(() => {
+  if (!!user.uid) {
+    getDbSnapshot("/users/" + user.uid); // uid michi = "UoVJYc0wIaNUSspmeZBhpGhNgFg2"
+  }
+}, [user.uid, getDbSnapshot]);

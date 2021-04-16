@@ -1,11 +1,16 @@
-
-// Enums were partly implemented but then removed again because
-// orientation in the database entries was very difficult when
-// the folder structure consists of numbers instead of strings
+/**
+ *
+ * Enums were partly implemented but then removed again because they led to
+ * a database folder structure containing of numbers instead of strings,
+ * which made it very difficult to debug.
+ * The Use of enums has been replaced by switch case statements, detecting
+ * invalid string values
+ *
+ */
 
 export const DisciplineEnum = Object.freeze({
-    addition: 1,
-    subtraction: 2,
-    multiplication: 3,
-    division: 4,
-  });
+  addition: 1,
+  subtraction: 2,
+  multiplication: 3,
+  division: 4,
+});
