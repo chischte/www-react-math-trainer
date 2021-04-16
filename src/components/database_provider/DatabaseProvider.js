@@ -13,7 +13,7 @@ export default function DatabaseProvider(props) {
     // Hooks to listen for data in db:
   const [onceRef, setOnceRef] = useState();
   const [continuousRef, setContinuousRef] = useState();
-  const [receivedDataFromDb, setNewDataFromDb] = useState();
+  const [receivedDataFromDb, setReceivedDataFromDb] = useState();
   
   // Hooks to update db:
   const [updateRef, setUpdateRef] = useState();
@@ -26,7 +26,7 @@ export default function DatabaseProvider(props) {
 
   useEffect(() => {
     setContinuousRef(props.continuousRef); // triggers a db query once
-    setOnceRef(props.onceRefRef); // triggers a db query that updates on changes
+    setOnceRef(props.onceRef); // triggers a db query that updates on changes
     setUpdateRef(props.updateRef); // defines where to write to in db
     setNewDataForDb(props.updateData); // data to write to db
   }, [props]);
@@ -40,14 +40,14 @@ export default function DatabaseProvider(props) {
       try {
         if (snapshot) {
           console.log("get data from db helper");
-          setNewDataFromDb(snapshot.val());
+          setReceivedDataFromDb(snapshot.val());
         }
       } catch (e) {
         console.log(e);
       }
     });
   }, [onceRef]);
-
+  
   useEffect(() => {
     if (onceRef) {
       getDataOnce();
@@ -64,7 +64,7 @@ export default function DatabaseProvider(props) {
       try {
         if (snapshot) {
           console.log("get data from db helper");
-          setNewDataFromDb(snapshot.val());
+          setReceivedDataFromDb(snapshot.val());
         }
       } catch (e) {
         console.log(e);

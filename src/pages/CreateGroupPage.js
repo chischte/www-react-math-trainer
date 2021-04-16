@@ -6,13 +6,17 @@ import TextField from "@material-ui/core/TextField";
 import { Button, Box } from "@material-ui/core";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import Header from "../components/Header";
+import DatabaseProvider from "../components/database_provider/DatabaseProvider";
 
 var generator = require("generate-password"); //www.npmjs.com/package/generate-password
 
 export default function CreateGroupPage() {
   const authContext = useContext(AuthContext);
+  
+  const [dbGroupCodeData, setDbGroupCodeData] = useState();
   const [groupName, setGroupName] = useState("");
   const [groupCode, setGroupCode] = useState("");
+  const [groupCodeRef, setGroupCodeRef] = useState("");
   const [groupCreated, setGroupCreated] = useState(false);
   const [userIsLoggedIn, setUserIsLoggedIn] = useState("");
   const [userName, setUserName] = useState();
@@ -51,23 +55,36 @@ export default function CreateGroupPage() {
     return password;
   };
 
+  // Generate password
   const getUniquePassword = useCallback(() => {
-    let groupCode = generatePassword();
-    let ref = firebase.database().ref("/groups/" + groupCode + "/highscore/");
-    ref.on("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      if (!!dbUserData) {
-        // groupCode exists already, get new code:
-        getUniquePassword();
-      } else {
-        setGroupCode(groupCode);
-      }
-    });
+    console.log("get new group code ************************");
+    // setGroupCode(generatePassword());
+    setGroupCode("public");
   }, []);
+
+  // Generate new group code if group exists in database
+  useEffect(() => {
+    if (dbGroupCodeData) {
+      console.log("db entry already existssssssssssssssssssssssssssssssssss")
+      getUniquePassword();
+    }
+  }, [dbGroupCodeData,getUniquePassword]);
 
   useEffect(() => {
     getUniquePassword();
   }, [getUniquePassword]);
+
+  // Props function for the db provider:
+  const getDbGroupCodeData = (dbProviderData) => {
+    setDbGroupCodeData(dbProviderData);
+  };
+
+  // Trigger DB snapshot if untestedGroupCode is available:
+  useEffect(() => {
+    if (groupCode) {
+      setGroupCodeRef("/groups/" + groupCode + "/highscore/");
+    }
+  }, [groupCode]);
 
   //#endregion
 
@@ -148,7 +165,6 @@ export default function CreateGroupPage() {
 
   //#endregion
 
-  
   const handleCreateGroup = (event) => {
     event.preventDefault();
     const { groupName } = event.target.elements;
@@ -157,6 +173,12 @@ export default function CreateGroupPage() {
 
   return (
     <div>
+      <DatabaseProvider
+        onceRef={groupCodeRef}
+        updateFunction={getDbGroupCodeData}
+        // updateRef={userGroupsRef}
+        // updateData={dbUpdateEntry}
+      />
       <Header />
       {!groupCreated && (
         <div>
