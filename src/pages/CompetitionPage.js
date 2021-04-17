@@ -37,7 +37,6 @@ export default function CompetitionPage() {
   const [newHighscoreEntry, setNewHighscoreEntry] = useState(false);
   const [recordCheckIsDone, setRecordCheckIsDone] = useState(false);
   const [competitionCountIsUpdated, setCompetitionCountIsUpdated] = useState(false);
-  const [dbSnapshotWasAvailable, setDbSnapshotWasAvailable] = useState(false);
   // USER AUTH INFO:
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
@@ -85,11 +84,10 @@ export default function CompetitionPage() {
   }, [groupCode, userUid]);
 
   const getGroupsHighscoreDB = useCallback(() => {
-    let ref = firebase.database().ref(highscoreDbPath);
+    let ref = firebase.database().ref(highscoreDbPath+"1");
     ref.once("value", (snapshot) => {
       const dbUserData = snapshot.val();
       setdBSnapshot(dbUserData);
-      setDbSnapshotWasAvailable(true);
       console.log("get high score data from db/groups: ");
       console.log(dbUserData);
     });
@@ -106,7 +104,6 @@ export default function CompetitionPage() {
     setCountDiv(0);
     setCountTotal(0);
   };
-
   useEffect(() => {
     if (!!dbSnapshot) {
       setCpmAdd(dbSnapshot.cpm_add);
@@ -127,7 +124,6 @@ export default function CompetitionPage() {
   // Get DB /groups data if group changed:
   useEffect(() => {
     if (userUid) {
-      setDbSnapshotWasAvailable(false);
       getGroupsHighscoreDB(userUid);
     }
   }, [userUid, getGroupsHighscoreDB, groupCode]);
@@ -142,10 +138,10 @@ export default function CompetitionPage() {
 
   // Trigger db update:
   useEffect(() => {
-    if (newHighscoreEntry && dbSnapshotWasAvailable && highscoreDbPath) {
+    if (newHighscoreEntry && highscoreDbPath) {
       writeToDatabase();
     }
-  }, [newHighscoreEntry, dbSnapshotWasAvailable, highscoreDbPath, writeToDatabase]);
+  }, [newHighscoreEntry, highscoreDbPath, writeToDatabase]);
 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
@@ -185,10 +181,10 @@ export default function CompetitionPage() {
 
   // Create new db entry:
   useEffect(() => {
-    if (dbSnapshotWasAvailable && recordCheckIsDone && competitionCountIsUpdated) {
+    if (recordCheckIsDone && competitionCountIsUpdated) {
       createNewDbEntry();
     }
-  }, [dbSnapshotWasAvailable, competitionCountIsUpdated, recordCheckIsDone, createNewDbEntry]);
+  }, [competitionCountIsUpdated, recordCheckIsDone, createNewDbEntry]);
   //#endregion
 
   //#region CHECK FOR RECORDS --------------------------------------------------
