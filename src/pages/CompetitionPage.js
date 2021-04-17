@@ -84,7 +84,7 @@ export default function CompetitionPage() {
   }, [groupCode, userUid]);
 
   const getGroupsHighscoreDB = useCallback(() => {
-    let ref = firebase.database().ref(highscoreDbPath+"1");
+    let ref = firebase.database().ref(highscoreDbPath);
     ref.once("value", (snapshot) => {
       const dbUserData = snapshot.val();
       setdBSnapshot(dbUserData);
@@ -116,7 +116,7 @@ export default function CompetitionPage() {
       setCountDiv(dbSnapshot.count_div);
       setCountTotal(dbSnapshot.count_total);
     } else {
-      // no group highscore created yet, clear fields:
+      console.log("no previous data found in db/.../highscore/user");
       clearAllFields();
     }
   }, [dbSnapshot]);
