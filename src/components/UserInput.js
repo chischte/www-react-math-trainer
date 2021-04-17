@@ -1,17 +1,16 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 export default function UserInput(props) {
-
   const [falseEntry, setFalseEntry] = useState(false);
   const [keyCount, setKeyCount] = useState();
 
   const setEntryFalse = () => {
     setFalseEntry(true);
-  }
+  };
 
   const setEntryTrue = () => {
     setFalseEntry(false);
-  }
+  };
 
   const handleUserInput = (e) => {
     e.preventDefault();
@@ -33,6 +32,7 @@ export default function UserInput(props) {
       <form onSubmit={handleUserInput}>
         {falseEntry ? (
           <input
+            data-testid="user-input-field"
             className="input-field input-field__red"
             autoComplete="off"
             autoFocus

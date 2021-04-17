@@ -18,24 +18,45 @@ afterEach(() => {
   container = null;
 });
 
-var result;
-const dbPath = "nicknames";
-
-
+var resultAllowedPath;
+const dbPathAllowed = "nicknames";
 
 it("get nickname data from firebase", async () => {
   act(() => {
     render(
       <DatabaseProvider
-        dbPath={dbPath}
+        dbPath={dbPathAllowed}
         addDbListener={false}
         updateParentFunction={(dbProviderData) => {
-          result = dbProviderData.michi.name;
+          resultAllowedPath = dbProviderData.michi.name;
         }}
       />,
       container
     );
   });
   await new Promise((r) => setTimeout(r, 1500));
-  expect(result).toBe("michi");
+  expect(resultAllowedPath).toBe("michi");
+});
+
+const dbPathPermitted = "user";
+var resultBlockedPath = false;
+
+// TestDoes not test if Path exists
+it("get no info from path without read rights", async () => {
+  act(() => {
+    render(
+      <DatabaseProvider
+        dbPath={dbPathPermitted}
+        addDbListener={false}
+        updateParentFunction={(dbProviderData) => {
+          if (dbProviderData) {
+            resultBlockedPath = true;
+          }
+        }}
+      />,
+      container
+    );
+  });
+  await new Promise((r) => setTimeout(r, 1500));
+  expect(resultBlockedPath).toBe(false);
 });
