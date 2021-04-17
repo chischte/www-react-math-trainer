@@ -18,43 +18,121 @@ export default function CompetitionPage() {
   const authContext = useContext(AuthContext);
 
   //#region useState HOOKS -------------------------------------------------------
+
+  // INFOS FROM AND FOR DATABASE:
+  const [dbSnapshot, setdBSnapshot] = useState();
   const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
   const [cpmAdd, setCpmAdd] = useState(0);
   const [cpmSub, setCpmSub] = useState(0);
   const [cpmMul, setCpmMul] = useState(0);
   const [cpmDiv, setCpmDiv] = useState(0);
-  const [groupName, setGroupName] = useState();
-  const [groupCode, setGroupCode] = useState();
   const [countAdd, setCountAdd] = useState(0);
   const [countSub, setCountSub] = useState(0);
   const [countMul, setCountMul] = useState(0);
   const [countDiv, setCountDiv] = useState(0);
   const [countTotal, setCountTotal] = useState(0);
+  const [highscoreDbPath, setHighscoreDbPath] = useState(0);
+  const [userDbPath, setUserDbPath] = useState(0);
+  // TRIGGER DB WRITE:
+  const [recordCheckIsDone, setRecordCheckIsDone] = useState(false);
+  const [competitionCountIsUpdated, setCompetitionCountIsUpdated] = useState(false);
+  const [dbSnapshotWasAvailable, setDbSnapshotWasAvailable] = useState(false);
+  // USER AUTH INFO:
   const [userUid, setUserUid] = useState("");
   const [userName, setUserName] = useState("guest");
   const [userCharacter, setUserCharacter] = useState("");
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
-  const [recordCheckIsEnabled, setRecordCheckIsEnabled] = useState(false);
-  const [competitionCountIsEnabled, setCompetitionCountIsEnabled] = useState(
-    false
-  );
-  const [checkForRecordTrack, setCheckForRecordTrack] = useState(false);
-  const [dbWriteDataIsReady, setDbWriteDataIsReady] = useState(false);
-  const [questionStrings, setQuestionStrings] = useState([]);
-  const [calculationsSolved, setCalculationsSolved] = useState(0);
+  // GROUP INFO:
+  const [groupName, setGroupName] = useState();
+  const [groupCode, setGroupCode] = useState();
+  // STAGES AND TRIGGERS:
   const [mode, setMode] = useState(); // addition/subtraction/division/multiplication
   const [competitionStage, setCompetitionStage] = useState("mounted"); // mounted -> readySetGo -> running -> completed
-  const [currentSpeed, setCurrentSpeed] = useState(0);
-  const [speedometerSpeed, setSpeedometerSpeed] = useState(0);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeElapsedArray, setTimeElapsedArray] = useState([]);
+  const [calculationsSolved, setCalculationsSolved] = useState(0);
+  // QUESTIONS AND ANSWERS:
+  const [questionStrings, setQuestionStrings] = useState([]);
   const [errorArray, setErrorArray] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentSolution, setCurrentSolution] = useState("");
   const [calculationLogArray, setCalculationLogArray] = useState([]);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [timeElapsedArray, setTimeElapsedArray] = useState([]);
+  //SPEEDOMETER
+  const [speedometerSpeed, setSpeedometerSpeed] = useState(0);
+  const [currentSpeed, setCurrentSpeed] = useState(0);
+
   //#endregion
 
-  //#region WRITE COMPETITION INFO TO DB/GROUPS -----------------------
+  //#region GET USER AUTH STATUS AND INFO --------------------------------------
+
+  useEffect(() => {
+    if (!!authContext.currentUser) {
+      setUserUid(authContext.currentUser.uid);
+      setUserName(authContext.currentUser.displayName);
+    } else {
+      setGroupName("public");
+    }
+  }, [authContext]);
+  //#endregion
+
+  //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
+
+  // Generate highscore database path:
+  useEffect(() => {
+    if (groupCode && userUid) {
+      setHighscoreDbPath("/groups/" + groupCode + "/highscore/" + userUid);
+    }
+  }, [groupCode, userUid]);
+
+  const getGroupsHighscoreDB = useCallback(() => {
+    let ref = firebase.database().ref(highscoreDbPath);
+    ref.once("value", (snapshot) => {
+      const dbUserData = snapshot.val();
+      setdBSnapshot(dbUserData);
+      setDbSnapshotWasAvailable(true);
+      console.log("get high score data from db/groups: ");
+      console.log(dbUserData);
+    });
+  }, [highscoreDbPath]);
+
+  const clearAllFields = () => {
+    setCpmAdd(0);
+    setCpmSub(0);
+    setCpmMul(0);
+    setCpmDiv(0);
+    setCountAdd(0);
+    setCountSub(0);
+    setCountMul(0);
+    setCountDiv(0);
+    setCountTotal(0);
+  };
+
+  useEffect(() => {
+    if (!!dbSnapshot) {
+      setCpmAdd(dbSnapshot.cpm_add);
+      setCpmSub(dbSnapshot.cpm_sub);
+      setCpmMul(dbSnapshot.cpm_mul);
+      setCpmDiv(dbSnapshot.cpm_div);
+      setCountAdd(dbSnapshot.count_add);
+      setCountSub(dbSnapshot.count_sub);
+      setCountMul(dbSnapshot.count_mul);
+      setCountDiv(dbSnapshot.count_div);
+      setCountTotal(dbSnapshot.count_total);
+    } else {
+      // no group highscore created yet, clear fields:
+      clearAllFields();
+    }
+  }, [dbSnapshot]);
+
+  // Get DB /groups data if group changed:
+  useEffect(() => {
+    if (userUid) {
+      setDbSnapshotWasAvailable(false);
+      getGroupsHighscoreDB(userUid);
+    }
+  }, [userUid, getGroupsHighscoreDB, groupCode]);
+  //#endregion
+
+  //#region WRITE COMPETITION INFO TO DB/GROUPS --------------------------------
 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
@@ -62,29 +140,24 @@ export default function CompetitionPage() {
   }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
   const writeToDatabase = useCallback(() => {
-    if (userIsLoggedIn && dbWriteDataIsReady) {
-      let dbEntry = {
-        cpm_add: cpmAdd,
-        cpm_avg: calculateNewAverage(),
-        cpm_div: cpmDiv,
-        cpm_mul: cpmMul,
-        cpm_sub: cpmSub,
-        count_add: countAdd,
-        count_sub: countSub,
-        count_mul: countMul,
-        count_div: countDiv,
-        count_total: countTotal,
-        character: userCharacter,
-        name: userName,
-        timestamp: new Date(),
-      };
-      firebase
-        .database()
-        .ref("/groups/" + groupCode + "/highscore/" + userUid)
-        .update(dbEntry);
-      console.log("stored high score data to db/groups:");
-      console.log(dbEntry);
-    }
+    let dbEntry = {
+      cpm_add: cpmAdd,
+      cpm_avg: calculateNewAverage(),
+      cpm_div: cpmDiv,
+      cpm_mul: cpmMul,
+      cpm_sub: cpmSub,
+      count_add: countAdd,
+      count_sub: countSub,
+      count_mul: countMul,
+      count_div: countDiv,
+      count_total: countTotal,
+      character: userCharacter,
+      name: userName,
+      timestamp: new Date(),
+    };
+    firebase.database().ref(highscoreDbPath).update(dbEntry);
+    console.log("stored high score data to db/groups:");
+    console.log(dbEntry);
   }, [
     countAdd,
     countDiv,
@@ -95,28 +168,41 @@ export default function CompetitionPage() {
     cpmDiv,
     cpmMul,
     cpmSub,
-    groupCode,
-    userUid,
     userCharacter,
     userName,
-    dbWriteDataIsReady,
-    userIsLoggedIn,
     calculateNewAverage,
+    highscoreDbPath,
   ]);
 
   // Monitor if DB is ready to write and initiate DB write
   useEffect(() => {
-    if (userIsLoggedIn && dbWriteDataIsReady) {
+    console.log(
+      dbSnapshotWasAvailable + highscoreDbPath + recordCheckIsDone + competitionCountIsUpdated
+    );
+    if (
+      dbSnapshotWasAvailable &&
+      highscoreDbPath &&
+      recordCheckIsDone &&
+      competitionCountIsUpdated
+    ) {
       writeToDatabase();
-      setDbWriteDataIsReady(false);
     }
-  }, [userIsLoggedIn, dbWriteDataIsReady, writeToDatabase]);
+  }, [
+    dbSnapshotWasAvailable,
+    competitionCountIsUpdated,
+    recordCheckIsDone,
+    highscoreDbPath,
+    writeToDatabase,
+  ]);
   //#endregion
 
   //#region CHECK FOR RECORDS --------------------------------------------------
 
   const showRecordMessage = () => {
-    alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)");
+    setTimeout(
+      () => alert("SUPER! ...DU HAST EINEN NEUEN PERSöNLICHEN REKORD GEMACHT !!! :-)"),
+      100
+    ); // timeout to allow page refresh before alert
   };
 
   const checkForNewRecord = useCallback(() => {
@@ -149,71 +235,23 @@ export default function CompetitionPage() {
         console.log("this was not a new record");
         break;
     }
-  }, [mode,calculationsSolved, cpmAdd, cpmDiv, cpmMul, cpmSub]);
+    setRecordCheckIsDone(true);
+  }, [mode, calculationsSolved, cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
-  useEffect(() => {
-    if (recordCheckIsEnabled) {
-      setRecordCheckIsEnabled(false);
-      checkForNewRecord();
-    }
-  }, [checkForNewRecord, checkForRecordTrack, recordCheckIsEnabled]);
   //#endregion
 
-  //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
+  //#region GET USER'S AVATAR AND FAVORITE GROUP FROM DB/USERS -----------------
 
-  const clearAllFields = () => {
-    setCpmAdd(0);
-    setCpmSub(0);
-    setCpmMul(0);
-    setCpmDiv(0);
-    setCountAdd(0);
-    setCountSub(0);
-    setCountMul(0);
-    setCountDiv(0);
-    setCountTotal(0);
-  };
-
-  const getGroupsHighscoreDB = useCallback(
-    (uid) => {
-      let ref = firebase
-        .database()
-        .ref("/groups/" + groupCode + "/highscore/" + uid);
-      ref.once("value", (snapshot) => {
-        const dbUserData = snapshot.val();
-        console.log("get high score data from db/groups: ");
-        console.log(dbUserData);
-        if (!!dbUserData) {
-          setCpmAdd(dbUserData.cpm_add);
-          setCpmSub(dbUserData.cpm_sub);
-          setCpmMul(dbUserData.cpm_mul);
-          setCpmDiv(dbUserData.cpm_div);
-          setCountAdd(dbUserData.count_add);
-          setCountSub(dbUserData.count_sub);
-          setCountMul(dbUserData.count_mul);
-          setCountDiv(dbUserData.count_div);
-          setCountTotal(dbUserData.count_total);
-        } else {
-          // no group highscore created yet, clear fields:
-          clearAllFields();
-        }
-      });
-    },
-    [groupCode]
-  );
-
-  // Get DB /groups data if group changed:
+  // Generate user database path:
   useEffect(() => {
     if (userUid) {
-      getGroupsHighscoreDB(userUid);
+      setUserDbPath("/users/" + userUid);
     }
-  }, [userUid, getGroupsHighscoreDB, groupCode]);
-  //#endregion
+  }, [userUid]);
 
-  //#region GET USER'S NAME AVATAR FAVORITE GROUP FROM DB/USERS ----------------
-
-  const getUsersDB = useCallback((uid) => {
+  const getUsersDB = useCallback(() => {
     var dbUserData = 0;
-    let ref = firebase.database().ref("/users/" + uid);
+    let ref = firebase.database().ref(userDbPath);
     ref.on("value", (snapshot) => {
       dbUserData = snapshot.val();
       console.log("get user data from db/user:");
@@ -227,29 +265,15 @@ export default function CompetitionPage() {
         }
       }
     });
-  }, []);
+  }, [userDbPath]);
 
   // Get DB /user data:
   useEffect(() => {
-    if (userUid) {
-      getUsersDB(userUid);
+    if (userDbPath) {
+      getUsersDB();
     }
-  }, [userUid, getUsersDB]);
+  }, [userDbPath, getUsersDB]);
 
-  //#endregion
-
-  //#region GET USER AUTH STATUS AND INFO --------------------------------------
-
-  useEffect(() => {
-    if (!!authContext.currentUser) {
-      setUserUid(authContext.currentUser.uid);
-      setUserName(authContext.currentUser.displayName);
-      setUserIsLoggedIn(true);
-    } else {
-      setUserIsLoggedIn(false);
-      setGroupName("public");
-    }
-  }, [authContext]);
   //#endregion
 
   //#region VARIOUS ------------------------------------------------------------
@@ -289,7 +313,6 @@ export default function CompetitionPage() {
 
   const countOneUp = () => {
     setCalculationsSolved(calculationsSolved + 1);
-    setCheckForRecordTrack(true);
   };
 
   // Calculate speed when competition is running:
@@ -373,9 +396,7 @@ export default function CompetitionPage() {
       _calculationLogArray[currentIndex - 1].calculationTime = timeDifference;
     }
     if (calculationsSolved > 1) {
-      timeDifference =
-        _timeElapsedArray[currentIndex - 1] -
-        _timeElapsedArray[currentIndex - 2];
+      timeDifference = _timeElapsedArray[currentIndex - 1] - _timeElapsedArray[currentIndex - 2];
       timeDifference = Math.round(10 * timeDifference) / 10;
       _calculationLogArray[currentIndex - 1].calculationTime = timeDifference;
     }
@@ -412,6 +433,8 @@ export default function CompetitionPage() {
   //#region MANAGE COMPETITION STAGES ------------------------------------------
 
   const setStageReadySetGo = () => {
+    setRecordCheckIsDone(false);
+    setCompetitionCountIsUpdated(false);
     setCompetitionStage("readySetGo");
     setCalculationsSolved(0);
     setQuestionStrings([]);
@@ -423,9 +446,11 @@ export default function CompetitionPage() {
 
   const setStageCompleted = () => {
     setCompetitionStage("completed");
-    setRecordCheckIsEnabled(true);
-    setCompetitionCountIsEnabled(true);
+    checkForNewRecord();
+    updateCompetitionCounter();
   };
+
+  //#region UPDATE COMPETITION COUNT -------------------------------------------
 
   const updateCompetitionCounter = useCallback(() => {
     if (mode === "addition") {
@@ -452,7 +477,7 @@ export default function CompetitionPage() {
         setCountTotal(countTotal + 1);
       }
     }
-    setDbWriteDataIsReady(true);
+    setCompetitionCountIsUpdated(true);
   }, [
     calculationsSolved,
     countAdd,
@@ -466,13 +491,6 @@ export default function CompetitionPage() {
     cpmSub,
     mode,
   ]);
-
-  useEffect(() => {
-    if (competitionCountIsEnabled) {
-      updateCompetitionCounter();
-      setCompetitionCountIsEnabled(false);
-    }
-  }, [competitionCountIsEnabled, updateCompetitionCounter]);
 
   //#endregion
 
@@ -499,14 +517,8 @@ export default function CompetitionPage() {
             markUserError={markUserError}
           />
         </div>
-        <Countdown
-          setTimeElapsed={updateTimeElapsed}
-          setStageCompleted={setStageCompleted}
-        />
-        <Speedometer
-          currentSpeed={speedometerSpeed}
-          currentModeRecordCpm={currentModeRecordCpm}
-        />
+        <Countdown setTimeElapsed={updateTimeElapsed} setStageCompleted={setStageCompleted} />
+        <Speedometer currentSpeed={speedometerSpeed} currentModeRecordCpm={currentModeRecordCpm} />
       </div>
     );
   };
@@ -530,10 +542,7 @@ export default function CompetitionPage() {
         {userName}@{groupName}
       </div>
       <GroupSelector />
-      <CompetitionSelector
-        selectMode={selectMode}
-        setStageReadySetGo={setStageReadySetGo}
-      />
+      <CompetitionSelector selectMode={selectMode} setStageReadySetGo={setStageReadySetGo} />
       {competitionStage === "mounted" && stageMounted()}
       {competitionStage === "readySetGo" && stageReadySetGo()}
       {competitionStage === "running" && stageRunning()}

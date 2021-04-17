@@ -48,7 +48,7 @@ export default function ManageGroupsPage() {
         <div className="group-selector">
           <br></br>
           {!!userGroups ? (
-            <div className="ooutliner outliner-flex">
+            <div className="outliner outliner-flex">
               <table className="groups_table">
                 <thead>
                   <tr>
