@@ -18,20 +18,24 @@ afterEach(() => {
   container = null;
 });
 
-var result = "nope";
+var result;
+const dbPath = "nicknames";
+
+
 
 it("get nickname data from firebase", async () => {
   act(() => {
-    
     render(
       <DatabaseProvider
-        dbPath={"/nicknames/"}
+        dbPath={dbPath}
         addDbListener={false}
-        updateParentFunction={(dbProviderData)=>{result=dbProviderData}}
+        updateParentFunction={(dbProviderData) => {
+          result = dbProviderData.michi.name;
+        }}
       />,
       container
     );
   });
-  await new Promise((r) => setTimeout(r, 500));
-  expect(result).toBe("speed: 48 cpmcount: 78");
+  await new Promise((r) => setTimeout(r, 1500));
+  expect(result).toBe("michi");
 });
