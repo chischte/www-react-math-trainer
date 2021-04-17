@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import firebase from "firebase";
 import { AuthContext } from "../components/firebase/Auth";
 import GenerateCalculations from "../calculation_generator/generateCompetitionCalculations";
 import Countdown from "../components/competition/Countdown";
@@ -21,7 +20,7 @@ export default function CompetitionPage() {
   //#region useState HOOKS -------------------------------------------------------
 
   // INFOS FROM AND FOR DATABASE:
-  const [dbSnapshot, setDbSnapshot] = useState();
+  const [dbHighscoreSnapshot, setDbHighscoreSnapshot] = useState();
   const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
   const [cpmAdd, setCpmAdd] = useState(0);
   const [cpmSub, setCpmSub] = useState(0);
@@ -34,7 +33,7 @@ export default function CompetitionPage() {
   const [countTotal, setCountTotal] = useState(0);
   const [highscoreDbPath, setHighscoreDbPath] = useState(0);
   const [userDbPath, setUserDbPath] = useState(0);
-  // TRIGGER DB WRITE:
+  // TRIGGER DB/HIGHSCORE WRITE:
   const [newHighscoreEntry, setNewHighscoreEntry] = useState(false);
   const [recordCheckIsDone, setRecordCheckIsDone] = useState(false);
   const [competitionCountIsUpdated, setCompetitionCountIsUpdated] = useState(false);
@@ -86,7 +85,7 @@ export default function CompetitionPage() {
 
   // Props function for the db provider:
   const getHighscoreDbSnapshot = (dbProviderData) => {
-    setDbSnapshot(dbProviderData);
+    setDbHighscoreSnapshot(dbProviderData);
     console.log("get high score data from db/groups: ");
     console.log(dbProviderData);
   };
@@ -103,21 +102,21 @@ export default function CompetitionPage() {
     setCountTotal(0);
   };
   useEffect(() => {
-    if (!!dbSnapshot) {
-      setCpmAdd(dbSnapshot.cpm_add);
-      setCpmSub(dbSnapshot.cpm_sub);
-      setCpmMul(dbSnapshot.cpm_mul);
-      setCpmDiv(dbSnapshot.cpm_div);
-      setCountAdd(dbSnapshot.count_add);
-      setCountSub(dbSnapshot.count_sub);
-      setCountMul(dbSnapshot.count_mul);
-      setCountDiv(dbSnapshot.count_div);
-      setCountTotal(dbSnapshot.count_total);
+    if (!!dbHighscoreSnapshot) {
+      setCpmAdd(dbHighscoreSnapshot.cpm_add);
+      setCpmSub(dbHighscoreSnapshot.cpm_sub);
+      setCpmMul(dbHighscoreSnapshot.cpm_mul);
+      setCpmDiv(dbHighscoreSnapshot.cpm_div);
+      setCountAdd(dbHighscoreSnapshot.count_add);
+      setCountSub(dbHighscoreSnapshot.count_sub);
+      setCountMul(dbHighscoreSnapshot.count_mul);
+      setCountDiv(dbHighscoreSnapshot.count_div);
+      setCountTotal(dbHighscoreSnapshot.count_total);
     } else {
       console.log("no previous data found in db/.../highscore/user");
       clearAllFields();
     }
-  }, [dbSnapshot]);
+  }, [dbHighscoreSnapshot]);
 
   //#endregion
 
@@ -220,31 +219,18 @@ export default function CompetitionPage() {
     }
   }, [userUid]);
 
-  const getUsersDB = useCallback(() => {
-    var dbUserData = 0;
-    let ref = firebase.database().ref(userDbPath);
-    ref.on("value", (snapshot) => {
-      dbUserData = snapshot.val();
-      console.log("get user data from db/user:");
-      if (dbUserData) {
-        try {
-          setUserCharacter(dbUserData.character);
-          setGroupName(dbUserData.favorite_group.name);
-          setGroupCode(dbUserData.favorite_group.code);
-        } catch (e) {
-          console.log(e);
-        }
+  const getGroupsAvatarFromDb = (dbProviderData) => {
+    console.log("get user data from db/user:");
+    if (dbProviderData) {
+      try {
+        setUserCharacter(dbProviderData.character);
+        setGroupName(dbProviderData.favorite_group.name);
+        setGroupCode(dbProviderData.favorite_group.code);
+      } catch (e) {
+        console.log(e);
       }
-    });
-  }, [userDbPath]);
-
-  // Get DB /user data:
-  useEffect(() => {
-    if (userDbPath) {
-      getUsersDB();
     }
-  }, [userDbPath, getUsersDB]);
-
+  };
   //#endregion
 
   //#region VARIOUS ------------------------------------------------------------
@@ -401,8 +387,9 @@ export default function CompetitionPage() {
 
   //#endregion
 
-  //#region MANAGE COMPETITION STAGES ------------------------------------------
+  //#region SET COMPETITION STAGES ---------------------------------------------
 
+  // Triggered by a button click:
   const setStageReadySetGo = () => {
     setRecordCheckIsDone(false);
     setCompetitionCountIsUpdated(false);
@@ -411,10 +398,12 @@ export default function CompetitionPage() {
     setQuestionStrings([]);
   };
 
+  // Triggered by the readySetGo component:
   const setStageRunning = () => {
     setCompetitionStage("running");
   };
 
+  // Triggered by the countdown at 0:
   const setStageCompleted = () => {
     setCompetitionStage("completed");
     checkForNewRecord();
@@ -423,28 +412,31 @@ export default function CompetitionPage() {
   //#endregion
 
   //#region UPDATE COMPETITION COUNT -------------------------------------------
+  
+  // Competitions are only counted if the user reached at least a third of his
+  // record speed.
 
   const updateCompetitionCounter = useCallback(() => {
     if (mode === "addition") {
-      if (calculationsSolved > cpmAdd / 2) {
+      if (calculationsSolved > cpmAdd / 3) {
         setCountAdd(countAdd + 1);
         setCountTotal(countTotal + 1);
       }
     }
     if (mode === "subtraction") {
-      if (calculationsSolved > cpmSub / 2) {
+      if (calculationsSolved > cpmSub / 3) {
         setCountSub(countSub + 1);
         setCountTotal(countTotal + 1);
       }
     }
     if (mode === "multiplication") {
-      if (calculationsSolved > cpmMul / 2) {
+      if (calculationsSolved > cpmMul / 3) {
         setCountMul(countMul + 1);
         setCountTotal(countTotal + 1);
       }
     }
     if (mode === "division") {
-      if (calculationsSolved > cpmDiv / 2) {
+      if (calculationsSolved > cpmDiv / 3) {
         setCountDiv(countDiv + 1);
         setCountTotal(countTotal + 1);
       }
@@ -514,6 +506,11 @@ export default function CompetitionPage() {
         addDbListener={false}
         updateParentFunction={getHighscoreDbSnapshot}
         updateDbData={newHighscoreEntry}
+      />
+      <DatabaseProvider
+        dbPath={userDbPath}
+        addDbListener={true}
+        updateParentFunction={getGroupsAvatarFromDb}
       />
       <Header />
       <div className="user-at-group">
