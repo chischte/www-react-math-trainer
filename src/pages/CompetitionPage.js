@@ -11,6 +11,7 @@ import UserInput from "../components/UserInput";
 import Header from "../components/Header";
 import GroupSelector from "../components/GroupSelector";
 import Speedometer from "../components/competition/Speedometer";
+import DatabaseProvider from "../components/database_provider/DatabaseProvider";
 
 const generateCalculations = new GenerateCalculations();
 
@@ -20,7 +21,7 @@ export default function CompetitionPage() {
   //#region useState HOOKS -------------------------------------------------------
 
   // INFOS FROM AND FOR DATABASE:
-  const [dbSnapshot, setdBSnapshot] = useState();
+  const [dbSnapshot, setDbSnapshot] = useState();
   const [currentModeRecordCpm, setCurrentModeRecordCpm] = useState(0);
   const [cpmAdd, setCpmAdd] = useState(0);
   const [cpmSub, setCpmSub] = useState(0);
@@ -74,7 +75,7 @@ export default function CompetitionPage() {
   }, [authContext]);
   //#endregion
 
-  //#region GET PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------------------
+  //#region GET AND PROCESS PREVIOUS USER COMPETITION INFO FROM DB/GROUPS ------
 
   // Generate highscore database path:
   useEffect(() => {
@@ -83,15 +84,12 @@ export default function CompetitionPage() {
     }
   }, [groupCode, userUid]);
 
-  const getGroupsHighscoreDB = useCallback(() => {
-    let ref = firebase.database().ref(highscoreDbPath);
-    ref.once("value", (snapshot) => {
-      const dbUserData = snapshot.val();
-      setdBSnapshot(dbUserData);
-      console.log("get high score data from db/groups: ");
-      console.log(dbUserData);
-    });
-  }, [highscoreDbPath]);
+  // Props function for the db provider:
+  const getHighscoreDbSnapshot = (dbProviderData) => {
+    setDbSnapshot(dbProviderData);
+    console.log("get high score data from db/groups: ");
+    console.log(dbProviderData);
+  };
 
   const clearAllFields = () => {
     setCpmAdd(0);
@@ -121,27 +119,9 @@ export default function CompetitionPage() {
     }
   }, [dbSnapshot]);
 
-  // Get DB /groups data if group changed:
-  useEffect(() => {
-    if (userUid) {
-      getGroupsHighscoreDB(userUid);
-    }
-  }, [userUid, getGroupsHighscoreDB, groupCode]);
   //#endregion
 
   //#region WRITE COMPETITION INFO TO DB/GROUPS --------------------------------
-
-  const writeToDatabase = useCallback(() => {
-    firebase.database().ref(highscoreDbPath).update(newHighscoreEntry);
-    console.log("stored high score data to db/groups:");
-  }, [highscoreDbPath, newHighscoreEntry]);
-
-  // Trigger db update:
-  useEffect(() => {
-    if (newHighscoreEntry && highscoreDbPath) {
-      writeToDatabase();
-    }
-  }, [newHighscoreEntry, highscoreDbPath, writeToDatabase]);
 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
@@ -182,7 +162,7 @@ export default function CompetitionPage() {
   // Create new db entry:
   useEffect(() => {
     if (recordCheckIsDone && competitionCountIsUpdated) {
-      createNewDbEntry();
+      createNewDbEntry(); // triggers databaseProvider update
     }
   }, [competitionCountIsUpdated, recordCheckIsDone, createNewDbEntry]);
   //#endregion
@@ -440,6 +420,7 @@ export default function CompetitionPage() {
     checkForNewRecord();
     updateCompetitionCounter();
   };
+  //#endregion
 
   //#region UPDATE COMPETITION COUNT -------------------------------------------
 
@@ -528,6 +509,12 @@ export default function CompetitionPage() {
 
   return (
     <div>
+      <DatabaseProvider
+        dbPath={highscoreDbPath}
+        addDbListener={false}
+        updateParentFunction={getHighscoreDbSnapshot}
+        updateDbData={newHighscoreEntry}
+      />
       <Header />
       <div className="user-at-group">
         {userName}@{groupName}
