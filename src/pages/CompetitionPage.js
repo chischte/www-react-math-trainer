@@ -34,6 +34,7 @@ export default function CompetitionPage() {
   const [highscoreDbPath, setHighscoreDbPath] = useState(0);
   const [userDbPath, setUserDbPath] = useState(0);
   // TRIGGER DB WRITE:
+  const [newHighscoreEntry, setNewHighscoreEntry] = useState(false);
   const [recordCheckIsDone, setRecordCheckIsDone] = useState(false);
   const [competitionCountIsUpdated, setCompetitionCountIsUpdated] = useState(false);
   const [dbSnapshotWasAvailable, setDbSnapshotWasAvailable] = useState(false);
@@ -134,13 +135,27 @@ export default function CompetitionPage() {
 
   //#region WRITE COMPETITION INFO TO DB/GROUPS --------------------------------
 
+  const writeToDatabase = useCallback(() => {
+    firebase.database().ref(highscoreDbPath).update(newHighscoreEntry);
+    console.log("stored high score data to db/groups:");
+  }, [highscoreDbPath, newHighscoreEntry]);
+  
+  
+  // Trigger db update:
+  useEffect(() => {
+    if (newHighscoreEntry && dbSnapshotWasAvailable && highscoreDbPath) {
+      writeToDatabase();
+    }
+  }, [newHighscoreEntry, dbSnapshotWasAvailable, highscoreDbPath, writeToDatabase]);
+
+ 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
     return newAverage;
   }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
-  const writeToDatabase = useCallback(() => {
-    let dbEntry = {
+  const createNewDbEntry = () => {
+    setNewHighscoreEntry({
       cpm_add: cpmAdd,
       cpm_avg: calculateNewAverage(),
       cpm_div: cpmDiv,
@@ -154,45 +169,23 @@ export default function CompetitionPage() {
       character: userCharacter,
       name: userName,
       timestamp: new Date(),
-    };
-    firebase.database().ref(highscoreDbPath).update(dbEntry);
-    console.log("stored high score data to db/groups:");
-    console.log(dbEntry);
-  }, [
-    countAdd,
-    countDiv,
-    countMul,
-    countSub,
-    countTotal,
-    cpmAdd,
-    cpmDiv,
-    cpmMul,
-    cpmSub,
-    userCharacter,
-    userName,
-    calculateNewAverage,
-    highscoreDbPath,
-  ]);
+    });
+  };
 
-  // Monitor if DB is ready to write and initiate DB write
+  // Create new db entry:
   useEffect(() => {
-    console.log(
-      dbSnapshotWasAvailable + highscoreDbPath + recordCheckIsDone + competitionCountIsUpdated
-    );
     if (
       dbSnapshotWasAvailable &&
-      highscoreDbPath &&
       recordCheckIsDone &&
       competitionCountIsUpdated
     ) {
-      writeToDatabase();
+      createNewDbEntry();
     }
   }, [
     dbSnapshotWasAvailable,
     competitionCountIsUpdated,
     recordCheckIsDone,
-    highscoreDbPath,
-    writeToDatabase,
+    createNewDbEntry,
   ]);
   //#endregion
 
