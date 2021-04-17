@@ -139,8 +139,7 @@ export default function CompetitionPage() {
     firebase.database().ref(highscoreDbPath).update(newHighscoreEntry);
     console.log("stored high score data to db/groups:");
   }, [highscoreDbPath, newHighscoreEntry]);
-  
-  
+
   // Trigger db update:
   useEffect(() => {
     if (newHighscoreEntry && dbSnapshotWasAvailable && highscoreDbPath) {
@@ -148,13 +147,12 @@ export default function CompetitionPage() {
     }
   }, [newHighscoreEntry, dbSnapshotWasAvailable, highscoreDbPath, writeToDatabase]);
 
- 
   const calculateNewAverage = useCallback(() => {
     const newAverage = (cpmAdd + cpmSub + cpmMul + cpmDiv) / 4;
     return newAverage;
   }, [cpmAdd, cpmDiv, cpmMul, cpmSub]);
 
-  const createNewDbEntry = () => {
+  const createNewDbEntry = useCallback(() => {
     setNewHighscoreEntry({
       cpm_add: cpmAdd,
       cpm_avg: calculateNewAverage(),
@@ -170,23 +168,27 @@ export default function CompetitionPage() {
       name: userName,
       timestamp: new Date(),
     });
-  };
+  }, [
+    calculateNewAverage,
+    countAdd,
+    countDiv,
+    countMul,
+    countSub,
+    countTotal,
+    cpmAdd,
+    cpmDiv,
+    cpmMul,
+    cpmSub,
+    userCharacter,
+    userName,
+  ]);
 
   // Create new db entry:
   useEffect(() => {
-    if (
-      dbSnapshotWasAvailable &&
-      recordCheckIsDone &&
-      competitionCountIsUpdated
-    ) {
+    if (dbSnapshotWasAvailable && recordCheckIsDone && competitionCountIsUpdated) {
       createNewDbEntry();
     }
-  }, [
-    dbSnapshotWasAvailable,
-    competitionCountIsUpdated,
-    recordCheckIsDone,
-    createNewDbEntry,
-  ]);
+  }, [dbSnapshotWasAvailable, competitionCountIsUpdated, recordCheckIsDone, createNewDbEntry]);
   //#endregion
 
   //#region CHECK FOR RECORDS --------------------------------------------------
