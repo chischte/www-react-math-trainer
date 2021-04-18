@@ -184,10 +184,11 @@ export default function CreateGroupPage() {
       <DatabaseProvider dbPath={newGroupDbPath} updateDbData={newGroupDbData} />
 
       <DatabaseProvider
-        dbPath={userDbPath}
-        updateDbData={userDbData}
-        addDbListener={false}
-        updateParentFunction={getDbUserData}
+        dbPath={userDbPath} //----------------------> required, db path
+        updateParentFunction={getDbUserData} //-----> optional, funtion to receive data in parent
+        addDbListener={false} //--------------------> optional, default false
+        updateDbData={userDbData} //----------------> optional, useState hook to write data to db
+        getErrorMessage={(e) => console.log(e)} //--> optional, get error in parent
       />
       <Header />
       {!groupCreated && (
@@ -209,12 +210,7 @@ export default function CreateGroupPage() {
                   </Box>
 
                   <Box m={0} pt={1}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="secondary"
-                      fullWidth
-                    >
+                    <Button type="submit" variant="contained" color="secondary" fullWidth>
                       Gruppe erstellen
                     </Button>
                   </Box>
@@ -228,13 +224,10 @@ export default function CreateGroupPage() {
         <div className="outliner_wide">
           <div className="infotext">
             <br></br>
-            Du hast die Gruppe <span className="it-blue">{groupName}</span>{" "}
-            erstellt.
+            Du hast die Gruppe <span className="it-blue">{groupName}</span> erstellt.
             <br></br>
-            Mit dem Gruppencode <span className="it-blue">
-              {groupCode}
-            </span>{" "}
-            können andere Benutzer der Gruppe beitreten.
+            Mit dem Gruppencode <span className="it-blue">{groupCode}</span> können andere Benutzer
+            der Gruppe beitreten.
           </div>
         </div>
       )}

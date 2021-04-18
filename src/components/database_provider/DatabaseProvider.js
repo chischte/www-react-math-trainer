@@ -67,15 +67,18 @@ export default function DatabaseProvider(props) {
 
   const errorFunctionFromParent = props.getErrorMessage;
 
-  const processError = useCallback((error) => {
-    // Forward error to parent if function provided:
-    if (errorFunctionFromParent) {
-      errorFunctionFromParent(error);
-    } else {
-      console.log(error);
-      console.log("error not forwarded to parent function");
-    }
-  }, []);
+  const processError = useCallback(
+    (e) => {
+      // Forward error to parent if function provided:
+      if (errorFunctionFromParent) {
+        errorFunctionFromParent(e);
+      } else {
+        console.log(e);
+        console.log("error not forwarded to parent function");
+      }
+    },
+    [errorFunctionFromParent]
+  );
 
   //#endregion
 
@@ -91,7 +94,7 @@ export default function DatabaseProvider(props) {
             setReceivedDataFromDb(snapshot.val());
           }
         } catch (e) {
-          console.log(e);
+          processError(e);
         }
       })
       .catch((error) => {
@@ -109,16 +112,19 @@ export default function DatabaseProvider(props) {
 
   //#region GET DATA CONTINUOUSLY --------------------------------------------
 
-  const processSnapshot = (snapshot) => {
-    try {
-      if (snapshot) {
-        console.log("get data from db helper continuously");
-        setReceivedDataFromDb(snapshot.val());
+  const processSnapshot = useCallback(
+    (snapshot) => {
+      try {
+        if (snapshot) {
+          console.log("get data from db helper continuously");
+          setReceivedDataFromDb(snapshot.val());
+        }
+      } catch (e) {
+        processError(e);
       }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+    },
+    [processError]
+  );
 
   const previousDbPath = useRef();
 
@@ -133,7 +139,7 @@ export default function DatabaseProvider(props) {
 
     // Store new dbPath as ref:
     getDataContinuous.current = dbPath;
-  }, [dbPath]);
+  }, [dbPath, processSnapshot]);
 
   useEffect(() => {
     if (dbPath && addDbListener === true) {
@@ -164,10 +170,10 @@ export default function DatabaseProvider(props) {
       .database()
       .ref(dbPath)
       .update(updateDbData)
-      .catch(function (error) {
-        console.log(error);
+      .catch(function (e) {
+        processError(e);
       });
-  }, [dbPath, updateDbData]);
+  }, [dbPath, updateDbData,processError]);
 
   // The timeout in the following useEffect was necessary because
   // if the database update is triggerd by the same stateHooks that read
