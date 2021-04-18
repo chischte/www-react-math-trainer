@@ -39,7 +39,7 @@ import firebaseInitializeApp from "../firebase/firebase"; // used for jest testi
 
 export default function DatabaseProvider(props) {
   //#region USE STATE HOOKS ----------------------------------------------------
-
+  const [errorMessage, setErrorMessage] = useState();
   // LISTEN TO DB DATA:
   const [dbPath, setDbPath] = useState();
   const [receivedDataFromDb, setReceivedDataFromDb] = useState();
@@ -65,20 +65,24 @@ export default function DatabaseProvider(props) {
 
   //#region PROCESS ERROR MESSAGES -------------------------------------------
 
-  const errorFunctionFromParent = props.getErrorMessage;
+  // const processError = props.getErrorMessage;
+  const processError = useCallback((e) => {
+    console.log(e);
+    setErrorMessage(e);
+  }, []);
 
-  const processError = useCallback(
-    (e) => {
-      // Forward error to parent if function provided:
-      if (errorFunctionFromParent) {
-        errorFunctionFromParent(e);
+  const submitErrorMessage = props.getErrorMessage;
+
+  useEffect(() => {
+    if (errorMessage) {
+      if (submitErrorMessage) {
+        submitErrorMessage(errorMessage);
       } else {
-        console.log(e);
-        console.log("error not forwarded to parent function");
+        console.log(errorMessage);
+        console.log("error not forwarded to parent");
       }
-    },
-    [errorFunctionFromParent]
-  );
+    }
+  }, [errorMessage, submitErrorMessage]);
 
   //#endregion
 
@@ -97,8 +101,8 @@ export default function DatabaseProvider(props) {
           processError(e);
         }
       })
-      .catch((error) => {
-        processError(error);
+      .catch((e) => {
+        processError(e);
       });
   }, [dbPath, processError]);
 
@@ -112,19 +116,16 @@ export default function DatabaseProvider(props) {
 
   //#region GET DATA CONTINUOUSLY --------------------------------------------
 
-  const processSnapshot = useCallback(
-    (snapshot) => {
-      try {
-        if (snapshot) {
-          console.log("get data from db helper continuously");
-          setReceivedDataFromDb(snapshot.val());
-        }
-      } catch (e) {
-        processError(e);
+  const processSnapshot = useCallback((snapshot) => {
+    try {
+      if (snapshot) {
+        console.log("get data from db helper continuously");
+        setReceivedDataFromDb(snapshot.val());
       }
-    },
-    [processError]
-  );
+    } catch (e) {
+      processError(e);
+    }
+  }, [processError]);
 
   const previousDbPath = useRef();
 
@@ -173,7 +174,7 @@ export default function DatabaseProvider(props) {
       .catch(function (e) {
         processError(e);
       });
-  }, [dbPath, updateDbData,processError]);
+  }, [dbPath, updateDbData, processError]);
 
   // The timeout in the following useEffect was necessary because
   // if the database update is triggerd by the same stateHooks that read
@@ -189,7 +190,6 @@ export default function DatabaseProvider(props) {
     }, 50); // prevents an eternal loop of updating hooks
     return () => clearTimeout(timer);
   }, [dbPath, updateDbData, updateDbEntry]);
-  // The timeout g hooks in o
   //#endregion
 
   return <React.Fragment></React.Fragment>;
