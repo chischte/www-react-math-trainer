@@ -12,7 +12,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // cleanup on exiting
+  //cleanup on exiting
   unmountComponentAtNode(container);
   container.remove();
   container = null;
@@ -38,15 +38,15 @@ it("get nickname data from firebase", async () => {
   expect(resultAllowedPath).toBe("michi");
 });
 
-const dbPathPermitted = "users";
+const dbPathBlocked = "users";
 var resultBlockedPath = false;
 
-// TestDoes not test if Path exists
+// Test if firebase security rule does work:
 it("get no info from path without read rights", async () => {
   act(() => {
     render(
       <DatabaseProvider
-        dbPath={dbPathPermitted}
+        dbPath={dbPathBlocked}
         addDbListener={false}
         updateParentFunction={() => {}}
         getErrorMessage={(e) => {
