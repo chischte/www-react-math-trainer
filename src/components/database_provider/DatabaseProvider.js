@@ -140,7 +140,7 @@ export default function DatabaseProvider(props) {
   };
 
   const getDataContinuous = useCallback(() => {
-    // Detach previous listeners:
+    // Detach previous listener:
     if (previousDbPath.current) {
       firebase.database().ref(previousDbPath.current).off();
     }

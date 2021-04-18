@@ -26,10 +26,11 @@
         },
         "nicknames": {
             ".read": true,
-            "$user_id": {
+            "$nickname": {
                 ".write": "!data.exists()"
             }
         },
         
     }
 }
+
