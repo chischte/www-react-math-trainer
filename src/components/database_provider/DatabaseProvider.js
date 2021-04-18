@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback, useState, useRef } from "react";
 import firebase from "firebase";
-import firebaseInitializeApp from "../firebase/firebase"; // used for jest testing
+import firebaseInitializeApp from "../firebase/firebase"; // required for isolated jest testing
 
+//#region HEADER ---------------------------------------------------------------
 /**
  * -----------------------------------------------------------------------------
  * EACH DatabaseProvider CAN PROVIDE A PARENT COMPONENT WITH 1 READ
@@ -36,6 +37,7 @@ import firebaseInitializeApp from "../firebase/firebase"; // used for jest testi
  *   .....
  * -----------------------------------------------------------------------------
  */
+//#endregion
 
 export default function DatabaseProvider(props) {
   //#region USE STATE HOOKS ----------------------------------------------------
