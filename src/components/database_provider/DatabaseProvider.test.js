@@ -38,7 +38,7 @@ it("get nickname data from firebase", async () => {
   expect(resultAllowedPath).toBe("michi");
 });
 
-const dbPathPermitted = "user";
+const dbPathPermitted = "users";
 var resultBlockedPath = false;
 
 // TestDoes not test if Path exists
@@ -48,15 +48,14 @@ it("get no info from path without read rights", async () => {
       <DatabaseProvider
         dbPath={dbPathPermitted}
         addDbListener={false}
-        updateParentFunction={(dbProviderData) => {
-          if (dbProviderData) {
-            resultBlockedPath = true;
-          }
+        updateParentFunction={() => {}}
+        getErrorMessage={(e) => {
+          resultBlockedPath = e;
         }}
       />,
       container
     );
   });
   await new Promise((r) => setTimeout(r, 1500));
-  expect(resultBlockedPath).toBe(false);
+  expect(resultBlockedPath.code).toEqual("PERMISSION_DENIED");
 });
