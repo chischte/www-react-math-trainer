@@ -3,6 +3,7 @@ import firebase from "firebase";
 import firebaseInitializeApp from "../firebase/firebase"; // used for jest testing
 
 /**
+ * -----------------------------------------------------------------------------
  * EACH DatabaseProvider CAN PROVIDE A PARENT COMPONENT WITH 1 READ
  * AND 1 UPDATE POSSIBILITY FOR ONE REFERENCE PATH.
  * IF A SECOND DATABASE LOCATION SHOULD BE USED SIMULTANOUSLY, A
@@ -10,65 +11,93 @@ import firebaseInitializeApp from "../firebase/firebase"; // used for jest testi
  *
  *
  * IMPLEMENTATION EXAMPLE IN PARENT COMPONENT:
- *      .....
- *      // Get DB connection after changed uid:
- *      useEffect(() => {
- *        if (userUid) {
- *          setUserGroupsDbPath("/users/" + userUid);
- *        }
- *      }, [userUid]);
- *      .....
- *      // Props function for the dbProvider:
- *      const getDbUserData = (dbProviderData) => {
- *        setDbUserData(dbProviderData);
- *      };
- *      .....
- *      return (
- *        <DatabaseProvider
- *          dbPath={userGroupsDbPath}
- *          addDbListener={true}
- *          updateParentFunction={getDbUserData}
- *          updateDbData={dbUpdateEntry} // = useState hook containing data
- *         />
- *      )
- *      .....
+ *   .....
+ *   // Get DB connection after changed uid:
+ *   useEffect(() => {
+ *     if (userUid) {
+ *       setUserGroupsDbPath("/users/" + userUid);
+ *     }
+ *   }, [userUid]);
+ *   .....
+ *   // Props function for the dbProvider:
+ *   const getDbUserData = (dbProviderData) => {
+ *     setDbUserData(dbProviderData);
+ *   };
+ *   .....
+ *   return (
+ *     <DatabaseProvider //-----------------------> example in CreateGroupPage
+ *       dbPath={userGroupsDbPath} //-------------> required, db path
+ *       updateParentFunction={getDbUserData} //--> optional, funtion to receive data in parent
+ *       addDbListener={true} //------------------> optional, default false
+ *       updateDbData={dbUpdateEntry} //----------> optional, useState hook to write data to db
+ *       getErrorMessage={(error)=>{}} //---------> optional, get error in parent
+ *      />
+ *   )
+ *   .....
+ * -----------------------------------------------------------------------------
  */
 
 export default function DatabaseProvider(props) {
-  // Hooks to listen for data in db:
+  //#region USE STATE HOOKS ----------------------------------------------------
+
+  // LISTEN TO DB DATA:
   const [dbPath, setDbPath] = useState();
   const [receivedDataFromDb, setReceivedDataFromDb] = useState();
-  const [addDbListener, setAddDbListener] = useState(null);
-  // Hooks to update db:
+  const [addDbListener, setAddDbListener] = useState(false);
+  // UPDATE DB:
   const [updateDbData, setUpdateDbData] = useState();
+  //#endregion
 
-  //#region MONITOR PROPS ----------------------------------------------------
+  //#region MONITOR PROPS ------------------------------------------------------
 
   // Function to update the parent component:
   const updateParentFunction = props.updateParentFunction;
 
+  // Get props:
   useEffect(() => {
     setDbPath(props.dbPath); // triggers a db query
-    setAddDbListener(props.addDbListener); //"true" adds a listener, "false" doesn't
     setUpdateDbData(props.updateDbData); // data to write to db
+    if (props.addDbListener) {
+      setAddDbListener(props.addDbListener); // default false
+    }
   }, [props]);
+  //#endregion
+
+  //#region PROCESS ERROR MESSAGES -------------------------------------------
+
+  const errorFunctionFromParent = props.getErrorMessage;
+
+  const processError = useCallback((error) => {
+    // Forward error to parent if function provided:
+    if (errorFunctionFromParent) {
+      errorFunctionFromParent(error);
+    } else {
+      console.log(error);
+      console.log("error not forwarded to parent function");
+    }
+  }, []);
+
   //#endregion
 
   //#region GET DATA ONCE ----------------------------------------------------
 
   const getDataOnce = useCallback(() => {
     let ref = firebase.database().ref(dbPath);
-    ref.once("value", (snapshot) => {
-      try {
-        if (snapshot) {
-          console.log("get data from db helper once");
-          setReceivedDataFromDb(snapshot.val());
+    ref
+      .once("value", (snapshot) => {
+        try {
+          if (snapshot) {
+            console.log("get data from db helper once");
+            setReceivedDataFromDb(snapshot.val());
+          }
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  }, [dbPath]);
+      })
+      .catch((error) => {
+        processError(error);
+      });
+  }, [dbPath, processError]);
 
   useEffect(() => {
     if (dbPath && addDbListener === false) {
@@ -118,7 +147,11 @@ export default function DatabaseProvider(props) {
 
   useEffect(() => {
     if (receivedDataFromDb) {
-      updateParentFunction(receivedDataFromDb);
+      if (updateParentFunction) {
+        updateParentFunction(receivedDataFromDb);
+      } else {
+        console.log("no function defined to send data to parent function");
+      }
     }
   }, [updateParentFunction, receivedDataFromDb]);
   //#endregion

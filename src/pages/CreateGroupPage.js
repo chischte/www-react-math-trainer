@@ -84,7 +84,8 @@ export default function CreateGroupPage() {
   // Trigger db snapshot:
   useEffect(() => {
     if (groupCode) {
-      setGroupDbPath("/groups/" + groupCode + "/highscore/");
+      setGroupDbPath("/users/");
+      // setGroupDbPath("/groups/" + groupCode + "/highscore/");
     }
   }, [groupCode]);
 

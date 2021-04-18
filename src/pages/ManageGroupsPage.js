@@ -25,7 +25,8 @@ export default function ManageGroupsPage() {
   // Set db path:
   useEffect(() => {
     if (userUid) {
-      setUserGroupsDbPath("/users/" + userUid + "/groups");
+      // setUserGroupsDbPath("/users/" + userUid + "/groups");/////////////////////////
+      setUserGroupsDbPath("/users/eAov1km3Uph0d4a8Fugkc3QP10l1/grouswps"); /////////////////////////
     }
   }, [userUid]);
 
@@ -42,6 +43,7 @@ export default function ManageGroupsPage() {
         dbPath={userGroupsDbPath}
         addDbListener={false}
         updateParentFunction={getDbUserData}
+        getErrorMessage={(error) => console.log(error)}
       />
       <Header />
       <div>
