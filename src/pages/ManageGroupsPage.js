@@ -25,7 +25,7 @@ export default function ManageGroupsPage() {
   // Set db path:
   useEffect(() => {
     if (userUid) {
-     setUserGroupsDbPath("/users/" + userUid + "/groups");
+      setUserGroupsDbPath("/users/" + userUid + "/groups");
     }
   }, [userUid]);
 
@@ -34,12 +34,10 @@ export default function ManageGroupsPage() {
     setUserGroups(dbProviderData);
   };
 
-    //Props function for the db provider:
-    const getErrorMessage = (e) => {
-      alert(e);
-      console.log(e);
-    };
-  
+  //Props function for the db provider:
+  const getErrorMessage = (e) => {
+    console.log(e);
+  };
 
   //#endregion
 

@@ -86,25 +86,36 @@ export default function DatabaseProvider(props) {
 
   //#endregion
 
+  //#region PROCESS DATABASE SNAPSHOT ------------------------------------------
+
+  const processSnapshot = useCallback(
+    (snapshot) => {
+      try {
+        if (snapshot) {
+          setReceivedDataFromDb(snapshot.val());
+        }
+      } catch (e) {
+        processError(e);
+      }
+    },
+    [processError]
+  );
+
+  //#endregion
+
   //#region GET DATA ONCE ----------------------------------------------------
 
   const getDataOnce = useCallback(() => {
     let ref = firebase.database().ref(dbPath);
     ref
       .once("value", (snapshot) => {
-        try {
-          if (snapshot) {
-            console.log("get data from db helper once");
-            setReceivedDataFromDb(snapshot.val());
-          }
-        } catch (e) {
-          processError(e);
-        }
+        console.log("get data from db helper once");
+        processSnapshot(snapshot);
       })
       .catch((e) => {
         processError(e);
       });
-  }, [dbPath, processError]);
+  }, [dbPath, processError, processSnapshot]);
 
   useEffect(() => {
     if (dbPath && addDbListener === false) {
@@ -116,30 +127,35 @@ export default function DatabaseProvider(props) {
 
   //#region GET DATA CONTINUOUSLY --------------------------------------------
 
-  const processSnapshot = useCallback((snapshot) => {
-    try {
-      if (snapshot) {
-        console.log("get data from db helper continuously");
-        setReceivedDataFromDb(snapshot.val());
-      }
-    } catch (e) {
-      processError(e);
-    }
-  }, [processError]);
-
   const previousDbPath = useRef();
+
+  // Access has to be checked with "ref.once", because there is no
+  // possibility to catch a "permission denied" error using "ref.on"
+  const checkIfAccessIsPermitted = (ref) => {
+    ref
+      .once("value", () => {})
+      .catch((e) => {
+        processError(e);
+      });
+  };
 
   const getDataContinuous = useCallback(() => {
     // Detach previous listeners:
     if (previousDbPath.current) {
       firebase.database().ref(previousDbPath.current).off();
     }
-    // Add new listener:
+    // Define new path:
     let ref = firebase.database().ref(dbPath);
-    ref.on("value", (snapshot) => processSnapshot(snapshot));
+    checkIfAccessIsPermitted(ref);
 
+    // Get data and add new listener:
+    ref.on("value", (snapshot) => {
+      console.log("get data from db helper continuously");
+      processSnapshot(snapshot);
+    });
     // Store new dbPath as ref:
     getDataContinuous.current = dbPath;
+    // }
   }, [dbPath, processSnapshot]);
 
   useEffect(() => {
