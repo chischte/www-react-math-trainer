@@ -133,13 +133,16 @@ export default function DatabaseProvider(props) {
 
   // Access has to be checked with "ref.once", because there is no
   // possibility to catch a "permission denied" error using "ref.on"
-  const checkIfAccessIsPermitted = useCallback((ref) => {
-    ref
-      .once("value", () => {})
-      .catch((e) => {
-        processError(e);
-      });
-  },[processError]);
+  const checkIfAccessIsPermitted = useCallback(
+    (ref) => {
+      ref
+        .once("value", () => {})
+        .catch((e) => {
+          processError(e);
+        });
+    },
+    [processError]
+  );
 
   const getDataContinuous = useCallback(() => {
     // Detach previous listener:
@@ -156,9 +159,9 @@ export default function DatabaseProvider(props) {
       processSnapshot(snapshot);
     });
     // Store new dbPath as ref:
-    getDataContinuous.current = dbPath;
+    previousDbPath.current = dbPath;
     // }
-  }, [dbPath, processSnapshot,checkIfAccessIsPermitted]);
+  }, [dbPath, processSnapshot, checkIfAccessIsPermitted]);
 
   useEffect(() => {
     if (dbPath && addDbListener === true) {
@@ -170,13 +173,17 @@ export default function DatabaseProvider(props) {
 
   //#region SEND UPDATED DATA TO PARENT --------------------------------------
 
+  // Use a reference to compare if DB Data changed
+  const previousDataFromDb = useRef();
+
   useEffect(() => {
-    if (receivedDataFromDb) {
+    if (receivedDataFromDb && receivedDataFromDb !== previousDataFromDb.current) {
       if (updateParentFunction) {
         updateParentFunction(receivedDataFromDb);
       } else {
         console.log("no function defined to send data to parent function");
       }
+      previousDataFromDb.current = receivedDataFromDb;
     }
   }, [updateParentFunction, receivedDataFromDb]);
   //#endregion
@@ -205,7 +212,7 @@ export default function DatabaseProvider(props) {
       if (dbPath && updateDbData) {
         updateDbEntry();
       }
-    }, 50); // prevents an eternal loop of updating hooks
+    }, 200); // prevents an eternal loop of updating hooks
     return () => clearTimeout(timer);
   }, [dbPath, updateDbData, updateDbEntry]);
   //#endregion

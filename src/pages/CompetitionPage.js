@@ -219,7 +219,7 @@ export default function CompetitionPage() {
     }
   }, [userUid]);
 
-  const getGroupsAvatarFromDb = (dbProviderData) => {
+  const getUserInfoFromDb = (dbProviderData) => {
     console.log("get user data from db/user:");
     if (dbProviderData) {
       try {
@@ -510,7 +510,7 @@ export default function CompetitionPage() {
       <DatabaseProvider
         dbPath={userDbPath}
         addDbListener={true}
-        updateParentFunction={getGroupsAvatarFromDb}
+        updateParentFunction={getUserInfoFromDb}
       />
       <Header />
       <div className="user-at-group">
