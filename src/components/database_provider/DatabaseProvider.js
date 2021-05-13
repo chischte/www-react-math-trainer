@@ -133,13 +133,13 @@ export default function DatabaseProvider(props) {
 
   // Access has to be checked with "ref.once", because there is no
   // possibility to catch a "permission denied" error using "ref.on"
-  const checkIfAccessIsPermitted = (ref) => {
+  const checkIfAccessIsPermitted = useCallback((ref) => {
     ref
       .once("value", () => {})
       .catch((e) => {
         processError(e);
       });
-  };
+  },[processError]);
 
   const getDataContinuous = useCallback(() => {
     // Detach previous listener:
@@ -158,7 +158,7 @@ export default function DatabaseProvider(props) {
     // Store new dbPath as ref:
     getDataContinuous.current = dbPath;
     // }
-  }, [dbPath, processSnapshot]);
+  }, [dbPath, processSnapshot,checkIfAccessIsPermitted]);
 
   useEffect(() => {
     if (dbPath && addDbListener === true) {

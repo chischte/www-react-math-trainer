@@ -81,7 +81,7 @@ export default function SignupPage() {
     let nicknameIsAvailable = true;
     if (name.length > 15) {
       alert(
-        "Bitte wähle einen kürzeren Namen.\r\n" + "Der Name darf maximal 15 Zeichen lang sein."
+        "Bitte wähle einen kürzeren Namen.\r\n Der Name darf maximal 15 Zeichen lang sein."
       );
       nicknameIsAvailable = false;
     } else if (!!nicknameDatabaseSnapshot) {
