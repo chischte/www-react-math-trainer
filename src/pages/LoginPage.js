@@ -28,6 +28,8 @@ export default function LoginPage() {
   };
 
   const logInExistingUser = async (email, password) => {
+    // Replace whitespaces with an underline (g for globally):
+    var email=email.replace(/ /g,'_')
     try {
       await firebaseInitializeApp
         .auth()

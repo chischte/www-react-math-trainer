@@ -31,8 +31,8 @@ export default function SignupPage() {
   // Get user auth info:
   useEffect(() => {
     if (!!authContext.currentUser) {
-      setUserIsLoggedIn(true);
       setUserUid(authContext.currentUser.uid);
+      setUserIsLoggedIn(true);
     } else {
       setUserIsLoggedIn(false);
     }
@@ -81,23 +81,22 @@ export default function SignupPage() {
     let nicknameIsAvailable = true;
     if (name.length > 15) {
       alert(
-        "Bitte wähle einen kürzeren Namen.\r\n" +
-        "Der Name darf maximal 15 Zeichen lang sein."
+        "Bitte wähle einen kürzeren Namen.\r\n" + "Der Name darf maximal 15 Zeichen lang sein."
       );
       nicknameIsAvailable = false;
     } else if (!!nicknameDatabaseSnapshot) {
       if (!!nicknameDatabaseSnapshot.find((x) => x.name === name)) {
         nicknameIsAvailable = false;
-        alert(
-          "Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen"
-        );
+        alert("Dieser Nickname ist bereits vergeben, bitte probier es mit einem anderen Namen");
       }
     }
     return nicknameIsAvailable;
   };
 
   const createEmailFromUserName = (nickName) => {
-    var email = nickName + "@mathe-trainer.oo";
+    // Replace whitespaces with an underline (g for globally):
+    var emailName = nickName.replace(/ /g, "_");
+    var email = emailName + "@mathe-trainer.oo";
     return email;
   };
 
@@ -108,23 +107,22 @@ export default function SignupPage() {
   // Create user in firebase auth:
   const createUserEmailAuth = useCallback(async () => {
     try {
-      await firebaseInitializeApp
-        .auth()
-        .createUserWithEmailAndPassword(userEmail, userPassword);
+      await firebaseInitializeApp.auth().createUserWithEmailAndPassword(userEmail, userPassword);
       alert(
         "WICHTIG! AUFSCHREIBEN!:\r\nDein Nickname ist:" +
-        userName +
-        "\r\nDein Passwort ist:" +
-        userPassword +
-        "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
+          userName +
+          "\r\nDein Passwort ist:" +
+          userPassword +
+          "\r\nOHNE DIESE INFOS IST ES NICHT MÖGLICH,\r\nDICH SPÄTER WIEDER ANZUMELDEN!"
       );
     } catch (error) {
       console.log(error);
       alert(
         "Das erstellen des Accounts hat leider nicht funktioniert!\r\n" +
-        "Bitte entferne allfällige Leerschläge oder Sonderzeichen aus deinem Nickname.\r\n" +
-        "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~\r\n\r\n" +
-        "Das Passwort muss mindestens 6 Stellen haben \r\n\r\n" + error
+          "Bitte entferne allfällige Sonderzeichen aus deinem Nickname.\r\n" +
+          "Erlaubte Sonderzeichen sind: !%&'*+-/=?^_`{|}~\r\n\r\n" +
+          "Das Passwort muss mindestens 6 Stellen haben \r\n\r\n" +
+          error
       );
     } finally {
     }
@@ -167,14 +165,14 @@ export default function SignupPage() {
       };
       firebase
         .database()
-        .ref("/nicknames/" + userName)
+        .ref("/nicknames/" + userUid)
         .update(dbEntry);
       console.log("created nickname entry in database");
     }
-  }, [userName]);
+  }, [userName,userUid]);
 
   useEffect(() => {
-    if (userEmail && userPassword && !!userName && userIsLoggedIn) {
+    if (userEmail && userPassword && !!userName && userIsLoggedIn && !!userUid) {
       createNicknameEntryDB();
       createUserEntryInDB();
     }
@@ -185,6 +183,7 @@ export default function SignupPage() {
     createNicknameEntryDB,
     createUserEntryInDB,
     userIsLoggedIn,
+    userUid,
   ]);
 
   // Set user display name in firebase auth:
@@ -269,12 +268,7 @@ export default function SignupPage() {
                     </FormControl>
                   </div>
                   <Box m={0} pt={1}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="secondary"
-                      fullWidth
-                    >
+                    <Button type="submit" variant="contained" color="secondary" fullWidth>
                       Account Erstellen
                     </Button>
                   </Box>
@@ -284,7 +278,7 @@ export default function SignupPage() {
           </div>
         </div>
       )}
-      {userIsLoggedIn && displayNameIsAssigned&&(
+      {userIsLoggedIn && displayNameIsAssigned && (
         <div className="infotext">
           <Header />
           <br></br>
